@@ -593,7 +593,7 @@ else
 
         // Here is the trade fonction to strip out some "spaghetti code". The function saves about 60 lines of code, I hope it will be
         // easier to modify/add something in this part.
-        function trade($price, $delta, $max, $limit, $factor, $port_type, $origin, $price_array, $sectorinfo)
+        function trade($price, $delta, $max, $limit, $factor, $port_type, $origin, &$price_array, $sectorinfo)
         {
             if ($sectorinfo['port_type'] ==  $port_type)
             {
