@@ -630,6 +630,7 @@ else
 
         $free_holds = Bnt\CalcLevels::holds($playerinfo['hull'], $bntreg->level_factor) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
         $free_power = Bnt\CalcLevels::energy($playerinfo['power'], $bntreg->level_factor) - $playerinfo['ship_energy'];
+        // TODO: Bug here, this is using global prices and not the ones from the port as found in $price_array.
         $total_cost = $trade_ore * $bntreg->ore_price + $trade_organics * $bntreg->organics_price + $trade_goods * $bntreg->goods_price + $trade_energy * $bntreg->energy_price;
 
         // Debug info
