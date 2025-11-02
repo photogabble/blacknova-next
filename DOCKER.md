@@ -85,6 +85,35 @@ To enable PHP error reporting, create a file named `dev` in the project root:
 touch dev
 ```
 
+## Xdebug Configuration
+
+Xdebug 3.1.6 is installed and configured to work with your IDE.
+
+**Configuration:**
+- Mode: Controlled by `XDEBUG_MODE` in `.env` (default: `debug`)
+- Port: 9003
+- Client: `host.docker.internal` (your host machine)
+
+**To enable Xdebug:**
+1. Set `XDEBUG_MODE=debug` in `docker/.env`
+2. Rebuild: `cd docker && docker-compose up -d --build`
+
+**To disable Xdebug:**
+1. Set `XDEBUG_MODE=off` in `docker/.env`
+2. Restart: `cd docker && docker-compose restart web`
+
+**IDE Setup (PhpStorm/VS Code):**
+1. Configure your IDE to listen on port 9003
+2. Set path mappings: `/var/www/html` → `[your project root]`
+3. Start listening for debug connections
+4. Add breakpoints and refresh your browser
+
+**Verify Xdebug is running:**
+```bash
+cd docker && docker compose exec web php -v
+```
+You should see "with Xdebug" in the output.
+
 ## Notes
 
 - Database schema is automatically imported on first run from `schema/mysql/`
