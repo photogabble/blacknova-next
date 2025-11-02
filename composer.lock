@@ -4,24 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "489a1a0201b56cc450230464d220f2df",
+    "content-hash": "cc2f655428a78de136c01af1328261d2",
     "packages": [
         {
             "name": "adodb/adodb-php",
-            "version": "v5.19",
+            "version": "v5.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ADOdb/ADOdb.git",
-                "reference": "773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de"
+                "reference": "d99127b8811a9f949c00ab425065e380dce6bdc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de",
-                "reference": "773bb9b7ccd81b403bf75f7ef476c3f2d7ee04de",
+                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/d99127b8811a9f949c00ab425065e380dce6bdc1",
+                "reference": "d99127b8811a9f949c00ab425065e380dce6bdc1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2"
+                "php": "^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5"
             },
             "type": "library",
             "autoload": {
@@ -31,8 +34,8 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1",
-                " BSD-2-Clause"
+                "BSD-3-Clause",
+                "LGPL-2.1-or-later"
             ],
             "authors": [
                 {
@@ -43,18 +46,26 @@
                 {
                     "name": "Damien Regad",
                     "role": "Current maintainer"
+                },
+                {
+                    "name": "Mark Newnham",
+                    "role": "Developer"
                 }
             ],
             "description": "ADOdb is a PHP database abstraction layer library",
-            "homepage": "http://adodb.sourceforge.net/",
+            "homepage": "https://adodb.org/",
             "keywords": [
-                "database"
+                "abstraction",
+                "database",
+                "layer",
+                "library",
+                "php"
             ],
             "support": {
                 "issues": "https://github.com/ADOdb/ADOdb/issues",
                 "source": "https://github.com/ADOdb/ADOdb"
             },
-            "time": "2014-04-23T14:37:03+00:00"
+            "time": "2022-02-07T23:42:42+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -274,7 +285,9 @@
     "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "ext-mbstring": "*"
+    },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

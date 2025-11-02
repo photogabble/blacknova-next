@@ -30,7 +30,7 @@
     "ezyang/htmlpurifier": "v4.6.0",
     "ircmaxell/password-compat": "1.0.3",
     "swiftmailer/swiftmailer": "v5.2.1",
-    "adodb/adodb-php": "v5.19",
+    "adodb/adodb-php": "v5.22",
     "ext-mbstring": "*"
   },
   "autoload": {
