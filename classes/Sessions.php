@@ -19,11 +19,19 @@
 
 namespace Bnt;
 
+use PDO;
+
 class Sessions
 {
+    private $pdo_db;
+
+    private $currenttime;
+
+    private $expiry;
+
     public $maxlifetime = 1800; // 30 mins
 
-    public function __construct($pdo_db)
+    public function __construct(PDO $pdo_db)
     {
         session_set_save_handler(
         array($this, 'open'),
@@ -57,17 +65,17 @@ class Sessions
         session_write_close();
     }
 
-    public function open($path, $name)
+    public function open($path, $name): bool
     {
         return true;
     }
 
-    public function close()
+    public function close(): bool
     {
         return true;
     }
 
-    public function read($sesskey)
+    public function read(string $sesskey): string
     {
         $table = $this->pdo_db->prefix . 'sessions';
         $qry = 'SELECT sessdata FROM ' . $table . ' where sesskey=:sesskey and expiry>=:expiry';
@@ -75,11 +83,16 @@ class Sessions
         $stmt->bindParam(':sesskey', $sesskey);
         $stmt->bindParam(':expiry', $this->currenttime);
         $stmt->execute();
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $result['sessdata'];
+
+        if ($result = $stmt->fetch(\PDO::FETCH_ASSOC))
+        {
+            return $result['sessdata'];
+        }
+
+        return '';
     }
 
-    public function write($sesskey, $sessdata)
+    public function write(string $sesskey, string $sessdata): bool
     {
         $err_mode = $this->pdo_db->getAttribute(\PDO::ATTR_ERRMODE);
         // Set the error mode to be exceptions, so that we can catch them -- This fucks everything in game except for sessions
@@ -110,7 +123,7 @@ class Sessions
         return $result;
     }
 
-    public function destroy($sesskey)
+    public function destroy(string $sesskey): bool
     {
         $table = $this->pdo_db->prefix . 'sessions';
         $qry = 'DELETE from ' . $table . ' where sesskey=:sesskey';
@@ -120,7 +133,7 @@ class Sessions
         return $result;
     }
 
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): bool
     {
         $table = $this->pdo_db->prefix . 'sessions';
         $qry = 'DELETE from ' . $table . ' where expiry>:expiry';
@@ -130,17 +143,16 @@ class Sessions
         return $result;
     }
 
-    public function regen()
+    public function regen(): void
     {
         $old_id = session_id();
-        session_regenerate_id();
+        session_regenerate_id(); // results in $this->write being called
         $new_id = session_id();
         $table = $this->pdo_db->prefix . 'sessions';
         $qry = 'UPDATE ' . $table . ' SET sesskey=:newkey where sesskey=:sesskey';
         $stmt = $this->pdo_db->prepare($qry);
         $stmt->bindParam(':newkey', $new_id);
         $stmt->bindParam(':sesskey', $old_id);
-        $result = $stmt->execute();
+        $stmt->execute();
     }
 }
-?>
