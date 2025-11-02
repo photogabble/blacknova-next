@@ -1,71 +1,42 @@
 {
-    "name": "blacknova/traders",
-    "description": "BlackNova Traders is a web-based, multi-player space exploration game inspired by the popular BBS game of TradeWars.",
-    "authors": [
-        {
-            "name": "Ron Harwood",
-            "email": "harwoodr@gmail.com"
-        },
-        {
-            "name": "Blacknova Development",
-            "email": "blacknova@net-code.co.uk"
-        },
-        {
-            "name": "TheMightyDude",
-            "email": "TheMightyDude@gmail.com"
-        },
-        {
-            "name": "TheKabal",
-            "email": "TheKabal@gmail.com"
-        },
-        {
-            "name": "Blacknova Development",
-            "email": "blacknova@net-code.co.uk"
-        }
-    ],
-    "license": "AGPL-3.0",
-    "minimum-stability": "alpha",
-    "require": {
-        "smarty/smarty": "v3.1.18",
-        "ezyang/htmlpurifier": "v4.6.0",
-        "ircmaxell/password-compat": "1.0.3",
-        "swiftmailer/swiftmailer": "v5.2.1",
-        "adodb/adodb-php": "v5.19"
+  "name": "blacknova/traders",
+  "description": "BlackNova Traders is a web-based, multi-player space exploration game inspired by the popular BBS game of TradeWars.",
+  "authors": [
+    {
+      "name": "Ron Harwood",
+      "email": "harwoodr@gmail.com"
     },
-
-    "autoload": {
-        "psr-4": { "Bnt\\": "classes/", "Bad\\": "classes/" }
+    {
+      "name": "Blacknova Development",
+      "email": "blacknova@net-code.co.uk"
     },
-    "scripts": {
-        "post-update-cmd": [
-            "rm -rf vendor/ezyang/htmlpurifier/docs/",
-            "rm -rf vendor/ezyang/htmlpurifier/extras/",
-            "rm -rf vendor/ezyang/htmlpurifier/smoketests/",
-            "rm -rf vendor/ezyang/htmlpurifier/tests/",
-            "rm -rf vendor/ezyang/htmlpurifier/art/",
-            "rm -rf vendor/ezyang/htmlpurifier/benchmarks/",
-            "rm -rf vendor/ezyang/htmlpurifier/configdoc/",
-            "rm -rf vendor/ezyang/htmlpurifier/maintenance/",
-            "rm -rf vendor/ezyang/htmlpurifier/plugins/",
-            "rm -rf vendor/ezyang/htmlpurifier/.git/",
-            "rm -rf vendor/ezyang/htmlpurifier/INSTALL.fr.utf8",
-            "rm -rf vendor/ezyang/htmlpurifier/Doxyfile",
-            "rm -rf vendor/ezyang/htmlpurifier/*.php",
-            "rm -rf vendor/ezyang/htmlpurifier/phpdoc.ini",
-            "rm -rf vendor/adodb/adodb-php/contrib/",
-            "rm -rf vendor/adodb/adodb-php/cute_icons_for_site/",
-            "rm -rf vendor/adodb/adodb-php/lang/",
-            "rm -rf vendor/adodb/adodb-php/pear/",
-            "rm -rf vendor/adodb/adodb-php/replicate/",
-            "rm -rf vendor/adodb/adodb-php/scripts/",
-            "rm -rf vendor/adodb/adodb-php/tests/",
-            "rm -rf vendor/adodb/adodb-php/docs/",
-            "rm -rf vendor/adodb/adodb-php/.git/",
-            "rm -rf vendor/smarty/smarty/development",
-            "rm -rf vendor/smarty/smarty/documentation",
-            "rm -rf vendor/swiftmailer/swiftmailer/notes",
-            "rm -rf vendor/swiftmailer/swiftmailer/doc",
-            "rm -rf vendor/swiftmailer/swiftmailer/tests"
-        ]
+    {
+      "name": "TheMightyDude",
+      "email": "TheMightyDude@gmail.com"
+    },
+    {
+      "name": "TheKabal",
+      "email": "TheKabal@gmail.com"
+    },
+    {
+      "name": "Blacknova Development",
+      "email": "blacknova@net-code.co.uk"
     }
+  ],
+  "license": "AGPL-3.0",
+  "minimum-stability": "alpha",
+  "require": {
+    "smarty/smarty": "v3.1.18",
+    "ezyang/htmlpurifier": "v4.6.0",
+    "ircmaxell/password-compat": "1.0.3",
+    "swiftmailer/swiftmailer": "v5.2.1",
+    "adodb/adodb-php": "v5.19",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bnt\\": "classes/",
+      "Bad\\": "classes/"
+    }
+  }
 }
