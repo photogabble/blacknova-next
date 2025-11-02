@@ -19,7 +19,7 @@
 
 namespace Bnt;
 
-class Reg
+final class Reg
 {
     public function __construct($db)
     {
@@ -27,7 +27,6 @@ class Reg
         $stmt = "SELECT name,value,type FROM {$db->prefix}gameconfig";
         $result = $db->query($stmt);
         Db::logDbErrors($db, $stmt, __LINE__, __FILE__);
-//        $no_langs_yet = true;
 
         if ($result !== false) // If the database is not live, this will give false, and db calls will fail silently
         {
@@ -37,43 +36,26 @@ class Reg
             {
                 foreach ($big_array as $row)
                 {
-                    settype($row['value'], $row['type']);
-                    $this->$row['name'] = $row['value'];
+                    $name = $row['name'];
+                    $value = $row['value'];
+                    settype($value, $row['type']);
+
+                    $this->$name = $value;
                 }
 
-                return $this;
-            }
-            else
-            {
-                // Slurp in config variables from the ini file directly
-                $ini_file = 'config/classic_config.ini.php'; // This is hard-coded for now, but when we get multiple game support, we may need to change this.
-                $ini_keys = parse_ini_file($ini_file, true);
-                foreach ($ini_keys as $config_category => $config_line)
-                {
-                    foreach ($config_line as $config_key => $config_value)
-                    {
-                        $this->$config_key = $config_value;
-                    }
-                }
-
-                return $this;
+                return;
             }
         }
-        else
-        {
-            // Slurp in config variables from the ini file directly
-            $ini_file = 'config/classic_config.ini.php'; // This is hard-coded for now, but when we get multiple game support, we may need to change this.
-            $ini_keys = parse_ini_file($ini_file, true);
-            foreach ($ini_keys as $config_category => $config_line)
-            {
-                foreach ($config_line as $config_key => $config_value)
-                {
-                    $this->$config_key = $config_value;
-                }
-            }
 
-            return $this;
+        // Slurp in config variables from the ini file directly
+        $ini_file = 'config/classic_config.ini.php'; // This is hard-coded for now, but when we get multiple game support, we may need to change this.
+        $ini_keys = parse_ini_file($ini_file, true);
+        foreach ($ini_keys as $config_category => $config_line)
+        {
+            foreach ($config_line as $config_key => $config_value)
+            {
+                $this->$config_key = $config_value;
+            }
         }
     }
 }
-?>
