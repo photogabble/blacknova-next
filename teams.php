@@ -157,7 +157,7 @@ switch ($teamwhat)
                     $langvars['l_team_error'] = str_replace("[error]", "<strong><font color=red>An error occured</font></strong><br>", $langvars['l_team_error']);
                     echo $langvars['l_team_error'];
                     echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
-                    continue;
+                    break;
                 }
 
                 $resx = $db->Execute("DELETE FROM {$db->prefix}teams WHERE id = ?;", array($whichteam));
@@ -342,7 +342,7 @@ switch ($teamwhat)
             $langvars['l_team_error'] = str_replace("[error]", "<strong><font color=red>An error occured</font></strong><br>", $langvars['l_team_error']);
             echo $langvars['l_team_error'];
             echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
-            continue;
+            break;
         }
         else
         {
@@ -381,7 +381,7 @@ switch ($teamwhat)
         {
             echo $langvars['l_team_leavefirst'] . "<br>";
             echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
-            continue;
+            break;
         }
 
         if (is_null ($teamname))
