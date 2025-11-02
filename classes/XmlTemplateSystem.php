@@ -30,9 +30,9 @@
 
 namespace Bnt;
 
-define('XMLDOM_PROCESSED', 0x0001, true);
-define('XMLDOM_UNPROCESSED', 0x0002, true);
-define('XMLDOM_XML', 0x0003, true);
+define('XMLDOM_PROCESSED', 0x0001);
+define('XMLDOM_UNPROCESSED', 0x0002);
+define('XMLDOM_XML', 0x0003);
 
 class XmlTemplateSystem
 {
