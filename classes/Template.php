@@ -19,11 +19,11 @@
 
 namespace Bnt;
 
-define('TEMPLATE_USE_SMARTY', 0x00000000, true);
-define('TEMPLATE_USE_XML', 0x00000001, true);
-
 class Template
 {
+    const TEMPLATE_USE_SMARTY = 0x00000000;
+    const TEMPLATE_USE_XML = 0x00000001;
+
     private $type = null;
     private $initialiszd = null;
     private $api = null;
@@ -55,19 +55,19 @@ class Template
                 case "application/xml":
                 {
                     // We have a Client that requires XML, so init the XML Template API.
-                    $this->initialize (TEMPLATE_USE_XML) or die ("ERR");
+                    $this->initialize (self::TEMPLATE_USE_XML) or die ("ERR");
                     break 2;
                 }
                 default:
                 {
                     // We have a Client that doesn't require XML, so fallback and init the Smarty Template API.
-                    $this->initialize (TEMPLATE_USE_SMARTY);
+                    $this->initialize (self::TEMPLATE_USE_SMARTY);
                     break 2;
                 }
             }
         }
 */
-        $this->initialize(TEMPLATE_USE_SMARTY);
+        $this->initialize(self::TEMPLATE_USE_SMARTY);
     }
 
     public function __destruct()
@@ -80,7 +80,7 @@ class Template
     {
         if ($this->initialized != true)
         {
-            if ($type === TEMPLATE_USE_SMARTY)
+            if ($type === self::TEMPLATE_USE_SMARTY)
             {
                 $smarty_errors = null;
                 if (!is_dir('templates'))
@@ -111,7 +111,7 @@ class Template
                     $api = new Smarty($this);
                 }
             }
-            elseif ($type === TEMPLATE_USE_XML)
+            elseif ($type === self::TEMPLATE_USE_XML)
             {
                 // Create the module.
                 $api = new Xml($this);

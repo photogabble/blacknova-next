@@ -17,5 +17,4 @@
 //
 // File: admin_config.php
 // Define the admin password, used for accessing create_universe, scheduler, and the admin control panel
-define('ADMIN_PW', 'secret');
-?>
+const ADMIN_PW = 'secret';
