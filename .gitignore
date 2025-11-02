@@ -1,4 +1,5 @@
 .idea
+.env
 vendor
 templates/_cache/*
 !templates/_cache/.htaccess
