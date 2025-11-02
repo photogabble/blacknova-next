@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    container_name: blacknova-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ..:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    networks:
+      - blacknova
+
+  db:
+    image: mysql:5.7
+    container_name: blacknova-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bnt
+      MYSQL_USER: bnt
+      MYSQL_PASSWORD: bnt
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ../schema/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - blacknova
+    command: --default-authentication-plugin=mysql_native_password
+
+networks:
+  blacknova:
+    driver: bridge
+
+volumes:
+  db_data:

@@ -1,0 +1,11 @@
+.git
+.idea
+.gitignore
+README.md
+docs/
+*.md
+.env
+.DS_Store
+Thumbs.db
+vendor/
+composer.lock
