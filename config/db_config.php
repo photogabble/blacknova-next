@@ -30,7 +30,7 @@ if (strpos($_SERVER['PHP_SELF'], 'db_config.php')) // Prevent direct access to t
 $db_port = null;
 
 // Hostname of the database server:
-$db_host = '127.0.0.1';
+$db_host = getenv('DB_HOST') ?: 'db';
 
 // Username and password to connect to the database:
 $db_user = 'bnt';

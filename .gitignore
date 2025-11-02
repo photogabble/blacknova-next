@@ -1,0 +1,8 @@
+.idea
+.env
+vendor
+/dev
+templates/_cache/*
+!templates/_cache/.htaccess
+templates/_compile/*
+!templates/_compile/.htaccess
