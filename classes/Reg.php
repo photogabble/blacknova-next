@@ -34,26 +34,21 @@ final class Reg
 
     public function __construct()
     {
-        // Get the config_values from the DB - This is a pdo operation
-        $stmt = "SELECT name,value,type FROM ".Db::table('gameconfig');
-        $result = Db::query($stmt);
+        if (Db::isActive()) {
+            // Get the config_values from the DB - This is a pdo operation
+            $stmt = "SELECT name,value,type FROM " . Db::table('gameconfig');
+            $result = Db::query($stmt);
 
-        if ($result !== false) // If the database is not live, this will give false, and db calls will fail silently
-        {
             $big_array = $result->fetchAll();
-            if (!empty ($big_array))
-            {
-                foreach ($big_array as $row)
-                {
-                    $name = $row['name'];
-                    $value = $row['value'];
-                    settype($value, $row['type']);
+            foreach ($big_array as $row) {
+                $name = $row['name'];
+                $value = $row['value'];
+                settype($value, $row['type']);
 
-                    $this->config[$name] = $value;
-                }
-
-                return;
+                $this->config[$name] = $value;
             }
+
+            return;
         }
 
         // Slurp in config variables from the ini file directly
