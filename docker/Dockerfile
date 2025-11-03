@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:8.4-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -7,12 +7,17 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libonig-dev \
+    libxml2-dev \
+    libcurl4-openssl-dev \
     && docker-php-ext-install \
     mysqli \
     pdo \
     pdo_mysql \
     mbstring \
-    && pecl install xdebug-3.1.6 \
+    zip \
+    xml \
+    curl \
+    && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && a2enmod rewrite \
     && apt-get clean \
@@ -31,6 +36,14 @@ WORKDIR /var/www/html
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Configure PHP for PHP 8.4 optimizations
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.interned_strings_buffer=8" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.max_accelerated_files=4000" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.revalidate_freq=2" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache.ini
 
 # Copy entrypoint script and fix line endings
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
