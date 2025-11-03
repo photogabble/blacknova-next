@@ -19,9 +19,20 @@
 
 namespace Bnt;
 
+/**
+ * BNT Registry object
+ *
+ * This class contains all the configuration variables for the game. These are initially
+ * loaded from a `.ini` file. During installation these variables are copied to the database
+ * from where this class then loads them.
+ *
+ * TODO: Rename class to Config?
+ */
 final class Reg
 {
-    public function __construct($db)
+    private array $config = [];
+
+    public function __construct()
     {
         // Get the config_values from the DB - This is a pdo operation
         $stmt = "SELECT name,value,type FROM ".Db::table('gameconfig');
@@ -38,7 +49,7 @@ final class Reg
                     $value = $row['value'];
                     settype($value, $row['type']);
 
-                    $this->$name = $value;
+                    $this->config[$name] = $value;
                 }
 
                 return;
@@ -52,8 +63,28 @@ final class Reg
         {
             foreach ($config_line as $config_key => $config_value)
             {
-                $this->$config_key = $config_value;
+                $this->config[$config_key] = $config_value;
             }
         }
+    }
+
+    public function __get(string $name): mixed
+    {
+        return $this->config[$name] ?? null;
+    }
+
+    public function __set(string $name, mixed $value): void
+    {
+        $this->config[$name] = $value;
+    }
+
+    public function __isset(string $name): bool
+    {
+        return isset($this->config[$name]);
+    }
+
+    public function __unset(string $name): void
+    {
+        unset($this->config[$name]);
     }
 }
