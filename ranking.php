@@ -59,7 +59,7 @@ switch ($sort)
         $by = 'rating ASC, character_name ASC';
         break;
     case 'team':
-        $by = "".\Bnt\Db::table('teams').".team_name DESC, character_name ASC";
+        $by = "".\BlackNova\Services\Db::table('teams').".team_name DESC, character_name ASC";
         break;
     case 'efficiency':
         $by = 'efficiency DESC';
@@ -71,8 +71,8 @@ switch ($sort)
 
 $variables['num_players'] = (int) 0;
 
-$rs = $db->SelectLimit("SELECT ".\Bnt\Db::table('ships').".ship_id, ".\Bnt\Db::table('ships').".email, ".\Bnt\Db::table('ships').".ip_address, ".\Bnt\Db::table('ships').".score, ".\Bnt\Db::table('ships').".character_name, ".\Bnt\Db::table('ships').".turns_used, ".\Bnt\Db::table('ships').".last_login,UNIX_TIMESTAMP(".\Bnt\Db::table('ships').".last_login) as online, ".\Bnt\Db::table('ships').".rating, ".\Bnt\Db::table('teams').".team_name, ".\Bnt\Db::table('teams').".admin AS team_admin, if (".\Bnt\Db::table('ships').".turns_used<150,0,ROUND(".\Bnt\Db::table('ships').".score/".\Bnt\Db::table('ships').".turns_used)) AS efficiency FROM ".\Bnt\Db::table('ships')." LEFT JOIN ".\Bnt\Db::table('teams')." ON ".\Bnt\Db::table('ships').".team = ".\Bnt\Db::table('teams').".id  WHERE ship_destroyed='N' and email NOT LIKE '%@xenobe' AND turns_used >0 ORDER BY $by", $bntreg->max_ranks);
-Bnt\Db::logDbErrors($db, $rs, __LINE__, __FILE__);
+$rs = $db->SelectLimit("SELECT ".\BlackNova\Services\Db::table('ships').".ship_id, ".\BlackNova\Services\Db::table('ships').".email, ".\BlackNova\Services\Db::table('ships').".ip_address, ".\BlackNova\Services\Db::table('ships').".score, ".\BlackNova\Services\Db::table('ships').".character_name, ".\BlackNova\Services\Db::table('ships').".turns_used, ".\BlackNova\Services\Db::table('ships').".last_login,UNIX_TIMESTAMP(".\BlackNova\Services\Db::table('ships').".last_login) as online, ".\BlackNova\Services\Db::table('ships').".rating, ".\BlackNova\Services\Db::table('teams').".team_name, ".\BlackNova\Services\Db::table('teams').".admin AS team_admin, if (".\BlackNova\Services\Db::table('ships').".turns_used<150,0,ROUND(".\BlackNova\Services\Db::table('ships').".score/".\BlackNova\Services\Db::table('ships').".turns_used)) AS efficiency FROM ".\BlackNova\Services\Db::table('ships')." LEFT JOIN ".\BlackNova\Services\Db::table('teams')." ON ".\BlackNova\Services\Db::table('ships').".team = ".\BlackNova\Services\Db::table('teams').".id  WHERE ship_destroyed='N' and email NOT LIKE '%@xenobe' AND turns_used >0 ORDER BY $by", $bntreg->max_ranks);
+\BlackNova\Services\Db::logDbErrors($db, $rs, __LINE__, __FILE__);
 if ($rs instanceof ADORecordSet)
 {
     $variables['num_players'] = (int) $rs->RecordCount();

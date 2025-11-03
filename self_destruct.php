@@ -28,8 +28,8 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 echo "<h1>" . $title . "</h1>\n";
 
-$result = $db->Execute("SELECT ship_id,character_name FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT ship_id,character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 if (array_key_exists('sure', $_GET))

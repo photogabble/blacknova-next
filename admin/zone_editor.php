@@ -32,8 +32,8 @@ if (!array_key_exists('zone', $_POST))
 
 if ($_POST['zone'] == null)
 {
-    $res = $db->Execute("SELECT zone_id, zone_name FROM ".\Bnt\Db::table('zones')." ORDER BY zone_name");
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res = $db->Execute("SELECT zone_id, zone_name FROM ".\BlackNova\Services\Db::table('zones')." ORDER BY zone_name");
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     while (!$res->EOF)
     {
         $zones[] = $res->fields;
@@ -47,8 +47,8 @@ else
     $variables['zone'] = null;
     if ($_POST['operation'] == "edit")
     {
-        $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?", array($_POST['zone']));
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('zones')." WHERE zone_id = ?", array($_POST['zone']));
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $row = $res->fields;
         $variables['operation'] = "edit";
         $variables['zone_id'] = $row['zone_id'];
@@ -92,8 +92,8 @@ else
         $_zone_attack = empty($zone_attack) ? "N" : "Y";
         $_zone_warpedit = empty($zone_warpedit) ? "N" : "Y";
         $_zone_planet = empty($zone_planet) ? "N" : "Y";
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('zones')." SET zone_name = ?, allow_beacon = ? , allow_attack= ?  , allow_warpedit = ? , allow_planet = ?, max_hull = ? WHERE zone_id = ?;", array($zone_name, $_zone_beacon , $_zone_attack, $_zone_warpedit, $_zone_planet, $zone_hull, $_POST['zone']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('zones')." SET zone_name = ?, allow_beacon = ? , allow_attack= ?  , allow_warpedit = ? , allow_planet = ?, max_hull = ? WHERE zone_id = ?;", array($zone_name, $_zone_beacon , $_zone_attack, $_zone_warpedit, $_zone_planet, $zone_hull, $_POST['zone']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         $button_main = false;
     }
 }

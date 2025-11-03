@@ -471,7 +471,7 @@ TheKabal (1 March 2013)
 --------------------------------------
 Redo calc_ownership so that it does not use global variables, in preparation for migrating it to be autoloaded
 Updated composer to latest version
-db_op_result has been replaced by \bnt\dbop::dbresult, which is auto-loaded from the vendor/bnt directory.
+db_op_result has been replaced by \BlackNova\Services\Dbop::dbresult, which is auto-loaded from the vendor/bnt directory.
 num_torps has been replaced by \bnt\CalcLevels::Torpedoes, which is auto-loaded from the vendor/bnt directory.
 num_beams has been replaced by \bnt\CalcLevels::Beams, which is auto-loaded from the vendor/bnt directory.
 num_fighters has been replaced by \bnt\CalcLevels::Fighters, which is auto-loaded from the vendor/bnt directory.

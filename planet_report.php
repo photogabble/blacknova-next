@@ -33,8 +33,8 @@ if (array_key_exists('preptype', $_GET))
 }
 
 // Get data about planets
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
 // Determine what type of report is displayed and display it's title

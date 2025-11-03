@@ -31,12 +31,12 @@ echo "<h1>" . $title . "</h1>\n";
 echo "<body class=" . $body_class . ">";
 $zone = (int) filter_input(INPUT_GET, 'zone', FILTER_SANITIZE_NUMBER_INT);
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($zone));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('zones')." WHERE zone_id = ?;", array($zone));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 
 if ($res->EOF)
@@ -76,15 +76,15 @@ else
 
         if ($row['corp_zone'] == 'N')
         {
-            $result = $db->Execute("SELECT ship_id, character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($row['owner']));
-            Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+            $result = $db->Execute("SELECT ship_id, character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($row['owner']));
+            \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $ownerinfo = $result->fields;
             $ownername = $ownerinfo['character_name'];
         }
         else
         {
-            $result = $db->Execute("SELECT team_name, creator, id FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($row['owner']));
-            Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+            $result = $db->Execute("SELECT team_name, creator, id FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($row['owner']));
+            \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $ownerinfo = $result->fields;
             $ownername = $ownerinfo['team_name'];
         }

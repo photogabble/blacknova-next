@@ -19,6 +19,8 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+
 /**
  * BNT Registry object
  *

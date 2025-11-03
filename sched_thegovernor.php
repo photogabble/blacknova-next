@@ -25,8 +25,8 @@ if (strpos($_SERVER['PHP_SELF'], 'sched_thegovernor.php')) // Prevent direct acc
 echo "<strong>The Governor</strong><br><br>";
 
 echo "Validating Ship Fighters, Torpedoes, Armor points and Credits...<br>\n";
-$tdres = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')."");
-Bnt\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
+$tdres = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')."");
+\BlackNova\Services\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
 
 $detected = (boolean) false;
 
@@ -41,8 +41,8 @@ while (!$tdres->EOF)
     if ($playerinfo['ship_fighters'] > $ship_fighters_max)
     {
         echo "'-> <span style='color:#f00;'>Detected Fighters Overload on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_fighters = ? WHERE ship_id = ? LIMIT 1;", array($ship_fighters_max, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET ship_fighters = ? WHERE ship_id = ? LIMIT 1;", array($ship_fighters_max, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -54,8 +54,8 @@ while (!$tdres->EOF)
     elseif ($playerinfo['ship_fighters'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Fighters Flip on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resy = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_fighters = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+        $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET ship_fighters = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -69,8 +69,8 @@ while (!$tdres->EOF)
     if ($playerinfo['torps'] > $torps_max)
     {
         echo "'-> <span style='color:#f00;'>Detected Torpedoes Overload on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resz = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET torps = ? WHERE ship_id = ? LIMIT 1;", array($torps_max, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
+        $resz = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET torps = ? WHERE ship_id = ? LIMIT 1;", array($torps_max, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -82,8 +82,8 @@ while (!$tdres->EOF)
     elseif ($playerinfo['torps'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Torpedoes Flip on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resa = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET torps = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resa, __LINE__, __FILE__);
+        $resa = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET torps = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resa, __LINE__, __FILE__);
         if ($db->ErrorNo() >0)
         {
             echo "error: ". $db->ErrorMsg() . "<br>\n";
@@ -96,8 +96,8 @@ while (!$tdres->EOF)
     if ($playerinfo['armor_pts'] > $armor_pts_max)
     {
         echo "'-> <span style='color:#f00;'>Detected Armor points Overload on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resb = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET armor_pts = ? WHERE ship_id = ? LIMIT 1;", array($armor_pts_max, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resb, __LINE__, __FILE__);
+        $resb = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET armor_pts = ? WHERE ship_id = ? LIMIT 1;", array($armor_pts_max, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resb, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -109,8 +109,8 @@ while (!$tdres->EOF)
     elseif ($playerinfo['armor_pts'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Armor points Flip on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resc = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET armor_pts = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resc, __LINE__, __FILE__);
+        $resc = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET armor_pts = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resc, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -124,8 +124,8 @@ while (!$tdres->EOF)
     if ($playerinfo['credits'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Credits Flip on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resd = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resd, __LINE__, __FILE__);
+        $resd = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET credits = ? WHERE ship_id = ? LIMIT 1;", array(0, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resd, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -138,8 +138,8 @@ while (!$tdres->EOF)
     if ($playerinfo['credits'] > 100000000000000000000)
     {
         echo "'-> <span style='color:#f00;'>Detected Credits Overflow on Ship: {$playerinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $rese = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits = ? WHERE ship_id = ? LIMIT 1;", array(100000000000000000000, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
+        $rese = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET credits = ? WHERE ship_id = ? LIMIT 1;", array(100000000000000000000, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -153,8 +153,8 @@ while (!$tdres->EOF)
 }
 
 echo "Validating Planets Fighters, Torpedoes, Credits...<br>\n";
-$tdres = $db->Execute("SELECT planet_id, credits, fighters, torps, owner FROM ".\Bnt\Db::table('planets')."");
-Bnt\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
+$tdres = $db->Execute("SELECT planet_id, credits, fighters, torps, owner FROM ".\BlackNova\Services\Db::table('planets')."");
+\BlackNova\Services\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
 
 while (!$tdres->EOF)
 {
@@ -164,8 +164,8 @@ while (!$tdres->EOF)
     if ($planetinfo['credits'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Credits Flip on Planet: {$planetinfo['planet_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $rese = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
-        Bnt\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
+        $rese = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET credits = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -178,8 +178,8 @@ while (!$tdres->EOF)
     if ($planetinfo['credits'] > 100000000000000000000)
     {
         echo "'-> <span style='color:#f00;'>Detected Credits Overflow on Planet: {$planetinfo['planet_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resf = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits = ? WHERE planet_id = ? LIMIT 1;", array(100000000000000000000, $planetinfo['planet_id']));
-        Bnt\Db::logDbErrors($db, $resf, __LINE__, __FILE__);
+        $resf = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET credits = ? WHERE planet_id = ? LIMIT 1;", array(100000000000000000000, $planetinfo['planet_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resf, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -193,8 +193,8 @@ while (!$tdres->EOF)
     if ($planetinfo['fighters'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Fighters Flip on Planet: {$planetinfo['planet_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resg = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET fighters = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
-        Bnt\Db::logDbErrors($db, $resg, __LINE__, __FILE__);
+        $resg = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET fighters = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resg, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -208,8 +208,8 @@ while (!$tdres->EOF)
     if ($planetinfo['torps'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Torpedoes Flip on Planet: {$planetinfo['planet_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resh = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET torps = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
-        Bnt\Db::logDbErrors($db, $resh, __LINE__, __FILE__);
+        $resh = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET torps = ? WHERE planet_id = ? LIMIT 1;", array(0, $planetinfo['planet_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resh, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -222,8 +222,8 @@ while (!$tdres->EOF)
 }
 
 echo "Validating IGB Balance and Loan Credits...<br>\n";
-$tdres = $db->Execute("SELECT ship_id, balance, loan FROM ".\Bnt\Db::table('ibank_accounts')."");
-Bnt\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
+$tdres = $db->Execute("SELECT ship_id, balance, loan FROM ".\BlackNova\Services\Db::table('ibank_accounts')."");
+\BlackNova\Services\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
 
 while (!$tdres->EOF)
 {
@@ -233,8 +233,8 @@ while (!$tdres->EOF)
     if ($bankinfo['balance'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Balance Credits Flip on IGB Account: {$bankinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resi = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = ? WHERE ship_id = ? LIMIT 1;", array(0, $bankinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
+        $resi = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ibank_accounts')." SET balance = ? WHERE ship_id = ? LIMIT 1;", array(0, $bankinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -247,8 +247,8 @@ while (!$tdres->EOF)
     if ($bankinfo['balance'] > 100000000000000000000)
     {
         echo "'-> <span style='color:#f00;'>Detected Balance Credits Overflow on IGB Account: {$bankinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resj = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = ? WHERE ship_id = ? LIMIT 1;", array(100000000000000000000, $bankinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resj, __LINE__, __FILE__);
+        $resj = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ibank_accounts')." SET balance = ? WHERE ship_id = ? LIMIT 1;", array(100000000000000000000, $bankinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resj, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -262,8 +262,8 @@ while (!$tdres->EOF)
     if ($bankinfo['loan'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Loan Credits Flip on IGB Account: {$bankinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $resk = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET loan = ? WHERE ship_id = ? LIMIT 1;", array(0, $bankinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resk, __LINE__, __FILE__);
+        $resk = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ibank_accounts')." SET loan = ? WHERE ship_id = ? LIMIT 1;", array(0, $bankinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resk, __LINE__, __FILE__);
 
         if ($db->ErrorNo() >0)
         {
@@ -277,8 +277,8 @@ while (!$tdres->EOF)
 }
 
 echo "Validating IGB Transfer Amount Credits...<br>\n";
-$tdres = $db->Execute("SELECT transfer_id, source_id, dest_id, amount FROM ".\Bnt\Db::table('ibank_transfers')."");
-Bnt\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
+$tdres = $db->Execute("SELECT transfer_id, source_id, dest_id, amount FROM ".\BlackNova\Services\Db::table('ibank_transfers')."");
+\BlackNova\Services\Db::logDbErrors($db, $tdres, __LINE__, __FILE__);
 
 /*
 while (!$tdres->EOF)
@@ -289,7 +289,7 @@ while (!$tdres->EOF)
     if ($transferinfo['amount'] < 0)
     {
         echo "'-> <span style='color:#f00;'>Detected Transfer Amount Credits Flip on IGB Transfer: {$transferinfo['ship_id']}.</span> <span style='color:#0f0;'>*** FIXED ***</span><br>\n";
-        $db->Execute ("UPDATE ".\Bnt\Db::table('ibank_transfers')." SET amount = ? WHERE transfer_id = ? LIMIT 1;", array(0, $transferinfo['transfer_id']));
+        $db->Execute ("UPDATE ".\BlackNova\Services\Db::table('ibank_transfers')." SET amount = ? WHERE transfer_id = ? LIMIT 1;", array(0, $transferinfo['transfer_id']));
         if ($db->ErrorNo() >0)
         {
             echo "error: ". $db->ErrorMsg() . "<br>\n";
@@ -313,8 +313,8 @@ echo "Checking for Old Session Data...<br>\n";
 
 $old_sessions = 0;
 
-$resl = $db->Execute("SELECT COUNT(*) as old FROM ".\Bnt\Db::table('sessions')." WHERE expiry < NOW();");
-Bnt\Db::logDbErrors($db, $resl, __LINE__, __FILE__);
+$resl = $db->Execute("SELECT COUNT(*) as old FROM ".\BlackNova\Services\Db::table('sessions')." WHERE expiry < NOW();");
+\BlackNova\Services\Db::logDbErrors($db, $resl, __LINE__, __FILE__);
 if ($resl instanceof ADORecordSet)
 {
     $old_sessions = (int) $resl->fields['old'];
@@ -322,8 +322,8 @@ if ($resl instanceof ADORecordSet)
     {
         echo "Found {$old_sessions} Old Sessions that needs to be removed.<br>\n";
 
-        $resm = $db->Execute("DELETE FROM ".\Bnt\Db::table('sessions')." WHERE expiry < NOW();");
-        Bnt\Db::logDbErrors($db, $resm, __LINE__, __FILE__);
+        $resm = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('sessions')." WHERE expiry < NOW();");
+        \BlackNova\Services\Db::logDbErrors($db, $resm, __LINE__, __FILE__);
         if ($db->ErrorNo() >0)
         {
             echo "error: ". $db->ErrorMsg() . "<br>\n";
@@ -335,15 +335,15 @@ if ($resl instanceof ADORecordSet)
         if ($db_type == 'postgres9')
         {
             // Postgresql and SQLite (but SQLite its more like rebuild the whole database!)
-            $resn = $db->Execute("VACUUM ".\Bnt\Db::table('sessions').";");
+            $resn = $db->Execute("VACUUM ".\BlackNova\Services\Db::table('sessions').";");
         }
         else
         {
             // Oracle, and mysql
-            $resn = $db->Execute("OPTIMIZE TABLE ".\Bnt\Db::table('sessions').";");
+            $resn = $db->Execute("OPTIMIZE TABLE ".\BlackNova\Services\Db::table('sessions').";");
         }
 
-        Bnt\Db::logDbErrors($db, $resn, __LINE__, __FILE__);
+        \BlackNova\Services\Db::logDbErrors($db, $resn, __LINE__, __FILE__);
         if ($db->ErrorNo() >0)
         {
             echo "error: ". $db->ErrorMsg() . "<br>\n";

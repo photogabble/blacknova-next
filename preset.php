@@ -30,14 +30,14 @@ Bnt\Header::display($pdo_db, $lang, $template, $title, $body_class);
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('presets', 'common', 'global_includes', 'global_funcs', 'combat', 'footer', 'news'));
 echo "<h1>" . $title . "</h1>\n";
 echo "<body class ='" . $body_class . "'>";
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 // Pull the presets for the player from the db.
 $i=0;
-$debug_query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('presets')." WHERE ship_id=?", array($playerinfo['ship_id']));
-Bnt\Db::logDbErrors($db, $debug_query ,__LINE__, __FILE__);
+$debug_query = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('presets')." WHERE ship_id=?", array($playerinfo['ship_id']));
+\BlackNova\Services\Db::logDbErrors($db, $debug_query ,__LINE__, __FILE__);
 while (!$debug_query->EOF)
 {
     $presetinfo[$i] = $debug_query->fields;
@@ -89,8 +89,8 @@ else
     {
         if ($key < $bntreg->preset_max)
         {
-            $update = $db->Execute("UPDATE ".\Bnt\Db::table('presets')." SET preset = ? WHERE preset_id = ?;", array($preset_list[$key], $presetinfo[$key]['preset_id']));
-            Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+            $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('presets')." SET preset = ? WHERE preset_id = ?;", array($preset_list[$key], $presetinfo[$key]['preset_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
             $preset_result_echo = str_replace("[preset]", "<a href=rsmove.php?engage=1&destination=$preset_list[$key]>$preset_list[$key]</a>", $langvars['l_pre_set_loop']);
             $preset_result_echo = str_replace("[num]", $key + 1, $preset_result_echo);
             echo $preset_result_echo . "<br>";

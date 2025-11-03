@@ -37,8 +37,8 @@ else
 }
 
 // Get user info
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 if ($sector == "*")
@@ -65,16 +65,16 @@ if ($sector == "*")
     echo $langvars['l_lrs_used'] . " " . number_format($bntreg->fullscan_cost, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']) . " " . $langvars['l_lrs_turns'] . " " . number_format($playerinfo['turns'] - $bntreg->fullscan_cost, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']) . " " . $langvars['l_lrs_left'] . ".<br><br>";
 
     // Deduct the appropriate number of turns
-    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns = turns - ?, turns_used = turns_used + ? WHERE ship_id = ?;", array($bntreg->fullscan_cost, $bntreg->fullscan_cost, $playerinfo['ship_id']));
-    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET turns = turns - ?, turns_used = turns_used + ? WHERE ship_id = ?;", array($bntreg->fullscan_cost, $bntreg->fullscan_cost, $playerinfo['ship_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
     // User requested a full long range scan
     $langvars['l_lrs_reach'] = str_replace("[sector]", $playerinfo['sector'], $langvars['l_lrs_reach']);
     echo $langvars['l_lrs_reach'] . "<br><br>";
 
     // Get sectors which can be reached from the player's current sector
-    $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('links')." WHERE link_start = ? ORDER BY link_dest;", array($playerinfo['sector']));
-    Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+    $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ? ORDER BY link_dest;", array($playerinfo['sector']));
+    \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
     echo "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\">";
     echo "  <tr bgcolor=\"$bntreg->color_header\">\n";
     echo "    <td><strong>" . $langvars['l_sector'] . "</strong></td>\n";
@@ -97,26 +97,26 @@ if ($sector == "*")
     {
         $row = $result->fields;
         // Get number of sectors which can be reached from scanned sector
-        $result2 = $db->Execute("SELECT COUNT(*) AS count FROM ".\Bnt\Db::table('links')." WHERE link_start = ?;", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+        $result2 = $db->Execute("SELECT COUNT(*) AS count FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ?;", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
         $row2 = $result2->fields;
         $num_links = $row2['count'];
 
         // Get number of ships in scanned sector
-        $result2 = $db->Execute("SELECT COUNT(*) AS count FROM ".\Bnt\Db::table('ships')." WHERE sector = ? AND on_planet = 'N' and ship_destroyed = 'N';", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+        $result2 = $db->Execute("SELECT COUNT(*) AS count FROM ".\BlackNova\Services\Db::table('ships')." WHERE sector = ? AND on_planet = 'N' and ship_destroyed = 'N';", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
         $row2 = $result2->fields;
         $num_ships = $row2['count'];
 
         // Get port type and discover the presence of a planet in scanned sector
-        $result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
-        $result3 = $db->Execute("SELECT planet_id FROM ".\Bnt\Db::table('planets')." WHERE sector_id = ?;", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
-        $resultSDa = $db->Execute("SELECT SUM(quantity) as mines from ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'M';", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $resultSDa, __LINE__, __FILE__);
-        $resultSDb = $db->Execute("SELECT SUM(quantity) as fighters from ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'F';", array($row['link_dest']));
-        Bnt\Db::logDbErrors($db, $resultSDb, __LINE__, __FILE__);
+        $result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+        $result3 = $db->Execute("SELECT planet_id FROM ".\BlackNova\Services\Db::table('planets')." WHERE sector_id = ?;", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+        $resultSDa = $db->Execute("SELECT SUM(quantity) as mines from ".\BlackNova\Services\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'M';", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $resultSDa, __LINE__, __FILE__);
+        $resultSDb = $db->Execute("SELECT SUM(quantity) as fighters from ".\BlackNova\Services\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'F';", array($row['link_dest']));
+        \BlackNova\Services\Db::logDbErrors($db, $resultSDb, __LINE__, __FILE__);
 
         $sectorinfo = $result2->fields;
         $defM = $resultSDa->fields;
@@ -140,8 +140,8 @@ if ($sector == "*")
         echo "<tr bgcolor=\"$bntreg->color\"><td><a href=move.php?sector=$row[link_dest]>$row[link_dest]</a></td><td><a href=lrscan.php?sector=$row[link_dest]>Scan</a></td><td>$num_links</td><td>$num_ships</td><td width=12>$image_string</td><td>" . Bnt\Ports::getType($port_type, $langvars) . "</td><td>$has_planet</td><td>$has_mines</td><td>$has_fighters</td>";
         if ($playerinfo['dev_lssd'] == 'Y')
         {
-            $resx = $db->SelectLimit("SELECT * from ".\Bnt\Db::table('movement_log')." WHERE ship_id <> ? AND sector_id = ? ORDER BY time DESC", 1, -1, array('ship_id' => $playerinfo['ship_id'], 'sector_id' => $row['link_dest']));
-            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+            $resx = $db->SelectLimit("SELECT * from ".\BlackNova\Services\Db::table('movement_log')." WHERE ship_id <> ? AND sector_id = ? ORDER BY time DESC", 1, -1, array('ship_id' => $playerinfo['ship_id'], 'sector_id' => $row['link_dest']));
+            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
             if (!$resx)
             {
                 echo "<td>None</td>";
@@ -149,8 +149,8 @@ if ($sector == "*")
             else
             {
                 $myrow = $resx->fields;
-                $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($myrow['ship_id']));
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($myrow['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 if ($res)
                 {
                     $row = $res->fields;
@@ -190,13 +190,13 @@ else
 {
     // User requested a single sector (standard) long range scan
     // Get scanned sector information
-    $result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($sector));
-    Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+    $result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($sector));
+    \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
     $sectorinfo = $result2->fields;
 
     // Get sectors which can be reached through scanned sector
-    $result3 = $db->Execute("SELECT link_dest FROM ".\Bnt\Db::table('links')." WHERE link_start = ? ORDER BY link_dest ASC;", array($sector));
-    Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+    $result3 = $db->Execute("SELECT link_dest FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ? ORDER BY link_dest ASC;", array($sector));
+    \BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
     $i=0;
 
     while (!$result3->EOF)
@@ -208,8 +208,8 @@ else
     $num_links = $i;
 
     // Get sectors which can be reached from the player's current sector
-    $result3a = $db->Execute("SELECT link_dest FROM ".\Bnt\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
-    Bnt\Db::logDbErrors($db, $result3a, __LINE__, __FILE__);
+    $result3a = $db->Execute("SELECT link_dest FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
+    \BlackNova\Services\Db::logDbErrors($db, $result3a, __LINE__, __FILE__);
     $i = 0;
     $flag = 0;
 
@@ -264,8 +264,8 @@ else
     if ($sector != 0)
     {
         // Get ships located in the scanned sector
-        $result4 = $db->Execute("SELECT ship_id, ship_name, character_name, cloak FROM ".\Bnt\Db::table('ships')." WHERE sector = ? AND on_planet = 'N';", array($sector));
-        Bnt\Db::logDbErrors($db, $result4, __LINE__, __FILE__);
+        $result4 = $db->Execute("SELECT ship_id, ship_name, character_name, cloak FROM ".\BlackNova\Services\Db::table('ships')." WHERE sector = ? AND on_planet = 'N';", array($sector));
+        \BlackNova\Services\Db::logDbErrors($db, $result4, __LINE__, __FILE__);
         if ($result4->EOF)
         {
             echo $langvars['l_none'];
@@ -329,8 +329,8 @@ else
     echo "</td></tr>";
     echo "<tr bgcolor=\"$bntreg->color_line2\"><td><strong>" . $langvars['l_planets'] . "</strong></td></tr>";
     echo "<tr><td>";
-    $query = $db->Execute("SELECT name, owner FROM ".\Bnt\Db::table('planets')." WHERE sector_id = ?;", array($sectorinfo['sector_id']));
-    Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
+    $query = $db->Execute("SELECT name, owner FROM ".\BlackNova\Services\Db::table('planets')." WHERE sector_id = ?;", array($sectorinfo['sector_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $query, __LINE__, __FILE__);
 
     if ($query->EOF)
     {
@@ -355,18 +355,18 @@ else
         }
         else
         {
-            $result5 = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($planet['owner']));
-            Bnt\Db::logDbErrors($db, $result5, __LINE__, __FILE__);
+            $result5 = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($planet['owner']));
+            \BlackNova\Services\Db::logDbErrors($db, $result5, __LINE__, __FILE__);
             $planet_owner_name = $result5->fields;
             echo " ($planet_owner_name[character_name])";
         }
         $query->MoveNext();
     }
 
-    $resultSDa = $db->Execute("SELECT SUM(quantity) as mines from ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'M';", array($sector));
-    Bnt\Db::logDbErrors($db, $resultSDa, __LINE__, __FILE__);
-    $resultSDb = $db->Execute("SELECT SUM(quantity) as fighters from ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'F';", array($sector));
-    Bnt\Db::logDbErrors($db, $resultSDb, __LINE__, __FILE__);
+    $resultSDa = $db->Execute("SELECT SUM(quantity) as mines from ".\BlackNova\Services\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'M';", array($sector));
+    \BlackNova\Services\Db::logDbErrors($db, $resultSDa, __LINE__, __FILE__);
+    $resultSDb = $db->Execute("SELECT SUM(quantity) as fighters from ".\BlackNova\Services\Db::table('sector_defence')." WHERE sector_id = ? and defence_type = 'F';", array($sector));
+    \BlackNova\Services\Db::logDbErrors($db, $resultSDb, __LINE__, __FILE__);
     $defM = $resultSDa->fields;
     $defF = $resultSDb->fields;
 
@@ -383,8 +383,8 @@ else
     {
         echo "<tr bgcolor=\"$bntreg->color_line2\"><td><strong>" . $langvars['l_lss'] . "</strong></td></tr>";
         echo "<tr><td>";
-        $resx = $db->SelectLimit("SELECT * FROM ".\Bnt\Db::table('movement_log')." WHERE ship_id <> ? AND sector_id = ? ORDER BY time DESC", 1, -1, array('ship_id' => $playerinfo['ship_id'], 'sector_id' => $sector));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->SelectLimit("SELECT * FROM ".\BlackNova\Services\Db::table('movement_log')." WHERE ship_id <> ? AND sector_id = ? ORDER BY time DESC", 1, -1, array('ship_id' => $playerinfo['ship_id'], 'sector_id' => $sector));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         if (!$resx)
         {
             echo "None";
@@ -392,8 +392,8 @@ else
         else
         {
             $myrow = $resx->fields;
-            $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($myrow['ship_id']));
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($myrow['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if ($res)
             {
                 $row = $res->fields;

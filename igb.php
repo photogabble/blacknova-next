@@ -30,12 +30,12 @@ $title = $langvars['l_ibank_title'];
 $body_class = 'igb';
 Bnt\Header::display($pdo_db, $lang, $template, $title, $body_class);
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email=?", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email=?", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ibank_accounts')." WHERE ship_id = ?;", array($playerinfo['ship_id']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ibank_accounts')." WHERE ship_id = ?;", array($playerinfo['ship_id']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $account = $result->fields;
 
 echo "<body class='" . $body_class . "'>";

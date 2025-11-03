@@ -33,11 +33,11 @@ if (!isset($ship_id))
     $ship_id = null;
 }
 
-$res = $db->Execute("SELECT team, ship_name, character_name, sector FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT team, ship_name, character_name, sector FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
-$res2 = $db->Execute("SELECT team, ship_name, character_name, sector FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($ship_id));
-Bnt\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
+$res2 = $db->Execute("SELECT team, ship_name, character_name, sector FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($ship_id));
+\BlackNova\Services\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
 $othership = $res2->fields;
 
 if ($othership['sector'] != $playerinfo['sector'])

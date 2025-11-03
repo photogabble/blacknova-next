@@ -153,8 +153,8 @@ else
             if (empty ($user))
             {
                 echo "<select size=20 name=user>";
-                $res = $db->Execute("SELECT email, character_name, ship_destroyed, active, sector FROM ".\Bnt\Db::table('ships')." JOIN ".\Bnt\Db::table('xenobe')." WHERE email = xenobe_id ORDER BY sector;");
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT email, character_name, ship_destroyed, active, sector FROM ".\BlackNova\Services\Db::table('ships')." JOIN ".\BlackNova\Services\Db::table('xenobe')." WHERE email = xenobe_id ORDER BY sector;");
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 while (!$res->EOF)
                 {
                     $row = $res->fields;
@@ -190,8 +190,8 @@ else
             {
                 if (empty($operation))
                 {
-                    $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." JOIN ".\Bnt\Db::table('xenobe')." WHERE email=xenobe_id AND email = ?;", array($user));
-                    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                    $res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." JOIN ".\BlackNova\Services\Db::table('xenobe')." WHERE email=xenobe_id AND email = ?;", array($user));
+                    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                     $row = $res->fields;
                     echo "<table border=0 cellspacing=0 cellpadding=5>";
                     echo "<tr><td>Xenobe name</td><td><input type=text name=character_name value=\"$row[character_name]\"></td></tr>";
@@ -299,8 +299,8 @@ else
                     echo "<hr>";
                     echo "<span style=\"font-family : courier, monospace; font-size: 12pt; color: #0f0;\">Log Data For This Xenobe</span><br>";
 
-                    $logres = $db->Execute("SELECT * FROM ".\Bnt\Db::table('logs')." WHERE ship_id = ? ORDER BY time DESC, type DESC", array($row['ship_id']));
-                    Bnt\Db::logDbErrors($db, $logres, __LINE__, __FILE__);
+                    $logres = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('logs')." WHERE ship_id = ? ORDER BY time DESC, type DESC", array($row['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $logres, __LINE__, __FILE__);
                     while (!$logres->EOF)
                     {
                         $logrow = $logres->fields;
@@ -330,8 +330,8 @@ else
                     $_dev_escapepod = empty($dev_escapepod) ? "N" : "Y";
                     $_dev_fuelscoop = empty($dev_fuelscoop) ? "N" : "Y";
                     $_active = empty($active) ? "N" : "Y";
-                    $result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET character_name = ?, ship_name = ?, ship_destroyed = ?, hull = ?, engines = ?, power = ?, computer = ?, sensors = ?, armor = ?, shields = ?, beams = ?, torp_launchers = ?, cloak = ?, credits = ?, turns = ?, dev_warpedit = ?, dev_genesis = ?, dev_beacon = ?, dev_emerwarp = ?, dev_escapepod = ?, dev_fuelscoop = ?, dev_minedeflector = ?, sector = ?, ship_ore = ?, ship_organics = ?, ship_goods = ?, ship_energy = ?, ship_colonists = ?, ship_fighters = ?, torps = ?, armor_pts = ? WHERE email = ?;", array($character_name, $ship_name, $_ship_destroyed, $hull, $engines, $power, $computer, $sensors, $armor, $shields, $beams, $torp_launchers, $cloak, $credits, $turns, $dev_warpedit, $dev_genesis, $dev_beacon, $dev_emerwarp, $_dev_escapepod, $_dev_fuelscoop, $dev_minedeflector, $sector, $ship_ore, $ship_organics, $ship_goods, $ship_energy, $ship_colonists, $ship_fighters, $torps, $armor_pts, $user));
-                    Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+                    $result = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET character_name = ?, ship_name = ?, ship_destroyed = ?, hull = ?, engines = ?, power = ?, computer = ?, sensors = ?, armor = ?, shields = ?, beams = ?, torp_launchers = ?, cloak = ?, credits = ?, turns = ?, dev_warpedit = ?, dev_genesis = ?, dev_beacon = ?, dev_emerwarp = ?, dev_escapepod = ?, dev_fuelscoop = ?, dev_minedeflector = ?, sector = ?, ship_ore = ?, ship_organics = ?, ship_goods = ?, ship_energy = ?, ship_colonists = ?, ship_fighters = ?, torps = ?, armor_pts = ? WHERE email = ?;", array($character_name, $ship_name, $_ship_destroyed, $hull, $engines, $power, $computer, $sensors, $armor, $shields, $beams, $torp_launchers, $cloak, $credits, $turns, $dev_warpedit, $dev_genesis, $dev_beacon, $dev_emerwarp, $_dev_escapepod, $_dev_fuelscoop, $dev_minedeflector, $sector, $ship_ore, $ship_organics, $ship_goods, $ship_energy, $ship_colonists, $ship_fighters, $torps, $armor_pts, $user));
+                    \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
                     if (!$result)
                     {
                         echo "Changes to Xenobe ship record have FAILED Due to the following Error:<br><br>";
@@ -340,8 +340,8 @@ else
                     else
                     {
                         echo "Changes to Xenobe ship record have been saved.<br><br>";
-                        $result2 = $db->Execute("UPDATE ".\Bnt\Db::table('xenobe')." SET active = ?, orders = ?, aggression = ? WHERE xenobe_id = ?;", array($_active, $orders, $aggression, $user));
-                        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+                        $result2 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('xenobe')." SET active = ?, orders = ?, aggression = ? WHERE xenobe_id = ?;", array($_active, $orders, $aggression, $user));
+                        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
                         if (!$result2)
                         {
                             echo "Changes to Xenobe activity record have FAILED Due to the following Error:<br><br>";
@@ -380,17 +380,17 @@ else
             {
                 // Delete all xenobe in the ships table
                 echo "Deleting xenobe records in the ships table...<br>";
-                $resx = $db->Execute("DELETE FROM ".\Bnt\Db::table('ships')." WHERE email LIKE '%@xenobe'");
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('ships')." WHERE email LIKE '%@xenobe'");
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                 echo "deleted.<br>";
                 // Drop xenobe table
                 echo "Dropping xenobe table...<br>";
-                $resy = $db->Execute("DROP TABLE IF EXISTS ".\Bnt\Db::table('xenobe')."");
-                Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                $resy = $db->Execute("DROP TABLE IF EXISTS ".\BlackNova\Services\Db::table('xenobe')."");
+                \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
                 echo "dropped.<br>";
                 // Create xenobe table
                 echo "Re-Creating table: xenobe...<br>";
-                $resz = $db->Execute("CREATE table ".\Bnt\Db::table('xenobe')."(" .
+                $resz = $db->Execute("CREATE table ".\BlackNova\Services\Db::table('xenobe')."(" .
                                      "xenobe_id char(40) NOT NULL," .
                                      "active enum('Y','N') DEFAULT 'Y' NOT NULL," .
                                      "aggression smallint(5) DEFAULT '0' NOT NULL," .
@@ -398,7 +398,7 @@ else
                                      "PRIMARY KEY (xenobe_id)," .
                                      "KEY xenobe_id (xenobe_id)" .
                                      ")");
-                Bnt\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
+                \BlackNova\Services\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
                 echo "created.<br>";
             }
             else
@@ -424,13 +424,13 @@ else
             }
             elseif ($operation == "clearxenlog")
             {
-                $res = $db->Execute("SELECT email,ship_id FROM ".\Bnt\Db::table('ships')." WHERE email LIKE '%@xenobe'");
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT email,ship_id FROM ".\BlackNova\Services\Db::table('ships')." WHERE email LIKE '%@xenobe'");
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 while (!$res->EOF)
                 {
                     $row = $res->fields;
-                    $resx = $db->Execute("DELETE FROM ".\Bnt\Db::table('logs')." WHERE ship_id = ?;", array($row['ship_id']));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resx = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('logs')." WHERE ship_id = ?;", array($row['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                     echo "Log for ship_id $row[ship_id] cleared.<br>";
                     $res->MoveNext();
                 }
@@ -460,8 +460,8 @@ else
                 $sy3roll = Bnt\Rand::betterRand(0, 19);
                 $character = $Sylable1[$sy1roll] . $Sylable2[$sy2roll] . $Sylable3[$sy3roll];
                 $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-                $resultnm = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE character_name = ?;", array($character));
-                Bnt\Db::logDbErrors($db, $resultnm, __LINE__, __FILE__);
+                $resultnm = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE character_name = ?;", array($character));
+                \BlackNova\Services\Db::logDbErrors($db, $resultnm, __LINE__, __FILE__);
                 $namecheck = $resultnm->fields;
                 $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
                 $nametry = 1;
@@ -473,8 +473,8 @@ else
                     $sy3roll = Bnt\Rand::betterRand(0, 19);
                     $character = $Sylable1[$sy1roll] . $Sylable2[$sy2roll] . $Sylable3[$sy3roll];
                     $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-                    $resultnm = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE character_name = ?;", array($character));
-                    Bnt\Db::logDbErrors($db, $resultnm, __LINE__, __FILE__);
+                    $resultnm = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE character_name = ?;", array($character));
+                    \BlackNova\Services\Db::logDbErrors($db, $resultnm, __LINE__, __FILE__);
                     $namecheck = $resultnm->fields;
                     $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
                     $nametry++;
@@ -528,8 +528,8 @@ else
                 // Create emailname from character
                 $emailname = str_replace(" ", "_", $character) . "@xenobe";
                 $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-                $result = $db->Execute("SELECT email, character_name, ship_name FROM ".\Bnt\Db::table('ships')." WHERE email = ? OR character_name = ? OR ship_name = ?;", array($emailname, $character, $shipname));
-                Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+                $result = $db->Execute("SELECT email, character_name, ship_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ? OR character_name = ? OR ship_name = ?;", array($emailname, $character, $shipname));
+                \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
                 if ($result instanceof ADORecordSet)
                 {
                     while (!$result->EOF)
@@ -586,10 +586,10 @@ else
                     $stamp = date("Y-m-d H:i:s");
 
                     // Add Xenobe record to ships table ... modify if the ships schema changes
-                    $thesql = "INSERT INTO ".\Bnt\Db::table('ships')." ( `ship_id` , `ship_name` , `ship_destroyed` , `character_name` , `password` , `email` , `hull` , `engines` , `power` , `computer` , `sensors` , `beams` , `torp_launchers` , `torps` , `shields` , `armor` , `armor_pts` , `cloak` , `credits` , `sector` , `ship_ore` , `ship_organics` , `ship_goods` , `ship_energy` , `ship_colonists` , `ship_fighters` , `ship_damage` , `turns` , `on_planet` , `dev_warpedit` , `dev_genesis` , `dev_beacon` , `dev_emerwarp` , `dev_escapepod` , `dev_fuelscoop` , `dev_minedeflector` , `turns_used` , `last_login` , `rating` , `score` , `team` , `team_invite` , `interface` , `ip_address` , `planet_id` , `trade_colonists` , `trade_fighters` , `trade_torps` , `trade_energy` , `cleared_defences` , `lang` , `dev_lssd` )
+                    $thesql = "INSERT INTO ".\BlackNova\Services\Db::table('ships')." ( `ship_id` , `ship_name` , `ship_destroyed` , `character_name` , `password` , `email` , `hull` , `engines` , `power` , `computer` , `sensors` , `beams` , `torp_launchers` , `torps` , `shields` , `armor` , `armor_pts` , `cloak` , `credits` , `sector` , `ship_ore` , `ship_organics` , `ship_goods` , `ship_energy` , `ship_colonists` , `ship_fighters` , `ship_damage` , `turns` , `on_planet` , `dev_warpedit` , `dev_genesis` , `dev_beacon` , `dev_emerwarp` , `dev_escapepod` , `dev_fuelscoop` , `dev_minedeflector` , `turns_used` , `last_login` , `rating` , `score` , `team` , `team_invite` , `interface` , `ip_address` , `planet_id` , `trade_colonists` , `trade_fighters` , `trade_torps` , `trade_energy` , `cleared_defences` , `lang` , `dev_lssd` )
                                VALUES (NULL,'$shipname','N','$character','$makepass','$emailname',$xenlevel,$xenlevel,$xenlevel,$xenlevel,$xenlevel,$xenlevel,$xenlevel,$maxtorps,$xenlevel,$xenlevel,$maxarmor,$xenlevel,$start_credits,$sector,0,0,0,$maxenergy,0,$maxfighters,0,$start_turns,'N',0,0,0,0,'N','N',0,0, '$stamp',0,0,0,0,'N','127.0.0.1',0,'Y','N','N','Y',NULL,'$default_lang','Y')";
                     $result2 = $db->Execute($thesql);
-                    Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+                    \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
                     if (!$result2)
                     {
                         echo $db->ErrorMsg() . "<br>";
@@ -601,8 +601,8 @@ else
                         echo "Ship Records have been updated.<br><br>";
                     }
 
-                    $result3 = $db->Execute("INSERT INTO ".\Bnt\Db::table('xenobe')." (xenobe_id, active, aggression, orders) values(?,?,?,?)", array($emailname, $_active, $aggression, $orders));
-                    Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+                    $result3 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('xenobe')." (xenobe_id, active, aggression, orders) values(?,?,?,?)", array($emailname, $_active, $aggression, $orders));
+                    \BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
                     if (!$result3)
                     {
                         echo $db->ErrorMsg() . "<br>";

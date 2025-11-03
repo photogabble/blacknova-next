@@ -19,7 +19,7 @@
 //
 // Class for managing the database inside BNT
 
-namespace Bnt;
+namespace BlackNova\Services;
 
 use PDO;
 use PDOException;

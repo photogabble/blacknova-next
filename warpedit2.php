@@ -44,8 +44,8 @@ if (mb_strlen(trim($target_sector)) === 0)
     $target_sector = false;
 }
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 if ($playerinfo['turns'] < 1)
@@ -73,8 +73,8 @@ if (is_null($target_sector))
     die();
 }
 
-$res = $db->Execute("SELECT allow_warpedit,".\Bnt\Db::table('universe').".zone_id FROM ".\Bnt\Db::table('zones').", ".\Bnt\Db::table('universe')." WHERE sector_id=? AND ".\Bnt\Db::table('universe').".zone_id = ".\Bnt\Db::table('zones').".zone_id;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT allow_warpedit,".\BlackNova\Services\Db::table('universe').".zone_id FROM ".\BlackNova\Services\Db::table('zones').", ".\BlackNova\Services\Db::table('universe')." WHERE sector_id=? AND ".\BlackNova\Services\Db::table('universe').".zone_id = ".\BlackNova\Services\Db::table('zones').".zone_id;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 if ($zoneinfo['allow_warpedit'] == 'N')
 {
@@ -85,12 +85,12 @@ if ($zoneinfo['allow_warpedit'] == 'N')
 }
 
 $target_sector = round($target_sector);
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($target_sector));
-Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+$result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($target_sector));
+\BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $row = $result2->fields;
 if (!$row)
 {
@@ -99,8 +99,8 @@ if (!$row)
     die();
 }
 
-$res = $db->Execute("SELECT allow_warpedit,".\Bnt\Db::table('universe').".zone_id FROM ".\Bnt\Db::table('zones').", ".\Bnt\Db::table('universe')." WHERE sector_id=? AND ".\Bnt\Db::table('universe').".zone_id = ".\Bnt\Db::table('zones').".zone_id;", array($target_sector));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT allow_warpedit,".\BlackNova\Services\Db::table('universe').".zone_id FROM ".\BlackNova\Services\Db::table('zones').", ".\BlackNova\Services\Db::table('universe')." WHERE sector_id=? AND ".\BlackNova\Services\Db::table('universe').".zone_id = ".\BlackNova\Services\Db::table('zones').".zone_id;", array($target_sector));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 if ($zoneinfo['allow_warpedit'] == 'N' && !$oneway)
 {
@@ -111,8 +111,8 @@ if ($zoneinfo['allow_warpedit'] == 'N' && !$oneway)
     die();
 }
 
-$res = $db->Execute("SELECT COUNT(*) as count FROM ".\Bnt\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT COUNT(*) as count FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $row = $res->fields;
 $numlink_start = $row['count'];
 
@@ -125,8 +125,8 @@ if ($numlink_start >= $link_max)
     die();
 }
 
-$result3 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+$result3 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 if ($result3 instanceof ADORecordSet)
 {
     $flag = 0;
@@ -151,11 +151,11 @@ if ($result3 instanceof ADORecordSet)
     }
     else
     {
-        $insert1 = $db->Execute("INSERT INTO ".\Bnt\Db::table('links')." SET link_start=?, link_dest = ?;", array($playerinfo['sector'], $target_sector));
-        Bnt\Db::logDbErrors($db, $insert1, __LINE__, __FILE__);
+        $insert1 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('links')." SET link_start=?, link_dest = ?;", array($playerinfo['sector'], $target_sector));
+        \BlackNova\Services\Db::logDbErrors($db, $insert1, __LINE__, __FILE__);
 
-        $update1 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET dev_warpedit = dev_warpedit - 1, turns = turns - 1, turns_used = turns_used + 1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
+        $update1 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET dev_warpedit = dev_warpedit - 1, turns = turns - 1, turns_used = turns_used + 1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
 
         if (!is_null($oneway))
         {
@@ -163,8 +163,8 @@ if ($result3 instanceof ADORecordSet)
         }
         else
         {
-            $result4 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('links')." WHERE link_start = ?;", array($target_sector));
-            Bnt\Db::logDbErrors($db, $result4, __LINE__, __FILE__);
+            $result4 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('links')." WHERE link_start = ?;", array($target_sector));
+            \BlackNova\Services\Db::logDbErrors($db, $result4, __LINE__, __FILE__);
             if ($result4 instanceof ADORecordSet)
             {
                 $flag2 = 0;
@@ -180,8 +180,8 @@ if ($result3 instanceof ADORecordSet)
             }
             if ($flag2 != 1)
             {
-                $insert2 = $db->Execute("INSERT INTO ".\Bnt\Db::table('links')." SET link_start = ?, link_dest = ?;", array($target_sector, $playerinfo['sector']));
-                Bnt\Db::logDbErrors($db, $insert2, __LINE__, __FILE__);
+                $insert2 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('links')." SET link_start = ?, link_dest = ?;", array($target_sector, $playerinfo['sector']));
+                \BlackNova\Services\Db::logDbErrors($db, $insert2, __LINE__, __FILE__);
             }
             echo $langvars['l_warp_ctwoway'] . " " . $target_sector . ".<br><br>";
         }

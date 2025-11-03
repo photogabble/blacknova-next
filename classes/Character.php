@@ -23,13 +23,13 @@ class Character
 {
     public static function kill($db, $ship_id, $langvars, $bntreg, $remove_planets = false)
     {
-        $update_ships_res = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_destroyed='Y', on_planet='N', sector=0, cleared_defences=' ' WHERE ship_id=?", array($ship_id));
+        $update_ships_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET ship_destroyed='Y', on_planet='N', sector=0, cleared_defences=' ' WHERE ship_id=?", array($ship_id));
         Db::logDbErrors($db, $update_ships_res, __LINE__, __FILE__);
 
-        $delete_bounty_res = $db->Execute("DELETE FROM ".\Bnt\Db::table('bounty')." WHERE placed_by = ?", array($ship_id));
+        $delete_bounty_res = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('bounty')." WHERE placed_by = ?", array($ship_id));
         Db::logDbErrors($db, $delete_bounty_res, __LINE__, __FILE__);
 
-        $sec_pl_res = $db->Execute("SELECT DISTINCT sector_id FROM ".\Bnt\Db::table('planets')." WHERE owner=? AND base='Y'", array($ship_id));
+        $sec_pl_res = $db->Execute("SELECT DISTINCT sector_id FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner=? AND base='Y'", array($ship_id));
         Db::logDbErrors($db, $sec_pl_res, __LINE__, __FILE__);
         $i = 0;
 
@@ -47,12 +47,12 @@ class Character
 
         if ($remove_planets == true && $ship_id > 0)
         {
-            $rm_pl_res = $db->Execute("DELETE FROM ".\Bnt\Db::table('planets')." WHERE owner = ?", array($ship_id));
+            $rm_pl_res = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner = ?", array($ship_id));
             Db::logDbErrors($db, $rm_pl_res, __LINE__, __FILE__);
         }
         else
         {
-            $up_pl_res = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET owner=0, corp=0, fighters=0, base='N' WHERE owner=?", array($ship_id));
+            $up_pl_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET owner=0, corp=0, fighters=0, base='N' WHERE owner=?", array($ship_id));
             Db::logDbErrors($db, $up_pl_res, __LINE__, __FILE__);
         }
 
@@ -64,17 +64,17 @@ class Character
             }
         }
 
-        $rm_def_res = $db->Execute("DELETE FROM ".\Bnt\Db::table('sector_defence')." WHERE ship_id=?", array($ship_id));
+        $rm_def_res = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('sector_defence')." WHERE ship_id=?", array($ship_id));
         Db::logDbErrors($db, $rm_def_res, __LINE__, __FILE__);
 
-        $zone_res = $db->Execute("SELECT zone_id FROM ".\Bnt\Db::table('zones')." WHERE corp_zone='N' AND owner=?", array($ship_id));
+        $zone_res = $db->Execute("SELECT zone_id FROM ".\BlackNova\Services\Db::table('zones')." WHERE corp_zone='N' AND owner=?", array($ship_id));
         Db::logDbErrors($db, $zone_res, __LINE__, __FILE__);
         $zone = $zone_res->fields;
 
-        $up_zone_res = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=1 WHERE zone_id=?", array($zone['zone_id']));
+        $up_zone_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=1 WHERE zone_id=?", array($zone['zone_id']));
         Db::logDbErrors($db, $up_zone_res, __LINE__, __FILE__);
 
-        $char_res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($ship_id));
+        $char_res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id=?", array($ship_id));
         Db::logDbErrors($db, $char_res, __LINE__, __FILE__);
         $name = $char_res->fields;
 
@@ -82,7 +82,7 @@ class Character
 
         $newstext = str_replace('[name]', $name['character_name'], $langvars['l_news_killed']);
 
-        $news_ins_res = $db->Execute("INSERT INTO ".\Bnt\Db::table('news')." (headline, newstext, user_id, date, news_type) VALUES (?,?,?,NOW(), 'killed')", array($headline, $newstext, $ship_id));
+        $news_ins_res = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('news')." (headline, newstext, user_id, date, news_type) VALUES (?,?,?,NOW(), 'killed')", array($headline, $newstext, $ship_id));
         Db::logDbErrors($db, $news_ins_res, __LINE__, __FILE__);
     }
 

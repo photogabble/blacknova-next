@@ -23,7 +23,7 @@ class LogMove
 {
     public static function writeLog($db, $ship_id, $sector_id)
     {
-        $res = $db->Execute("INSERT INTO ".\Bnt\Db::table('movement_log')." (ship_id, sector_id, time) VALUES (?, ?, NOW())", array($ship_id, $sector_id));
+        $res = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('movement_log')." (ship_id, sector_id, time) VALUES (?, ?, NOW())", array($ship_id, $sector_id));
         Db::logDbErrors($db, $res, __LINE__, __FILE__);
     }
 }

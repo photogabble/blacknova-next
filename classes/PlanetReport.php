@@ -58,7 +58,7 @@ class PlanetReport
             echo "<br><strong><a href=team_planets.php>" . $langvars['l_pr_teamlink'] . "</a></strong><br> <br>";
         }
 
-        $query = "SELECT * FROM ".\Bnt\Db::table('planets')." WHERE owner=$playerinfo[ship_id]";
+        $query = "SELECT * FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner=$playerinfo[ship_id]";
 
         if (!empty($sort))
         {
@@ -86,7 +86,7 @@ class PlanetReport
         }
 
         $res = $db->Execute($query);
-        \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
         $i = 0;
         if ($res)
@@ -238,7 +238,7 @@ class PlanetReport
         global $sort;
         global $color_header, $color, $color_line1, $color_line2;
 
-        $query = "SELECT * FROM ".\Bnt\Db::table('planets')." WHERE owner=? AND base='Y'";
+        $query = "SELECT * FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner=? AND base='Y'";
         echo "<div style='width:90%; margin:auto; font-size:14px;'>\n";
 
         echo "Planetary report <strong><a href=\"planet_report.php?preptype=0\">menu</a></strong><br><br>" .
@@ -279,7 +279,7 @@ class PlanetReport
         }
 
         $res = $db->Execute($query, array($playerinfo['ship_id']));
-        \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
         $i = 0;
         if ($res)

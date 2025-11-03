@@ -52,15 +52,15 @@ if (mb_strlen(trim($stop_sector)) === 0)
     $stop_sector = false;
 }
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 $current_sector = $playerinfo['sector'];
 $computer_tech  = $playerinfo['computer'];
 
-$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($current_sector));
-Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+$result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($current_sector));
+\BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $sectorinfo = $result2->fields;
 
 if ($state == 0)
@@ -101,11 +101,11 @@ elseif ($state == 1)
             $search_query = $search_query . " ,a". $i . ".link_dest ";
         }
 
-        $search_query = $search_query . "FROM     ".\Bnt\Db::table('links')." AS a1 ";
+        $search_query = $search_query . "FROM     ".\BlackNova\Services\Db::table('links')." AS a1 ";
 
         for ($i=2; $i<=$search_depth; $i++)
         {
-            $search_query = $search_query . "    ,".\Bnt\Db::table('links')." AS a". $i . " ";
+            $search_query = $search_query . "    ,".\BlackNova\Services\Db::table('links')." AS a". $i . " ";
         }
 
         $search_query = $search_query . "WHERE         a1.link_start = $current_sector ";
@@ -142,7 +142,7 @@ elseif ($state == 1)
         $db->SetFetchMode(ADODB_FETCH_NUM);
 
         $search_result = $db->Execute($search_query) or die("Invalid Query");
-        Bnt\Db::logDbErrors($db, $search_result, __LINE__, __FILE__);
+        \BlackNova\Services\Db::logDbErrors($db, $search_result, __LINE__, __FILE__);
         $found = $search_result->RecordCount();
         if ($found > 0)
         {

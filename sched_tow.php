@@ -27,8 +27,8 @@ echo "Towing bigger players out of restricted zones...";
 $num_to_tow = 0;
 do
 {
-    $res = $db->Execute("SELECT ship_id,character_name,hull,sector,".\Bnt\Db::table('universe').".zone_id,max_hull FROM ".\Bnt\Db::table('ships').",".\Bnt\Db::table('universe').",".\Bnt\Db::table('zones')." WHERE sector=sector_id AND ".\Bnt\Db::table('universe').".zone_id=".\Bnt\Db::table('zones').".zone_id AND max_hull<>0 AND ((".\Bnt\Db::table('ships').".hull + ".\Bnt\Db::table('ships').".engines + ".\Bnt\Db::table('ships').".computer + ".\Bnt\Db::table('ships').".beams + ".\Bnt\Db::table('ships').".torp_launchers + ".\Bnt\Db::table('ships').".shields + ".\Bnt\Db::table('ships').".armor)/7) >max_hull AND ship_destroyed='N'");
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res = $db->Execute("SELECT ship_id,character_name,hull,sector,".\BlackNova\Services\Db::table('universe').".zone_id,max_hull FROM ".\BlackNova\Services\Db::table('ships').",".\BlackNova\Services\Db::table('universe').",".\BlackNova\Services\Db::table('zones')." WHERE sector=sector_id AND ".\BlackNova\Services\Db::table('universe').".zone_id=".\BlackNova\Services\Db::table('zones').".zone_id AND max_hull<>0 AND ((".\BlackNova\Services\Db::table('ships').".hull + ".\BlackNova\Services\Db::table('ships').".engines + ".\BlackNova\Services\Db::table('ships').".computer + ".\BlackNova\Services\Db::table('ships').".beams + ".\BlackNova\Services\Db::table('ships').".torp_launchers + ".\BlackNova\Services\Db::table('ships').".shields + ".\BlackNova\Services\Db::table('ships').".armor)/7) >max_hull AND ship_destroyed='N'");
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     if ($res)
     {
         $num_to_tow = $res->RecordCount();
@@ -39,8 +39,8 @@ do
             echo "...towing $row[character_name] out of $row[sector] ...";
             $newsector = Bnt\Rand::betterRand(0, $sector_max - 1);
             echo " to sector $newsector.<br>";
-            $query = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET sector = ?, cleared_defences=' ' WHERE ship_id=?", array($newsector, $row['ship_id']));
-            Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
+            $query = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET sector = ?, cleared_defences=' ' WHERE ship_id=?", array($newsector, $row['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             Bnt\PlayerLog::writeLog($db, $row['ship_id'], LOG_TOW, "$row[sector]|$newsector|$row[max_hull]");
             Bnt\LogMove::writeLog($db, $row['ship_id'], $newsector);
             $res->MoveNext();

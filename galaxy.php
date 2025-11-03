@@ -28,11 +28,11 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 echo "<h1>" . $title . "</h1>\n";
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
-$result3 = $db->Execute("SELECT distinct ".\Bnt\Db::table('movement_log').".sector_id, port_type, beacon FROM ".\Bnt\Db::table('movement_log').",".\Bnt\Db::table('universe')." WHERE ship_id = ? AND ".\Bnt\Db::table('movement_log').".sector_id=".\Bnt\Db::table('universe').".sector_id order by sector_id ASC", array($playerinfo['ship_id']));
-Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+$result3 = $db->Execute("SELECT distinct ".\BlackNova\Services\Db::table('movement_log').".sector_id, port_type, beacon FROM ".\BlackNova\Services\Db::table('movement_log').",".\BlackNova\Services\Db::table('universe')." WHERE ship_id = ? AND ".\BlackNova\Services\Db::table('movement_log').".sector_id=".\BlackNova\Services\Db::table('universe').".sector_id order by sector_id ASC", array($playerinfo['ship_id']));
+\BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 $row = $result3->fields;
 
 $tile['special'] = "port-special.png";

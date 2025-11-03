@@ -35,7 +35,7 @@ class File
         $status_array = array();
         $j = 0;
         $start_tran_res = $db->beginTransaction(); // We enclose the inserts in a transaction as it is roughly 30 times faster
-        Db::logDbErrors($db, $start_tran_res, __LINE__, __FILE__);
+        \BlackNova\Services\Db::logDbErrors($db, $start_tran_res, __LINE__, __FILE__);
 
         $insert_sql = 'INSERT into ' . $db->prefix. $ini_table . ' (name, category, value, section, type) VALUES (:config_key, :config_category, :config_value, :section, :type)';
         $stmt = $db->prepare($insert_sql);
@@ -58,7 +58,7 @@ class File
                 $stmt->bindParam(':section', $section);
                 $stmt->bindParam(':type', $type_n_value['type']);
                 $result = $stmt->execute();
-                $status_array[$j] = Db::logDbErrors($db, $result, __LINE__, __FILE__);
+                $status_array[$j] = \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             }
         }
 
@@ -78,14 +78,14 @@ class File
         if ($final_result !== true) // If the final result is not true, rollback our transaction, and return false.
         {
             $db->rollBack();
-            Db::logDbErrors($db, 'Rollback transaction on File::initodb', __LINE__, __FILE__);
+            \BlackNova\Services\Db::logDbErrors($db, 'Rollback transaction on File::initodb', __LINE__, __FILE__);
 
             return false;
         }
         else // Else we process the transaction, and return true
         {
             $db->commit(); // Complete the transaction
-            Db::logDbErrors($db, 'Complete transaction on File::initodb', __LINE__, __FILE__);
+            \BlackNova\Services\Db::logDbErrors($db, 'Complete transaction on File::initodb', __LINE__, __FILE__);
 
             return true;
         }

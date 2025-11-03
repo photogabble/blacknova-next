@@ -92,22 +92,22 @@ if (array_key_exists('who', $_REQUEST) == true)
 // I noticed before the rewriting of this page that in some case recordset may be fetched more thant once, which is NOT optimized.
 
 // Get user info.
-$result = $db->Execute("SELECT ".\Bnt\Db::table('ships').".*, ".\Bnt\Db::table('teams').".team_name, ".\Bnt\Db::table('teams').".description, ".\Bnt\Db::table('teams').".creator, ".\Bnt\Db::table('teams').".id
-            FROM ".\Bnt\Db::table('ships')."
-            LEFT JOIN ".\Bnt\Db::table('teams')." ON ".\Bnt\Db::table('ships').".team = ".\Bnt\Db::table('teams').".id
-            WHERE ".\Bnt\Db::table('ships').".email = ?;", array($_SESSION['username'])) or die ($db->ErrorMsg());
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT ".\BlackNova\Services\Db::table('ships').".*, ".\BlackNova\Services\Db::table('teams').".team_name, ".\BlackNova\Services\Db::table('teams').".description, ".\BlackNova\Services\Db::table('teams').".creator, ".\BlackNova\Services\Db::table('teams').".id
+            FROM ".\BlackNova\Services\Db::table('ships')."
+            LEFT JOIN ".\BlackNova\Services\Db::table('teams')." ON ".\BlackNova\Services\Db::table('ships').".team = ".\BlackNova\Services\Db::table('teams').".id
+            WHERE ".\BlackNova\Services\Db::table('ships').".email = ?;", array($_SESSION['username'])) or die ($db->ErrorMsg());
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo=$result->fields;
 
 // We do not want to query the database, if it is not necessary.
 if ($playerinfo['team_invite'] != 0)
 {
     // Get invite info
-    $invite = $db->Execute(" SELECT ".\Bnt\Db::table('ships').".ship_id, ".\Bnt\Db::table('ships').".team_invite, ".\Bnt\Db::table('teams').".team_name,".\Bnt\Db::table('teams').".id
-            FROM ".\Bnt\Db::table('ships')."
-            LEFT JOIN ".\Bnt\Db::table('teams')." ON ".\Bnt\Db::table('ships').".team_invite = ".\Bnt\Db::table('teams').".id
-            WHERE ".\Bnt\Db::table('ships').".email = ?;", array($_SESSION['username'])) or die ($db->ErrorMsg());
-    Bnt\Db::logDbErrors($db, $invite, __LINE__, __FILE__);
+    $invite = $db->Execute(" SELECT ".\BlackNova\Services\Db::table('ships').".ship_id, ".\BlackNova\Services\Db::table('ships').".team_invite, ".\BlackNova\Services\Db::table('teams').".team_name,".\BlackNova\Services\Db::table('teams').".id
+            FROM ".\BlackNova\Services\Db::table('ships')."
+            LEFT JOIN ".\BlackNova\Services\Db::table('teams')." ON ".\BlackNova\Services\Db::table('ships').".team_invite = ".\BlackNova\Services\Db::table('teams').".id
+            WHERE ".\BlackNova\Services\Db::table('ships').".email = ?;", array($_SESSION['username'])) or die ($db->ErrorMsg());
+    \BlackNova\Services\Db::logDbErrors($db, $invite, __LINE__, __FILE__);
     $invite_info=$invite->fields;
 }
 else
@@ -118,14 +118,14 @@ else
 // Get Team Info
 if (!is_null($whichteam))
 {
-    $result_team = $db->Execute("SELECT * FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($whichteam)) or die ($db->ErrorMsg());
-    Bnt\Db::logDbErrors($db, $result_team, __LINE__, __FILE__);
+    $result_team = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($whichteam)) or die ($db->ErrorMsg());
+    \BlackNova\Services\Db::logDbErrors($db, $result_team, __LINE__, __FILE__);
     $team = $result_team->fields;
 }
 else
 {
-    $result_team = $db->Execute("SELECT * FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($playerinfo['team'])) or die ($db->ErrorMsg());
-    Bnt\Db::logDbErrors($db, $result_team, __LINE__, __FILE__);
+    $result_team = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($playerinfo['team'])) or die ($db->ErrorMsg());
+    \BlackNova\Services\Db::logDbErrors($db, $result_team, __LINE__, __FILE__);
     $team = $result_team->fields;
 }
 
@@ -160,17 +160,17 @@ switch ($teamwhat)
                     break;
                 }
 
-                $resx = $db->Execute("DELETE FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($whichteam));
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($whichteam));
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-                $resy = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team='0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team='0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
-                $resz = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team_invite = 0 WHERE team_invite = ?;", array($whichteam));
-                Bnt\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
+                $resz = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team_invite = 0 WHERE team_invite = ?;", array($whichteam));
+                \BlackNova\Services\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
 
-                $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\Bnt\Db::table('planets')." WHERE owner = ? AND base = 'Y';", array($playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner = ? AND base = 'Y';", array($playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 $i=0;
                 while (!$res->EOF)
                 {
@@ -180,8 +180,8 @@ switch ($teamwhat)
                     $res->MoveNext();
                 }
 
-                $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                 if (!empty ($sectors))
                 {
                     foreach ($sectors as $sector)
@@ -205,8 +205,8 @@ switch ($teamwhat)
                     echo "<table><input type=hidden name=teamwhat value=$teamwhat><input type=hidden name=confirmleave value=2><input type=hidden name=whichteam value=$whichteam>";
                     echo "<tr><td>" . $langvars['l_team_newc'] . "</td><td><select name=newcreator>";
 
-                    $res = $db->Execute("SELECT character_name, ship_id, team FROM ".\Bnt\Db::table('ships')." WHERE team = ? ORDER BY character_name ASC;", array($whichteam));
-                    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                    $res = $db->Execute("SELECT character_name, ship_id, team FROM ".\BlackNova\Services\Db::table('ships')." WHERE team = ? ORDER BY character_name ASC;", array($whichteam));
+                    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                     while (!$res->EOF)
                     {
                         $row = $res->fields;
@@ -223,13 +223,13 @@ switch ($teamwhat)
                 }
                 else
                 {
-                    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team='0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-                    $resy = $db->Execute("UPDATE ".\Bnt\Db::table('teams')." SET number_of_members = number_of_members - 1 WHERE id = ?;", array($whichteam));
-                    Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team='0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('teams')." SET number_of_members = number_of_members - 1 WHERE id = ?;", array($whichteam));
+                    \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
-                    $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\Bnt\Db::table('planets')." WHERE owner = ? AND base = 'Y' AND corp != 0;", array($playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                    $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner = ? AND base = 'Y' AND corp != 0;", array($playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                     $i=0;
                     while (!$res->EOF)
                     {
@@ -238,8 +238,8 @@ switch ($teamwhat)
                         $res->MoveNext();
                     }
 
-                    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                     if (!empty ($sectors))
                     {
                         foreach ($sectors as $sector)
@@ -259,22 +259,22 @@ switch ($teamwhat)
         elseif ($confirmleave == 2)
         {
             // owner of a team is leaving and set a new owner
-            $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($newcreator));
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($newcreator));
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             $newcreatorname = $res->fields;
             echo $langvars['l_team_youveleft'] . " <strong>" . $team['team_name'] . "</strong> " . $langvars['l_team_relto'] . " " . $newcreatorname['character_name'] . ".<br><br>";
 
-            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team = '0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+            $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team = '0' WHERE ship_id = ?;", array($playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-            $resy = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team = ? WHERE team = ?;", array($newcreator, $whichteam));
-            Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+            $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team = ? WHERE team = ?;", array($newcreator, $whichteam));
+            \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
-            $resz = $db->Execute("UPDATE ".\Bnt\Db::table('teams')." SET number_of_members = number_of_members - 1, creator = ? WHERE id = ?;", array($newcreator, $whichteam));
-            Bnt\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
+            $resz = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('teams')." SET number_of_members = number_of_members - 1, creator = ? WHERE id = ?;", array($newcreator, $whichteam));
+            \BlackNova\Services\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
 
-            $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\Bnt\Db::table('planets')." WHERE owner = ? AND base = 'Y' AND corp != 0;", array($playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $res = $db->Execute("SELECT DISTINCT sector_id FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner = ? AND base = 'Y' AND corp != 0;", array($playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             $i=0;
             while (!$res->EOF)
             {
@@ -283,8 +283,8 @@ switch ($teamwhat)
                 $res->MoveNext();
             }
 
-            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+            $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET corp = 0 WHERE owner = ?;", array($playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
             if (!empty ($sectors))
             {
                 foreach ($sectors as $sector)
@@ -309,11 +309,11 @@ switch ($teamwhat)
         {
             if ($playerinfo['team_invite'] == $whichteam)
             {
-                $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team = ?, team_invite = 0 WHERE ship_id = ?;", array($whichteam, $playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team = ?, team_invite = 0 WHERE ship_id = ?;", array($whichteam, $playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-                $resy = $db->Execute("UPDATE ".\Bnt\Db::table('teams')." SET number_of_members = number_of_members + 1 WHERE id = ?;", array($whichteam));
-                Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('teams')." SET number_of_members = number_of_members + 1 WHERE id = ?;", array($whichteam));
+                \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
                 echo $langvars['l_team_welcome'] . " <strong>" . $team['team_name'] . "</strong>.<br><br>";
                 Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_TEAM_JOIN, $team['team_name']);
@@ -347,8 +347,8 @@ switch ($teamwhat)
         else
         {
             $who = preg_replace('/[^0-9]/', '', $who);
-            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($who));
-            Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+            $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($who));
+            \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $whotoexpel = $result->fields;
 
             if (is_null($confirmed))
@@ -360,14 +360,14 @@ switch ($teamwhat)
                 // check whether the player we are ejecting might have already left in the meantime
                 // should go here if ($whotoexpel[team] ==
 
-                $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp='0' WHERE owner = ?;", array($who));
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('planets')." SET corp='0' WHERE owner = ?;", array($who));
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-                $resy = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team = '0' WHERE ship_id = ?;", array($who));
-                Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team = '0' WHERE ship_id = ?;", array($who));
+                \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
 
                 // No more necessary due to COUNT(*) in previous SQL statement
-                $db->Execute("UPDATE ".\Bnt\Db::table('teams')." SET number_of_members = number_of_members - 1 WHERE id = ?;", array($whotoexpel['team']));
+                $db->Execute("UPDATE ".\BlackNova\Services\Db::table('teams')." SET number_of_members = number_of_members - 1 WHERE id = ?;", array($whotoexpel['team']));
 
                 Bnt\PlayerLog::writeLog($db, $who, LOG_TEAM_KICK, $team['team_name']);
                 echo $whotoexpel['character_name'] . " " . $langvars['l_team_ejected'] . "<br>";
@@ -408,12 +408,12 @@ switch ($teamwhat)
                 break;
             }
 
-            $res = $db->Execute("INSERT INTO ".\Bnt\Db::table('teams')." (id, creator, team_name, number_of_members, description) VALUES (?, ?, ?, '1', ?);", array($playerinfo['ship_id'], $playerinfo['ship_id'], $teamname, $teamdesc));
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
-            $resx = $db->Execute("INSERT INTO ".\Bnt\Db::table('zones')." VALUES(NULL, ?, ?, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 0);", array("{$teamname}\'s Empire", $playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-            $resy = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team=? WHERE ship_id = ?;", array($playerinfo['ship_id'], $playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+            $res = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('teams')." (id, creator, team_name, number_of_members, description) VALUES (?, ?, ?, '1', ?);", array($playerinfo['ship_id'], $playerinfo['ship_id'], $teamname, $teamdesc));
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $resx = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('zones')." VALUES(NULL, ?, ?, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 0);", array("{$teamname}\'s Empire", $playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+            $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team=? WHERE ship_id = ?;", array($playerinfo['ship_id'], $playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
             echo $langvars['l_team_team'] . " <strong>" . $teamname . "</strong> " . $langvars['l_team_hcreated'] . ".<br><br>";
             Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_TEAM_CREATE, $teamname);
         }
@@ -434,8 +434,8 @@ switch ($teamwhat)
             echo "<table><input type=hidden name=teamwhat value=$teamwhat><input type=hidden name=invited value=1><input type=hidden name=whichteam value=$whichteam>";
             echo "<tr><td>" . $langvars['l_team_selectp'] . ":</td><td><select name=who style='width:200px;'>";
 
-            $res = $db->Execute("SELECT character_name, ship_id, team FROM ".\Bnt\Db::table('ships')." WHERE team <> ? AND ship_destroyed ='N' AND turns_used > 0 ORDER BY character_name ASC;", array($whichteam));
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $res = $db->Execute("SELECT character_name, ship_id, team FROM ".\BlackNova\Services\Db::table('ships')." WHERE team <> ? AND ship_destroyed ='N' AND turns_used > 0 ORDER BY character_name ASC;", array($whichteam));
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             while (!$res->EOF)
             {
                 $row = $res->fields;
@@ -461,8 +461,8 @@ switch ($teamwhat)
                             echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . "<br><br>";
                             break;
                 }
-                $res = $db->Execute("SELECT character_name,team_invite FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($who));
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT character_name,team_invite FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($who));
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 $newpl = $res->fields;
                 if ($newpl['team_invite'])
                 {
@@ -471,8 +471,8 @@ switch ($teamwhat)
                 }
                 else
                 {
-                    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team_invite = ? WHERE ship_id = ?;", array($whichteam, $who));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team_invite = ? WHERE ship_id = ?;", array($whichteam, $who));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                     echo $langvars['l_team_plinvted'] . "<br>" . $langvars['l_team_plinvted2'] . "<br>";
                     Bnt\PlayerLog::writeLog($db, $who, LOG_TEAM_INVITE, $team['team_name']);
                 }
@@ -487,8 +487,8 @@ switch ($teamwhat)
 
     case 8: // REFUSE invitation
         echo $langvars['l_team_refuse'] . " <strong>" . $invite_info['team_name'] . "</strong>.<br><br>";
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET team_invite = 0 WHERE ship_id = ?;", array($playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET team_invite = 0 WHERE ship_id = ?;", array($playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         Bnt\PlayerLog::writeLog($db, $team['creator'], LOG_TEAM_REJECT, $playerinfo['character_name'] ."|". $invite_info['team_name']);
         echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
         break;
@@ -532,13 +532,13 @@ switch ($teamwhat)
                 break;
             }
 
-            $res = $db->Execute("UPDATE ".\Bnt\Db::table('teams')." SET team_name = ?, description = ? WHERE id = ?;", array($teamname, $teamdesc, $whichteam)) or die ("<font color=red>error: " . $db->ErrorMSG() . "</font>");
-            Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            $res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('teams')." SET team_name = ?, description = ? WHERE id = ?;", array($teamname, $teamdesc, $whichteam)) or die ("<font color=red>error: " . $db->ErrorMSG() . "</font>");
+            \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             echo $langvars['l_team_team'] . " <strong>" . $teamname . "</strong> " . $langvars['l_team_hasbeenr'] . "<br><br>";
 
             // Adding a log entry to all members of the renamed team
-            $result_team_name = $db->Execute("SELECT ship_id FROM ".\Bnt\Db::table('ships')." WHERE team = ? AND ship_id <> ?;", array($whichteam, $playerinfo['ship_id'])) or die ("<font color=red>error: " . $db->ErrorMsg() . "</font>");
-            Bnt\Db::logDbErrors($db, $result_team_name, __LINE__, __FILE__);
+            $result_team_name = $db->Execute("SELECT ship_id FROM ".\BlackNova\Services\Db::table('ships')." WHERE team = ? AND ship_id <> ?;", array($whichteam, $playerinfo['ship_id'])) or die ("<font color=red>error: " . $db->ErrorMsg() . "</font>");
+            \BlackNova\Services\Db::logDbErrors($db, $result_team_name, __LINE__, __FILE__);
             Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_TEAM_RENAME, $teamname);
             while (!$result_team_name->EOF)
             {
@@ -561,28 +561,28 @@ switch ($teamwhat)
             if ($playerinfo['team'] < 0)
             {
                 $playerinfo['team'] = -$playerinfo['team'];
-                $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($playerinfo['team']));
-                Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+                $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($playerinfo['team']));
+                \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
                 $whichteam = $result->fields;
                 echo $langvars['l_team_urejected'] . " <strong>" . $whichteam['team_name'] . "</strong><br><br>";
                 echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
                 break;
             }
-            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($playerinfo['team']));
-            Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+            $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($playerinfo['team']));
+            \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $whichteam = $result->fields;
             if ($playerinfo['team_invite'])
             {
-                $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('teams')." WHERE id = ?;", array($playerinfo['team_invite']));
-                Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+                $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('teams')." WHERE id = ?;", array($playerinfo['team_invite']));
+                \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
                 $whichinvitingteam = $result->fields;
             }
             $isowner = Bad\Team::isTeamOwner($whichteam, $playerinfo);
             Bad\Team::showInfo($db, $langvars, $playerinfo['team'], $isowner, $playerinfo);
         }
 
-        $res= $db->Execute("SELECT COUNT(*) as total FROM ".\Bnt\Db::table('teams')." WHERE admin='N'");
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res= $db->Execute("SELECT COUNT(*) as total FROM ".\BlackNova\Services\Db::table('teams')." WHERE admin='N'");
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $num_res = $res->fields;
 
         if ($num_res['total'] > 0)

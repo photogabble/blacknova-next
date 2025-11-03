@@ -71,15 +71,15 @@ if (mb_strlen(trim($amount)) === 0)
     $amount = false;
 }
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
 switch ($response) {
     case "display":
         echo "<h1>" . $title . "</h1>\n";
-        $res5 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships').", ".\Bnt\Db::table('bounty')." WHERE bounty_on = ship_id AND bounty_on = ?;", array($bounty_on));
-        Bnt\Db::logDbErrors($db, $res5, __LINE__, __FILE__);
+        $res5 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships').", ".\BlackNova\Services\Db::table('bounty')." WHERE bounty_on = ship_id AND bounty_on = ?;", array($bounty_on));
+        \BlackNova\Services\Db::logDbErrors($db, $res5, __LINE__, __FILE__);
         $j = 0;
         if ($res5)
         {
@@ -108,8 +108,8 @@ switch ($response) {
             $color = $color_line1;
             for ($j = 0; $j < $num_details; $j++)
             {
-                $someres = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($bounty_details[$j]['placed_by']));
-                Bnt\Db::logDbErrors($db, $someres, __LINE__, __FILE__);
+                $someres = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($bounty_details[$j]['placed_by']));
+                \BlackNova\Services\Db::logDbErrors($db, $someres, __LINE__, __FILE__);
                 $details = $someres->fields;
                 echo "<tr bgcolor=\"$color\">";
                 echo "<td>" . $bounty_details[$j]['amount'] . "</td>";
@@ -154,8 +154,8 @@ switch ($response) {
             die();
         }
 
-        $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('bounty')." WHERE bounty_id = ?;", array($bid));
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('bounty')." WHERE bounty_id = ?;", array($bid));
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         if (!$res || $res->RowCount() ==0)
         {
             echo $langvars['l_by_nobounty'] . "<br><br>";
@@ -173,20 +173,20 @@ switch ($response) {
             die();
         }
 
-        $del = $db->Execute("DELETE FROM ".\Bnt\Db::table('bounty')." WHERE bounty_id = ?;", array($bid));
-        Bnt\Db::logDbErrors($db, $del, __LINE__, __FILE__);
+        $del = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('bounty')." WHERE bounty_id = ?;", array($bid));
+        \BlackNova\Services\Db::logDbErrors($db, $del, __LINE__, __FILE__);
         $stamp = date("Y-m-d H:i:s");
         $refund = $bty['amount'];
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login = ?, turns = turns-1, turns_used = turns_used + 1, credits = credits + ? WHERE ship_id = ?;", array($stamp, $refund, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET last_login = ?, turns = turns-1, turns_used = turns_used + 1, credits = credits + ? WHERE ship_id = ?;", array($stamp, $refund, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         echo $langvars['l_by_canceled'] . "<br>";
         Bnt\Text::gotoMain($db, $lang, $langvars);
         die();
         break;
     case "place":
         echo "<h1>" . $title . "</h1>\n";
-        $ex = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($bounty_on));
-        Bnt\Db::logDbErrors($db, $ex, __LINE__, __FILE__);
+        $ex = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($bounty_on));
+        \BlackNova\Services\Db::logDbErrors($db, $ex, __LINE__, __FILE__);
         if (!$ex)
         {
             echo $langvars['l_by_notexists'] . "<br><br>";
@@ -243,8 +243,8 @@ switch ($response) {
             $score = Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
             $maxtrans = $score * $score * $bounty_maxvalue;
             $previous_bounty = 0;
-            $pb = $db->Execute("SELECT SUM(amount) AS totalbounty FROM ".\Bnt\Db::table('bounty')." WHERE bounty_on = ? AND placed_by = ?;", array($bounty_on, $playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $pb, __LINE__, __FILE__);
+            $pb = $db->Execute("SELECT SUM(amount) AS totalbounty FROM ".\BlackNova\Services\Db::table('bounty')." WHERE bounty_on = ? AND placed_by = ?;", array($bounty_on, $playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $pb, __LINE__, __FILE__);
             if ($pb)
             {
                 $prev = $pb->fields;
@@ -261,19 +261,19 @@ switch ($response) {
             }
         }
 
-        $insert = $db->Execute("INSERT INTO ".\Bnt\Db::table('bounty')." (bounty_on,placed_by,amount) values (?,?,?);", array($bounty_on, $playerinfo['ship_id'] ,$amount));
-        Bnt\Db::logDbErrors($db, $insert, __LINE__, __FILE__);
+        $insert = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('bounty')." (bounty_on,placed_by,amount) values (?,?,?);", array($bounty_on, $playerinfo['ship_id'] ,$amount));
+        \BlackNova\Services\Db::logDbErrors($db, $insert, __LINE__, __FILE__);
         $stamp = date("Y-m-d H:i:s");
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login = ?, turns = turns - 1, turns_used = turns_used + 1, credits = credits - ? WHERE ship_id = ?;", array($stamp, $amount, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET last_login = ?, turns = turns - 1, turns_used = turns_used + 1, credits = credits - ? WHERE ship_id = ?;", array($stamp, $amount, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         echo $langvars['l_by_placed'] . "<br>";
         Bnt\Text::gotoMain($db, $lang, $langvars);
         die();
         break;
     default:
         echo "<h1>" . $title . "</h1>\n";
-        $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_destroyed = 'N' AND ship_id <> ? ORDER BY character_name ASC;", array($playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_destroyed = 'N' AND ship_id <> ? ORDER BY character_name ASC;", array($playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         echo "<form accept-charset='utf-8' action=bounty.php method=post>";
         echo "<table>";
         echo "<tr><td>" . $langvars['l_by_bountyon'] . "</td><td><select name=bounty_on>";
@@ -301,8 +301,8 @@ switch ($response) {
         echo "<input type=hidden name=response value=place>";
         echo "</form>";
 
-        $result3 = $db->Execute("SELECT bounty_on, SUM(amount) as total_bounty FROM ".\Bnt\Db::table('bounty')." GROUP BY bounty_on;");
-        Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+        $result3 = $db->Execute("SELECT bounty_on, SUM(amount) as total_bounty FROM ".\BlackNova\Services\Db::table('bounty')." GROUP BY bounty_on;");
+        \BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 
         $i = 0;
         if ($result3)
@@ -331,8 +331,8 @@ switch ($response) {
             $color = $color_line1;
             for ($i = 0; $i < $num_bounties; $i++)
             {
-                $someres = $db->execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($bounties[$i]['bounty_on']));
-                Bnt\Db::logDbErrors($db, $someres, __LINE__, __FILE__);
+                $someres = $db->execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($bounties[$i]['bounty_on']));
+                \BlackNova\Services\Db::logDbErrors($db, $someres, __LINE__, __FILE__);
                 $details = $someres->fields;
                 echo "<tr bgcolor=\"$color\">";
                 echo "<td><a href=bounty.php?bounty_on=" . $bounties[$i]['bounty_on'] . "&response=display>". $details['character_name'] ."</a></td>";

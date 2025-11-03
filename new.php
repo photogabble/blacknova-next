@@ -55,8 +55,8 @@ foreach ($lang_dir as $file_info) // Get a list of the files in the languages di
         $lang_file = mb_substr($file_info->getFilename(), 0, -8); // The actual file name
 
         // Select from the database and return the localized name of the language
-        $result = $db->Execute("SELECT value FROM ".\Bnt\Db::table('languages')." WHERE category = 'regional' AND section = ? AND name = 'local_lang_name';", array($lang_file));
-        Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+        $result = $db->Execute("SELECT value FROM ".\BlackNova\Services\Db::table('languages')." WHERE category = 'regional' AND section = ? AND name = 'local_lang_name';", array($lang_file));
+        \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
         while ($result && !$result->EOF)
         {
             $row = $result->fields;

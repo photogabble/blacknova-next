@@ -28,11 +28,11 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 echo "<h1>" . $title . "</h1>\n";
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
-$query = "SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE ship_id = ?";
+$query = "SELECT * FROM ".\BlackNova\Services\Db::table('sector_defence')." WHERE ship_id = ?";
 if (!empty($sort))
 {
     $query .= " ORDER BY";
@@ -55,7 +55,7 @@ if (!empty($sort))
 }
 
 $res = $db->Execute($query, array($playerinfo['ship_id']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
 $i = 0;
 if ($res)

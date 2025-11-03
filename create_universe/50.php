@@ -106,7 +106,7 @@ $local_table_timer->start(); // Start benchmarking
 $stmt = $pdo_db->prepare("UPDATE {$pdo_db->prefix}gameconfig SET value = ? WHERE name='sector_max'");
 $result = $stmt->execute(array($variables['sector_max']));
 $local_table_timer->stop();
-$variables['update_config_results']['result'] = Bnt\Db::logDbErrors($pdo_db, $result, __LINE__, __FILE__);
+$variables['update_config_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $result, __LINE__, __FILE__);
 $variables['update_config_results']['time'] = $local_table_timer->elapsed();
 
 $lang = $bntreg->default_lang;

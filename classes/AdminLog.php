@@ -35,7 +35,7 @@ class AdminLog
             if (is_int($log_type))
             {
                 $res = $db->Execute(
-                    "INSERT INTO ".\Bnt\Db::table('logs')." VALUES " .
+                    "INSERT INTO ".\BlackNova\Services\Db::table('logs')." VALUES " .
                     "(NULL, " .
                     "0, " .
                     "?, " .
@@ -50,7 +50,7 @@ class AdminLog
         }
         else
         {
-            $query = "INSERT INTO ".\Bnt\Db::table('logs')." VALUES (NULL, 0, :logtype, NOW(), :data)";
+            $query = "INSERT INTO ".\BlackNova\Services\Db::table('logs')." VALUES (NULL, 0, :logtype, NOW(), :data)";
             $result = $db->prepare($query);
             if ($result !== false) // If the database is not live, this will return false
             {                      // so we should not attempt to write (or it will fail silently)

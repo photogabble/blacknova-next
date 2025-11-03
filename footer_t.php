@@ -19,7 +19,7 @@
 
 $online = (int) 0;
 
-if (Bnt\Db::isActive())
+if (\BlackNova\Services\Db::isActive())
 {
     $stamp = date("Y-m-d H:i:s", time()); // Now (as seen by PHP)
     $since_stamp = date("Y-m-d H:i:s", time() - 5 * 60); // Five minutes ago
@@ -41,7 +41,7 @@ if (isset ($bntreg))
 $news_ticker_active = (!(preg_match("/index.php/i", $_SERVER['PHP_SELF']) || preg_match("/igb.php/i", $_SERVER['PHP_SELF']) || preg_match("/new.php/i", $_SERVER['PHP_SELF'])));
 
 // Suppress the news ticker if the database is not active
-if (!Bnt\Db::isActive())
+if (!\BlackNova\Services\Db::isActive())
 {
     $news_ticker_active = false;
 }

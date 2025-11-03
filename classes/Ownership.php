@@ -23,7 +23,7 @@ class Ownership
 {
     public static function calc($db, $sector, $min_bases_to_own, $langvars)
     {
-        $bases_res = $db->Execute("SELECT owner, corp FROM ".\Bnt\Db::table('planets')." WHERE sector_id=? AND base='Y'", array($sector));
+        $bases_res = $db->Execute("SELECT owner, corp FROM ".\BlackNova\Services\Db::table('planets')." WHERE sector_id=? AND base='Y'", array($sector));
         Db::logDbErrors($db, $bases_res, __LINE__, __FILE__);
         $num_bases = $bases_res->RecordCount();
 
@@ -113,7 +113,7 @@ class Ownership
             }
             else
             {
-                $team_res = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($owners[$loop]['id']));
+                $team_res = $db->Execute("SELECT team FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id=?", array($owners[$loop]['id']));
                 Db::logDbErrors($db, $team_res, __LINE__, __FILE__);
                 if ($team_res && $team_res->RecordCount() != 0)
                 {
@@ -129,7 +129,7 @@ class Ownership
         // More than one corp, war
         if ($nbcorps > 1)
         {
-            $setzone_res = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
+            $setzone_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
             Db::logDbErrors($db, $setzone_res, __LINE__, __FILE__);
 
             return $langvars['l_global_warzone'];
@@ -147,7 +147,7 @@ class Ownership
 
         if ($numunallied > 1)
         {
-            $setzone_resb = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
+            $setzone_resb = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
             Db::logDbErrors($db, $setzone_resb, __LINE__, __FILE__);
 
             return $langvars['l_global_warzone'];
@@ -156,7 +156,7 @@ class Ownership
         // Unallied ship, another corp present, war
         if ($numunallied > 0 && $nbcorps > 0)
         {
-            $setzone_resc = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
+            $setzone_resc = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
             Db::logDbErrors($db, $setzone_resc, __LINE__, __FILE__);
 
             return $langvars['l_global_warzone'];
@@ -165,7 +165,7 @@ class Ownership
         // Unallied ship, another ship in a corp, war
         if ($numunallied > 0)
         {
-            $query = "SELECT team FROM ".\Bnt\Db::table('ships')." WHERE (";
+            $query = "SELECT team FROM ".\BlackNova\Services\Db::table('ships')." WHERE (";
             $i = 0;
             foreach ($ships as $ship)
             {
@@ -187,7 +187,7 @@ class Ownership
 
             if ($select_team_res !== false && ($select_team_res->RecordCount() != 0))
             {
-                $setzone_resd = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
+                $setzone_resd = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=4 WHERE sector_id=?", array($sector));
                 Db::logDbErrors($db, $setzone_resd, __LINE__, __FILE__);
 
                 return $langvars['l_global_warzone'];
@@ -215,7 +215,7 @@ class Ownership
 
         if ($owners[$winner]['num'] < $min_bases_to_own)
         {
-            $setzone_rese = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=1 WHERE sector_id=?", array($sector));
+            $setzone_rese = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=1 WHERE sector_id=?", array($sector));
             Db::logDbErrors($db, $setzone_rese, __LINE__, __FILE__);
 
             return $langvars['l_global_nzone'];
@@ -223,15 +223,15 @@ class Ownership
 
         if ($owners[$winner]['type'] == 'C')
         {
-            $setzone_resf = $db->Execute("SELECT zone_id FROM ".\Bnt\Db::table('zones')." WHERE corp_zone='Y' AND owner=?", array($owners[$winner]['id']));
+            $setzone_resf = $db->Execute("SELECT zone_id FROM ".\BlackNova\Services\Db::table('zones')." WHERE corp_zone='Y' AND owner=?", array($owners[$winner]['id']));
             Db::logDbErrors($db, $setzone_resf, __LINE__, __FILE__);
             $zone = $setzone_resf->fields;
 
-            $setzone_resg = $db->Execute("SELECT team_name FROM ".\Bnt\Db::table('teams')." WHERE id=?", array($owners[$winner]['id']));
+            $setzone_resg = $db->Execute("SELECT team_name FROM ".\BlackNova\Services\Db::table('teams')." WHERE id=?", array($owners[$winner]['id']));
             Db::logDbErrors($db, $setzone_resg, __LINE__, __FILE__);
             $corp = $setzone_resg->fields;
 
-            $update_res = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=? WHERE sector_id=?", array($zone['zone_id'], $sector));
+            $update_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=? WHERE sector_id=?", array($zone['zone_id'], $sector));
             Db::logDbErrors($db, $update_res, __LINE__, __FILE__);
 
             return $langvars['l_global_team'] . ' ' . $corp['team_name'] . '!';
@@ -251,7 +251,7 @@ class Ownership
             // Two allies have the same number of bases
             if ($onpar == 1)
             {
-                $setzone_resh = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=1 WHERE sector_id=?", array($sector));
+                $setzone_resh = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=1 WHERE sector_id=?", array($sector));
                 Db::logDbErrors($db, $setzone_resh, __LINE__, __FILE__);
 
                 return $langvars['l_global_nzone'];
@@ -259,15 +259,15 @@ class Ownership
             else
             {
 
-                $setzone_resi = $db->Execute("SELECT zone_id FROM ".\Bnt\Db::table('zones')." WHERE corp_zone='N' AND owner=?", array($owners[$winner]['id']));
+                $setzone_resi = $db->Execute("SELECT zone_id FROM ".\BlackNova\Services\Db::table('zones')." WHERE corp_zone='N' AND owner=?", array($owners[$winner]['id']));
                 Db::logDbErrors($db, $setzone_resi, __LINE__, __FILE__);
                 $zone = $setzone_resi->fields;
 
-                $setzone_resj = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($owners[$winner]['id']));
+                $setzone_resj = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id=?", array($owners[$winner]['id']));
                 Db::logDbErrors($db, $setzone_resj, __LINE__, __FILE__);
                 $ship = $setzone_resj->fields;
 
-                $update_res2 = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET zone_id=? WHERE sector_id=?", array($zone['zone_id'], $sector));
+                $update_res2 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('universe')." SET zone_id=? WHERE sector_id=?", array($zone['zone_id'], $sector));
                 Db::logDbErrors($db, $update_res2, __LINE__, __FILE__);
 
                 return $langvars['l_global_player'] . ' ' . $ship['character_name'] . '!';

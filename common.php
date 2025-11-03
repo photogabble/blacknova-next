@@ -70,11 +70,11 @@ ob_start(array('Bnt\Compress', 'compress'));       // Start a buffer, and when i
                                                    // call the callback function 'bnt\Compress' to properly handle
                                                    // detection of compression.
 // Initialize the database.
-Bnt\Db::initDb();
+BlackNova\Services\Db::initDb();
 
 // Temporary set $pdo_db and $db to the same object. Usage of these globals should be eliminated.
-$pdo_db = Bnt\Db::connection();
-$db = Bnt\Db::connection();
+$pdo_db = BlackNova\Services\Db::connection();
+$db = BlackNova\Services\Db::connection();
 
 $bntreg = new Bnt\Reg($pdo_db);                    // BNT Registry object -  passing config variables via classes
 $bntreg->bnttimer = new Bnt\Timer;                 // Create a benchmark timer to get benchmarking data for everything
@@ -101,7 +101,7 @@ if (isset($bntreg->default_lang))
     $lang = $bntreg->default_lang;
 }
 
-if (Bnt\Db::isActive())
+if (BlackNova\Services\Db::isActive())
 {
     if (empty($_SESSION['username']))              // If the user has not logged in
     {

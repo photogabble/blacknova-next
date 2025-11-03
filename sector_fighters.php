@@ -154,8 +154,8 @@ Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_DEFS_DESTROYED_F, "$fig
 $armor_lost = $playerinfo['armor_pts'] - $playerarmor;
 $fighters_lost = $playerinfo['ship_fighters'] - $playerfighters;
 $energy = $playerinfo['ship_energy'];
-$update4b = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy = ?, ship_fighters = ship_fighters - ?, armor_pts = armor_pts - ?, torps = torps - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $armor_lost, $playertorpnum, $playerinfo['ship_id']));
-Bnt\Db::logDbErrors($db, $update4b, __LINE__, __FILE__);
+$update4b = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET ship_energy = ?, ship_fighters = ship_fighters - ?, armor_pts = armor_pts - ?, torps = torps - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $armor_lost, $playertorpnum, $playerinfo['ship_id']));
+\BlackNova\Services\Db::logDbErrors($db, $update4b, __LINE__, __FILE__);
 $langvars['l_sf_lreport'] = str_replace("[armor]", $armor_lost, $langvars['l_sf_lreport']);
 $langvars['l_sf_lreport'] = str_replace("[fighters]", $fighters_lost, $langvars['l_sf_lreport']);
 $langvars['l_sf_lreport'] = str_replace("[torps]", $playertorpnum, $langvars['l_sf_lreport']);
@@ -171,8 +171,8 @@ if ($playerarmor < 1)
     {
         $rating = round($playerinfo['rating'] / 2);
         echo $langvars['l_sf_escape'] . "<br><br>";
-        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET hull = 0, engines = 0, power = 0, sensors = 0, computer = 0, beams = 0, torp_launchers = 0, torps = 0, armor = 0, armor_pts = 100, cloak = 0, shields = 0, sector = 0, ship_organics = 0, ship_ore = 0, ship_goods = 0, ship_energy = ?, ship_colonists = 0, ship_fighters = 100, dev_warpedit = 0, dev_genesis = 0, dev_beacon = 0, dev_emerwarp = 0, dev_escapepod = 'N', dev_fuelscoop = 'N', dev_minedeflector = 0, on_planet = 'N', rating = ?, cleared_defences=' ', dev_lssd = 'N' WHERE ship_id = ?;", array($bntreg->start_energy, $rating, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET hull = 0, engines = 0, power = 0, sensors = 0, computer = 0, beams = 0, torp_launchers = 0, torps = 0, armor = 0, armor_pts = 100, cloak = 0, shields = 0, sector = 0, ship_organics = 0, ship_ore = 0, ship_goods = 0, ship_energy = ?, ship_colonists = 0, ship_fighters = 100, dev_warpedit = 0, dev_genesis = 0, dev_beacon = 0, dev_emerwarp = 0, dev_escapepod = 'N', dev_fuelscoop = 'N', dev_minedeflector = 0, on_planet = 'N', rating = ?, cleared_defences=' ', dev_lssd = 'N' WHERE ship_id = ?;", array($bntreg->start_energy, $rating, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         Bnt\Bounty::cancel($db, $playerinfo['ship_id']);
         $ok = 0;
         Bnt\Text::gotoMain($db, $lang, $langvars);

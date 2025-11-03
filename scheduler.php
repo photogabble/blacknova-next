@@ -75,7 +75,7 @@ echo "<h1>" . $title . "</h1>\n";
 // This isn't the right thing to do, but its better than creating an entire class for a 12 line function.
 function is_query_ok($db, $res)
 {
-    $test_result = Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $test_result = \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     if ($test_result)
     {
         echo " ok.<br>";
@@ -116,8 +116,8 @@ else
     $lastRun = 0;
     $schedCount = 0;
     $lastrunList = null;
-    $sched_res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('scheduler')."");
-    Bnt\Db::logDbErrors($db, $sched_res, __LINE__, __FILE__);
+    $sched_res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('scheduler')."");
+    \BlackNova\Services\Db::logDbErrors($db, $sched_res, __LINE__, __FILE__);
     if ($sched_res)
     {
         while (!$sched_res->EOF)
@@ -141,19 +141,19 @@ else
 
                 if ($event['spawn'] - $multiplier == 0)
                 {
-                    $resx = $db->Execute("DELETE FROM ".\Bnt\Db::table('scheduler')." WHERE sched_id = ?", array($event['sched_id']));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resx = $db->Execute("DELETE FROM ".\BlackNova\Services\Db::table('scheduler')." WHERE sched_id = ?", array($event['sched_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                 }
                 else
                 {
-                    $resy = $db->Execute("UPDATE ".\Bnt\Db::table('scheduler')." SET ticks_left = ?, spawn = spawn - ? WHERE sched_id = ?", array($ticks_left, $multiplier, $event['sched_id']));
-                    Bnt\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
+                    $resy = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('scheduler')." SET ticks_left = ?, spawn = spawn - ? WHERE sched_id = ?", array($ticks_left, $multiplier, $event['sched_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resy, __LINE__, __FILE__);
                 }
             }
             else
             {
-                $resz = $db->Execute("UPDATE ".\Bnt\Db::table('scheduler')." SET ticks_left = ? WHERE sched_id = ?", array($ticks_left, $event['sched_id']));
-                Bnt\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
+                $resz = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('scheduler')." SET ticks_left = ? WHERE sched_id = ?", array($ticks_left, $event['sched_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $resz, __LINE__, __FILE__);
             }
 
             $sched_var_id = $event['sched_id'];
@@ -181,8 +181,8 @@ else
     $runtime = time() - $starttime;
     echo "<p>The scheduler took $runtime seconds to execute.<p>";
 
-    $res = $db->Execute("UPDATE ".\Bnt\Db::table('scheduler')." SET last_run = ". time());
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('scheduler')." SET last_run = ". time());
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 }
 
 echo "<br>";

@@ -27,8 +27,8 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('team_planets', 'planet_report', 'planet', 'main', 'port', 'common', 'global_includes', 'global_funcs', 'footer', 'news', 'regional'));
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
 if ($playerinfo['team'] == 0)
@@ -40,7 +40,7 @@ if ($playerinfo['team'] == 0)
     return;
 }
 
-$query = "SELECT * FROM ".\Bnt\Db::table('planets')." WHERE corp=$playerinfo[team]";
+$query = "SELECT * FROM ".\BlackNova\Services\Db::table('planets')." WHERE corp=$playerinfo[team]";
 if (!empty ($sort))
 {
     $query .= " ORDER BY";
@@ -64,7 +64,7 @@ if (!empty ($sort))
 }
 
 $res = $db->Execute($query);
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 echo "<h1>" . $title . "</h1>\n";
 
 echo "<br>";
@@ -142,8 +142,8 @@ else
         }
 
         $owner = $planet[$i]['owner'];
-        $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id=$owner");
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id=$owner");
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $player = $res->fields['character_name'];
 
         echo "<tr bgcolor=\"$color\">";

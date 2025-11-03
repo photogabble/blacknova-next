@@ -93,8 +93,8 @@ $banned = 0;
 
 if (isset ($playerinfo) && $playerfound != false)
 {
-    $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ip_bans')." WHERE ? LIKE ban_mask OR ? LIKE ban_mask;", array($_SERVER['REMOTE_ADDR'], $playerinfo['ip_address']));
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ip_bans')." WHERE ? LIKE ban_mask OR ? LIKE ban_mask;", array($_SERVER['REMOTE_ADDR'], $playerinfo['ip_address']));
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     if ($res->RecordCount() != 0)
     {
         $banned = 1;
@@ -117,8 +117,8 @@ if ($playerfound)
                 // Player's ship has not been destroyed
                 Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_LOGIN, $_SERVER['REMOTE_ADDR']);
                 $stamp = date("Y-m-d H:i:s");
-                $update = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login = ?, ip_address = ? WHERE ship_id = ?;", array($stamp, $_SERVER['REMOTE_ADDR'], $playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET last_login = ?, ip_address = ? WHERE ship_id = ?;", array($stamp, $_SERVER['REMOTE_ADDR'], $playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
 
                 $_SESSION['logged_in'] = true;
                 $_SESSION['password'] = $filtered_post_password;
@@ -134,8 +134,8 @@ if ($playerfound)
                 // Player's ship has been destroyed
                 if ($playerinfo['dev_escapepod'] == "Y")
                 {
-                    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=1, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=1, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                     $langvars['l_login_died'] = str_replace("[here]", "<a href='main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_died']);
                     echo $langvars['l_login_died'];
                 }
@@ -146,15 +146,15 @@ if ($playerfound)
                     // Check if $newbie_nice is set, if so, verify ship limits
                     if ($bntreg->newbie_nice)
                     {
-                        $newbie_info = $db->Execute("SELECT hull, engines, power, computer, sensors, armor, shields, beams, torp_launchers, cloak FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ? AND hull <= ? AND engines <= ? AND power <= ? AND computer <= ? AND sensors <= ? AND armor <= ? AND shields <= ? AND beams <= ? AND torp_launchers <= ? AND cloak <= ?;", array($playerinfo['ship_id'], $newbie_hull, $newbie_engines, $newbie_power, $newbie_computer, $newbie_sensors, $newbie_armor, $newbie_shields, $newbie_beams, $newbie_torp_launchers, $newbie_cloak));
-                        Bnt\Db::logDbErrors($db, $newbie_info, __LINE__, __FILE__);
+                        $newbie_info = $db->Execute("SELECT hull, engines, power, computer, sensors, armor, shields, beams, torp_launchers, cloak FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ? AND hull <= ? AND engines <= ? AND power <= ? AND computer <= ? AND sensors <= ? AND armor <= ? AND shields <= ? AND beams <= ? AND torp_launchers <= ? AND cloak <= ?;", array($playerinfo['ship_id'], $newbie_hull, $newbie_engines, $newbie_power, $newbie_computer, $newbie_sensors, $newbie_armor, $newbie_shields, $newbie_beams, $newbie_torp_launchers, $newbie_cloak));
+                        \BlackNova\Services\Db::logDbErrors($db, $newbie_info, __LINE__, __FILE__);
                         $num_rows = $newbie_info->RecordCount();
 
                         if ($num_rows)
                         {
                             echo "<br><br>" . $langvars['l_login_newbie'] . "<br><br>";
-                            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=0, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, credits=1000, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
-                            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                            $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=0, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, credits=1000, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
+                            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
                             $langvars['l_login_newlife'] = str_replace("[here]", "<a href='main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_newlife']);
                             echo $langvars['l_login_newlife'];

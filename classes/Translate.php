@@ -19,6 +19,8 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+
 class Translate
 {
     private static array $langvars = [];

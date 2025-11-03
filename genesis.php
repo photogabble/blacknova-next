@@ -32,19 +32,19 @@ $title = $langvars['l_gns_title'];
 Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 // Adding db lock to prevent more than 5 planets in a sector
-$resx = $db->Execute("LOCK TABLES ".\Bnt\Db::table('ships')." WRITE, ".\Bnt\Db::table('planets')." WRITE, ".\Bnt\Db::table('universe')." READ, ".\Bnt\Db::table('zones')." READ, ".\Bnt\Db::table('adodb_logsql')." WRITE");
-Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+$resx = $db->Execute("LOCK TABLES ".\BlackNova\Services\Db::table('ships')." WRITE, ".\BlackNova\Services\Db::table('planets')." WRITE, ".\BlackNova\Services\Db::table('universe')." READ, ".\BlackNova\Services\Db::table('zones')." READ, ".\BlackNova\Services\Db::table('adodb_logsql')." WRITE");
+\BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email=?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email=?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+$result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id=?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $sectorinfo = $result2->fields;
 
-$result3 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE sector_id=?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+$result3 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('planets')." WHERE sector_id=?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 $planetinfo = $result3->fields;
 $num_planets = $result3->RecordCount();
 
@@ -81,8 +81,8 @@ elseif ($playerinfo['dev_genesis'] < 1)
 }
 else
 {
-    $res = $db->Execute("SELECT allow_planet, corp_zone, owner FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res = $db->Execute("SELECT allow_planet, corp_zone, owner FROM ".\BlackNova\Services\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     $zoneinfo = $res->fields;
     if ($zoneinfo['allow_planet'] == 'N')
     {
@@ -98,8 +98,8 @@ else
             }
             else
             {
-                $res = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($zoneinfo['owner']));
-                Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+                $res = $db->Execute("SELECT team FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($zoneinfo['owner']));
+                \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 $ownerinfo = $res->fields;
                 if ($ownerinfo['team'] != $playerinfo['team'])
                 {
@@ -107,10 +107,10 @@ else
                 }
                 else
                 {
-                    $update1 = $db->Execute("INSERT INTO ".\Bnt\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], $planetname, 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
-                    Bnt\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
-                    $update2 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
+                    $update1 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], $planetname, 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
+                    \BlackNova\Services\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
+                    $update2 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
                     echo $langvars['l_gns_pcreate'];
                 }
             }
@@ -121,25 +121,25 @@ else
         }
         else
         {
-            $update1 = $db->Execute("INSERT INTO ".\Bnt\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], '$planetname', 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
-            Bnt\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
-            $update2 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id=?;", array($playerinfo['ship_id']));
-            Bnt\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
+            $update1 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], '$planetname', 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
+            \BlackNova\Services\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
+            $update2 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id=?;", array($playerinfo['ship_id']));
+            \BlackNova\Services\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
             echo $langvars['l_gns_pcreate'];
         }
     }
     else
     {
-        $update1 = $db->Execute("INSERT INTO ".\Bnt\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], $planetname, 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
-        Bnt\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
-        $update2 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id=?;", array($playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
+        $update1 = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('planets')." VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array(NULL, $playerinfo['sector'], $planetname, 0, 0, 0, 0, 0, 0, 0, 0, $playerinfo['ship_id'], 0, 'N', 'N', $bntreg->default_prod_organics, $bntreg->default_prod_ore, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, 'N'));
+        \BlackNova\Services\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
+        $update2 = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id=?;", array($playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
         echo $langvars['l_gns_pcreate'];
     }
 }
 
 $resx = $db->Execute("UNLOCK TABLES");
-Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+\BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 echo "<br><br>";
 
 Bnt\Text::gotoMain($db, $lang, $langvars);

@@ -36,8 +36,8 @@ $reset_code  = filter_input(INPUT_GET, 'code', FILTER_SANITIZE_STRING);
 // We chose 8 characters of uniqueness because its reasonable if you have to type it in, and
 // because 8 characters is 4,294,967,296 combinations, and that should be sufficiently secure
 
-$result = $db->SelectLimit("SELECT character_name, email, recovery_time FROM ".\Bnt\Db::table('ships')." WHERE substr(MD5(password),6,8) = ?", 1, -1, array('password' => $reset_code));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->SelectLimit("SELECT character_name, email, recovery_time FROM ".\BlackNova\Services\Db::table('ships')." WHERE substr(MD5(password),6,8) = ?", 1, -1, array('password' => $reset_code));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
 if (!$result->EOF && $result != false)
 {
@@ -95,8 +95,8 @@ else
 //mail ($playerinfo['email'], $langvars['l_mail_topic'], $langvars['l_mail_message'], "From: {$bntreg->admin_mail}\r\nReply-To: {$bntreg->admin_mail}\r\nX-Mailer: PHP/" . phpversion());
 
 /// Reset recovery_time to zero
-//$recovery_update_result = $db->Execute ("UPDATE ".\Bnt\Db::table('ships')." SET recovery_time = null WHERE email = ?;", array($playerinfo['email']));
-//var_dump (Bnt\Db::logDbErrors ($db, $recovery_update_result, __LINE__, __FILE__));
+//$recovery_update_result = $db->Execute ("UPDATE ".\BlackNova\Services\Db::table('ships')." SET recovery_time = null WHERE email = ?;", array($playerinfo['email']));
+//var_dump (\BlackNova\Services\Db::logDbErrors ($db, $recovery_update_result, __LINE__, __FILE__));
 
 /// Log user in (like login does)
 

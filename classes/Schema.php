@@ -51,7 +51,7 @@ class Schema
                 if (!$persist_file)
                 {
                     $drop_res = $db->exec('DROP TABLE ' . $db_prefix . $tablename);
-                    Db::logDbErrors($db, $drop_res, __LINE__, __FILE__);
+                    \BlackNova\Services\Db::logDbErrors($db, $drop_res, __LINE__, __FILE__);
 
                     if ($drop_res !== false)
                     {
@@ -127,7 +127,7 @@ class Schema
                     $create_table_results[$i]['result'] = true;
                 }
 
-                Db::logDbErrors($db, $execute_res, __LINE__, __FILE__);
+                \BlackNova\Services\Db::logDbErrors($db, $execute_res, __LINE__, __FILE__);
                 $create_table_results[$i]['name'] = $db_prefix . $tablename;
                 $table_timer->stop();
                 $create_table_results[$i]['time'] = $table_timer->elapsed();

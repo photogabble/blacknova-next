@@ -27,15 +27,15 @@ $variables = null;
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('emerwarp', 'common', 'global_includes', 'global_funcs', 'footer', 'news'));
 
-$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
+$result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 if ($playerinfo['dev_emerwarp'] > 0)
 {
     $dest_sector = Bnt\Rand::betterRand(0, $sector_max - 1);
-    $result_warp = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET sector = ?, dev_emerwarp = dev_emerwarp - 1 WHERE ship_id = ?;", array($dest_sector, $playerinfo['ship_id']));
-    Bnt\Db::logDbErrors($db, $result_warp, __LINE__, __FILE__);
+    $result_warp = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET sector = ?, dev_emerwarp = dev_emerwarp - 1 WHERE ship_id = ?;", array($dest_sector, $playerinfo['ship_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $result_warp, __LINE__, __FILE__);
     Bnt\LogMove::writeLog($db, $playerinfo['ship_id'], $dest_sector);
     $langvars['l_ewd_used'] = str_replace("[sector]", $dest_sector, $langvars['l_ewd_used']);
     $variables['dest_sector'] = $dest_sector;

@@ -77,18 +77,18 @@ if (!empty ($subject))
     $subject = $purifier->purify($subject);
 }
 
-$res = $db->Execute("SELECT ship_id, character_name FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT ship_id, character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
 echo "<h1>" . $title . "</h1>\n";
 
 if (empty ($content))
 {
-    $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE email NOT LIKE '%@Xenobe' AND ship_id <> ? ORDER BY character_name ASC;", array($playerinfo['ship_id']));
-    Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
-    $res2 = $db->Execute("SELECT team_name FROM ".\Bnt\Db::table('teams')." WHERE admin ='N' ORDER BY team_name ASC;");
-    Bnt\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
+    $res = $db->Execute("SELECT character_name FROM ".\BlackNova\Services\Db::table('ships')." WHERE email NOT LIKE '%@Xenobe' AND ship_id <> ? ORDER BY character_name ASC;", array($playerinfo['ship_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+    $res2 = $db->Execute("SELECT team_name FROM ".\BlackNova\Services\Db::table('teams')." WHERE admin ='N' ORDER BY team_name ASC;");
+    \BlackNova\Services\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
     echo "<form accept-charset='utf-8' action=mailto.php method=post>\n";
     echo "  <table>\n";
     echo "    <tr>\n";
@@ -150,11 +150,11 @@ else
     if (mb_strpos($to, $langvars['l_sendm_ally']) === false)
     {
         $timestamp = date("Y\-m\-d H\:i\:s");
-        $res = $db->Execute("SELECT ship_id FROM ".\Bnt\Db::table('ships')." WHERE character_name = ?;", array($to));
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT ship_id FROM ".\BlackNova\Services\Db::table('ships')." WHERE character_name = ?;", array($to));
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $target_info = $res->fields;
-        $resx = $db->Execute("INSERT INTO ".\Bnt\Db::table('messages')." (sender_id, recp_id, sent, subject, message) VALUES (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $target_info['ship_id'], $timestamp, $subject, $content));
-        Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+        $resx = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('messages')." (sender_id, recp_id, sent, subject, message) VALUES (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $target_info['ship_id'], $timestamp, $subject, $content));
+        \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         if ($db->ErrorNo() != 0)
         {
             echo "Message failed to send: " . $db->ErrorMsg() . "<br>\n";
@@ -170,18 +170,18 @@ else
         $to = str_replace($langvars['l_sendm_ally'], "", $to);
         $to = trim($to);
         $to = addslashes($to);
-        $res = $db->Execute("SELECT id FROM ".\Bnt\Db::table('teams')." WHERE team_name = ?;", array($to));
-        Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+        $res = $db->Execute("SELECT id FROM ".\BlackNova\Services\Db::table('teams')." WHERE team_name = ?;", array($to));
+        \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $row = $res->fields;
 
-        $res2 = $db->Execute("SELECT ship_id FROM ".\Bnt\Db::table('ships')." WHERE team = ?;", array($row['id']));
-        Bnt\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
+        $res2 = $db->Execute("SELECT ship_id FROM ".\BlackNova\Services\Db::table('ships')." WHERE team = ?;", array($row['id']));
+        \BlackNova\Services\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
 
         while (!$res2->EOF)
         {
             $row2 = $res2->fields;
-            $resx = $db->Execute("INSERT INTO ".\Bnt\Db::table('messages')." (sender_id, recp_id, sent, subject, message) VALUES (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $row2['ship_id'], $timestamp, $subject, $content));
-            Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+            $resx = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('messages')." (sender_id, recp_id, sent, subject, message) VALUES (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $row2['ship_id'], $timestamp, $subject, $content));
+            \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
             $res2->MoveNext();
         }
     }

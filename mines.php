@@ -37,16 +37,16 @@ elseif (array_key_exists('op', $_POST) == true)
     $op = $_POST['op'];
 }
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $sectorinfo = $res->fields;
 
-$result3 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ?;", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+$result3 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('sector_defence')." WHERE sector_id = ?;", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 
 // Put the defence information into the array "defenceinfo"
 $i = 0;
@@ -113,8 +113,8 @@ if ($playerinfo['turns'] < 1)
     die ();
 }
 
-$res = $db->Execute("SELECT allow_defenses, ".\Bnt\Db::table('universe').".zone_id, owner FROM ".\Bnt\Db::table('zones').", ".\Bnt\Db::table('universe')." WHERE sector_id = ? AND ".\Bnt\Db::table('zones').".zone_id = ".\Bnt\Db::table('universe').".zone_id", array($playerinfo['sector']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT allow_defenses, ".\BlackNova\Services\Db::table('universe').".zone_id, owner FROM ".\BlackNova\Services\Db::table('zones').", ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ? AND ".\BlackNova\Services\Db::table('zones').".zone_id = ".\BlackNova\Services\Db::table('universe').".zone_id", array($playerinfo['sector']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 
 if ($zoneinfo['allow_defenses'] == 'N')
@@ -128,8 +128,8 @@ else
         if (!$owns_all)
         {
             $defence_owner = $defences[0]['ship_id'];
-            $result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($defence_owner));
-            Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+            $result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($defence_owner));
+            \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
             $fighters_owner = $result2->fields;
 
             if ($fighters_owner['team'] != $playerinfo['team'] || $playerinfo['team'] == 0)
@@ -144,8 +144,8 @@ else
     if ($zoneinfo['allow_defenses'] == 'L')
     {
         $zone_owner = $zoneinfo['owner'];
-        $result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($zone_owner));
-        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+        $result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE ship_id = ?;", array($zone_owner));
+        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
         $zoneowner_info = $result2->fields;
 
         if ($zone_owner != $playerinfo['ship_id'])
@@ -229,13 +229,13 @@ else
         {
             if ($fighter_id != 0)
             {
-                $update = $db->Execute("UPDATE ".\Bnt\Db::table('sector_defence')." SET quantity = quantity + ? ,fm_setting = ? WHERE defence_id = ?;", array($numfighters, $mode, $fighter_id));
-                Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('sector_defence')." SET quantity = quantity + ? ,fm_setting = ? WHERE defence_id = ?;", array($numfighters, $mode, $fighter_id));
+                \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
             }
             else
             {
-                $update = $db->Execute("INSERT INTO ".\Bnt\Db::table('sector_defence')." (ship_id, sector_id, defence_type, quantity, fm_setting) values (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $playerinfo['sector'], 'F', $numfighters, $mode));
-                Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                $update = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('sector_defence')." (ship_id, sector_id, defence_type, quantity, fm_setting) values (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $playerinfo['sector'], 'F', $numfighters, $mode));
+                \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
                 echo $db->ErrorMsg();
             }
         }
@@ -244,18 +244,18 @@ else
         {
             if ($mine_id != 0)
             {
-                $update = $db->Execute("UPDATE ".\Bnt\Db::table('sector_defence')." SET quantity = quantity + ?, fm_setting = ? WHERE defence_id = ?;", array($nummines, $mode, $mine_id));
-                Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('sector_defence')." SET quantity = quantity + ?, fm_setting = ? WHERE defence_id = ?;", array($nummines, $mode, $mine_id));
+                \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
             }
             else
             {
-                $update = $db->Execute("INSERT INTO ".\Bnt\Db::table('sector_defence')." (ship_id, sector_id, defence_type, quantity, fm_setting) values (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $playerinfo['sector'], 'M', $nummines, $mode));
-                Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                $update = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('sector_defence')." (ship_id, sector_id, defence_type, quantity, fm_setting) values (?, ?, ?, ?, ?);", array($playerinfo['ship_id'], $playerinfo['sector'], 'M', $nummines, $mode));
+                \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
             }
         }
 
-        $update = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login = ?, turns = turns - 1, turns_used = turns_used + 1, ship_fighters = ship_fighters - ?, torps = torps - ? WHERE ship_id = ?;", array($stamp, $numfighters, $nummines, $playerinfo['ship_id']));
-        Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+        $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET last_login = ?, turns = turns - 1, turns_used = turns_used + 1, ship_fighters = ship_fighters - ?, torps = torps - ? WHERE ship_id = ?;", array($stamp, $numfighters, $nummines, $playerinfo['ship_id']));
+        \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
     }
 }
 

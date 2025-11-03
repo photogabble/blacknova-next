@@ -29,8 +29,8 @@ $title = $langvars['l_rs_title'];
 Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 // Get the players information.
-$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
-Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
+$res = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
+\BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
 echo "<h1>" . $title . "</h1>\n";
@@ -50,8 +50,8 @@ if ($destination === false || $engage === false)
     // Invalid destination
 
     echo $langvars['l_rs_invalid'] . ".<br><br>";
-    $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET cleared_defences=' ' WHERE ship_id = ?;", array($playerinfo['ship_id']));
-    Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+    $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET cleared_defences=' ' WHERE ship_id = ?;", array($playerinfo['ship_id']));
+    \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 }
 else
 {
@@ -78,13 +78,13 @@ else
     {
         // Ok, we have been given the destination value.
         // Get the players current sector information.
-        $result2 = $db->Execute("SELECT angle1, angle2, distance FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
-        Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
+        $result2 = $db->Execute("SELECT angle1, angle2, distance FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
+        \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
         $start = $result2->fields;
 
         // Get the destination sector information.
-        $result3 = $db->Execute("SELECT angle1, angle2, distance FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($destination));
-        Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
+        $result3 = $db->Execute("SELECT angle1, angle2, distance FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id = ?;", array($destination));
+        \BlackNova\Services\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
         $finish = $result3->fields;
 
         // Calculate the distance.
@@ -163,8 +163,8 @@ else
                 $langvars['l_rs_movetime'] = str_replace("[triptime]", number_format($triptime, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_rs_movetime']);
                 echo $langvars['l_rs_movetime'] . "<br><br>";
                 echo $langvars['l_rs_noturns'] . "<br><br>";
-                $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET cleared_defences=' ' WHERE ship_id = ?;", array($playerinfo['ship_id']));
-                Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
+                $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET cleared_defences=' ' WHERE ship_id = ?;", array($playerinfo['ship_id']));
+                \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
             }
             else
             {
@@ -179,8 +179,8 @@ else
 
                     $langvars = Bnt\Translate::load($pdo_db, $lang, array('rsmove', 'common', 'global_funcs', 'global_includes', 'combat', 'footer', 'news'));
                     $stamp = date("Y-m-d H:i:s");
-                    $update = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login = ?, sector = ?, ship_energy = ship_energy + ?, turns = turns - ?, turns_used = turns_used + ? WHERE ship_id = ?;", array($stamp, $destination, $energyscooped, $triptime, $triptime, $playerinfo['ship_id']));
-                    Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
+                    $update = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET last_login = ?, sector = ?, ship_energy = ship_energy + ?, turns = turns - ?, turns_used = turns_used + ? WHERE ship_id = ?;", array($stamp, $destination, $energyscooped, $triptime, $triptime, $playerinfo['ship_id']));
+                    \BlackNova\Services\Db::logDbErrors($db, $update, __LINE__, __FILE__);
                     Bnt\LogMove::writeLog($db, $playerinfo['ship_id'], $destination);
                     $langvars['l_rs_ready'] = str_replace("[sector]", $destination, $langvars['l_rs_ready']);
                     $langvars['l_rs_ready'] = str_replace("[triptime]", number_format($triptime, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_rs_ready']);
