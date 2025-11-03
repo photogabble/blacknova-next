@@ -27,7 +27,7 @@ class Smarty
     public function __construct($parent)
     {
         $this->parent = $parent;
-        $this->smarty = new \Smarty();
+        $this->smarty = new \Smarty\Smarty();
     }
 
     public function __destruct()
@@ -109,7 +109,7 @@ class Smarty
         {
             $output = $this->smarty->fetch($template_file);
         }
-        catch (exception $e)
+        catch (\Exception $e)
         {
             // $output = $this->smarty->fetch ($template_file);
             $output  = 'The smarty template system is not working. We suggest checking the specific template you are using for an error in the page that you want to access.';

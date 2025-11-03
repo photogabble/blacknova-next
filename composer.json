@@ -19,18 +19,18 @@
       "email": "TheKabal@gmail.com"
     },
     {
-      "name": "Blacknova Development",
-      "email": "blacknova@net-code.co.uk"
+      "name": "Simon Dann",
+      "email": "simon.dann@gmail.com"
     }
   ],
   "license": "AGPL-3.0",
   "minimum-stability": "alpha",
   "require": {
-    "smarty/smarty": "v3.1.18",
-    "ezyang/htmlpurifier": "v4.6.0",
-    "ircmaxell/password-compat": "1.0.3",
-    "swiftmailer/swiftmailer": "v5.2.1",
-    "adodb/adodb-php": "v5.22",
+    "php": "^8.4",
+    "adodb/adodb-php": "^5.22",
+    "ezyang/htmlpurifier": "^4.17",
+    "smarty/smarty": "^5.4",
+    "symfony/mailer": "^7.1",
     "ext-mbstring": "*"
   },
   "autoload": {
