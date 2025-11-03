@@ -69,11 +69,12 @@ header('Keep-Alive: timeout=15, max=100');         // Ask for persistent HTTP co
 ob_start(array('Bnt\Compress', 'compress'));       // Start a buffer, and when it closes (at the end of a request),
                                                    // call the callback function 'bnt\Compress' to properly handle
                                                    // detection of compression.
+// Initialize the database.
+Bnt\Db::initDb();
 
-$pdo_db = new Bnt\Db;
-$pdo_db = $pdo_db->initDb('pdo');                  // Connect to db using pdo
-$db = new Bnt\Db;
-$db = $db->initDb('adodb');                        // Connect to db using adodb also - for now - to be eliminated!
+// Temporary set $pdo_db and $db to the same object. Usage of these globals should be eliminated.
+$pdo_db = Bnt\Db::connection();
+$db = Bnt\Db::connection();
 
 $bntreg = new Bnt\Reg($pdo_db);                    // BNT Registry object -  passing config variables via classes
 $bntreg->bnttimer = new Bnt\Timer;                 // Create a benchmark timer to get benchmarking data for everything
@@ -100,7 +101,7 @@ if (isset($bntreg->default_lang))
     $lang = $bntreg->default_lang;
 }
 
-if (Bnt\Db::isActive($pdo_db))
+if (Bnt\Db::isActive())
 {
     if (empty($_SESSION['username']))              // If the user has not logged in
     {

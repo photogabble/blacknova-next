@@ -27,7 +27,7 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('scan', 'common', 'bounty', 'report', 'main', 'global_includes', 'global_funcs', 'footer', 'news', 'planet', 'regional'));
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email=?", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email=?", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
@@ -39,7 +39,7 @@ if (mb_strlen(trim($filtered_ship_id)) === 0)
     $filtered_ship_id = false;
 }
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id=?", array($filtered_ship_id));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($filtered_ship_id));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $targetinfo = $result2->fields;
 
@@ -98,7 +98,7 @@ else
 
             // Get total bounty on this player, if any
             $btyamount = 0;
-            $hasbounty = $db->Execute("SELECT SUM(amount) AS btytotal FROM {$db->prefix}bounty WHERE bounty_on = ?", array($targetinfo['ship_id']));
+            $hasbounty = $db->Execute("SELECT SUM(amount) AS btytotal FROM ".\Bnt\Db::table('bounty')." WHERE bounty_on = ?", array($targetinfo['ship_id']));
             Bnt\Db::logDbErrors($db, $hasbounty, __LINE__, __FILE__);
 
             if ($hasbounty)
@@ -112,7 +112,7 @@ else
                     $btyamount = 0;
 
                     // Check for Federation bounty
-                    $hasfedbounty = $db->Execute("SELECT SUM(amount) AS btytotal FROM {$db->prefix}bounty WHERE bounty_on = ? AND placed_by = 0", array($targetinfo['ship_id']));
+                    $hasfedbounty = $db->Execute("SELECT SUM(amount) AS btytotal FROM ".\Bnt\Db::table('bounty')." WHERE bounty_on = ? AND placed_by = 0", array($targetinfo['ship_id']));
                     Bnt\Db::logDbErrors($db, $hasfedbounty, __LINE__, __FILE__);
                     if ($hasfedbounty)
                     {
@@ -452,7 +452,7 @@ else
             Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_SHIP_SCAN, "$playerinfo[character_name]");
         }
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ships SET turns = turns - 1, turns_used = turns_used + 1 WHERE ship_id=?", array($playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns = turns - 1, turns_used = turns_used + 1 WHERE ship_id=?", array($playerinfo['ship_id']));
         Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
     }
 }

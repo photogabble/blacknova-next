@@ -26,7 +26,7 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('mail', 'common', 'global_funcs', 'global_includes', 'global_funcs', 'combat', 'footer', 'news'));
 echo "<h1>" . $title . "</h1>\n";
 
-$result = $db->SelectLimit("SELECT character_name, email, password FROM {$db->prefix}ships WHERE email = ?", 1, -1, array('email' => $mail));
+$result = $db->SelectLimit("SELECT character_name, email, password FROM ".\Bnt\Db::table('ships')." WHERE email = ?", 1, -1, array('email' => $mail));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
 if (!$result->EOF)
@@ -66,7 +66,7 @@ if (!$result->EOF)
         // Recovery time is a timestamp at the time of recovery attempt, which is valid for 30 minutes
         // After 30 minutes, it will be cleared to null by scheduler. If it is used, it will also be cleared.
 
-        $recovery_update_result = $db->Execute("UPDATE {$db->prefix}ships SET recovery_time=? WHERE email = ?;", array(time(), $playerinfo['email']));
+        $recovery_update_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET recovery_time=? WHERE email = ?;", array(time(), $playerinfo['email']));
         Bnt\Db::logDbErrors($db, $recovery_update_result, __LINE__, __FILE__);
 
         mail($playerinfo['email'], $langvars['l_mail_topic'], $langvars['l_mail_message'] . "\r\n\r\n{$link_to_reset}\r\n", "From: {$bntreg->admin_mail}\r\nReply-To: {$bntreg->admin_mail}\r\nX-Mailer: PHP/" . phpversion());

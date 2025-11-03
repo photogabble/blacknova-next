@@ -62,11 +62,11 @@ if ($planet_id <= 0)
     die ();
 }
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id = ?;", array($planet_id));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?;", array($planet_id));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $planetinfo = $result2->fields;
 
@@ -156,10 +156,10 @@ if ($planetinfo['sells'] == 'Y')
         echo $langvars['l_totalcost'] . ": $total_cost<br>" . $langvars['l_traded_ore'] . ": $trade_ore<br>" . $langvars['l_traded_organics'] . ": $trade_organics<br>" . $langvars['l_traded_goods'] . ": $trade_goods<br>" . $langvars['l_traded_energy'] . ": $trade_energy<br><br>";
 
         // Update ship cargo, credits and turns
-        $trade_result = $db->Execute("UPDATE {$db->prefix}ships SET turns = turns - 1, turns_used = turns_used + 1, credits = credits - ?, ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, ship_energy = ship_energy + ? WHERE ship_id = ?;", array($total_cost, $trade_ore, $trade_organics, $trade_goods, $trade_energy, $playerinfo['ship_id']));
+        $trade_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns = turns - 1, turns_used = turns_used + 1, credits = credits - ?, ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, ship_energy = ship_energy + ? WHERE ship_id = ?;", array($total_cost, $trade_ore, $trade_organics, $trade_goods, $trade_energy, $playerinfo['ship_id']));
         Bnt\Db::logDbErrors($db, $trade_result, __LINE__, __FILE__);
 
-        $trade_result2 = $db->Execute("UPDATE {$db->prefix}planets SET ore = ore - ?, organics = organics - ?, goods = goods - ?, energy = energy - ?, credits = credits + ? WHERE planet_id = ?;", array($trade_ore, $trade_organics, $trade_goods, $trade_energy, $total_cost, $planet_id));
+        $trade_result2 = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET ore = ore - ?, organics = organics - ?, goods = goods - ?, energy = energy - ?, credits = credits + ? WHERE planet_id = ?;", array($trade_ore, $trade_organics, $trade_goods, $trade_energy, $total_cost, $planet_id));
         Bnt\Db::logDbErrors($db, $trade_result2, __LINE__, __FILE__);
         echo $langvars['l_trade_complete'] . "<br><br>";
     }

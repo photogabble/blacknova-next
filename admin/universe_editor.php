@@ -29,7 +29,7 @@ $radius  = filter_input(INPUT_POST, 'radius', FILTER_SANITIZE_NUMBER_INT);
 
 if ($action == "doexpand")
 {
-    $result = $db->Execute("SELECT sector_id FROM {$db->prefix}universe ORDER BY sector_id ASC");
+    $result = $db->Execute("SELECT sector_id FROM ".\Bnt\Db::table('universe')." ORDER BY sector_id ASC");
     Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
     if (!$result->EOF)
@@ -42,7 +42,7 @@ if ($action == "doexpand")
         {
             $row = $result->fields;
             $distance = Bnt\Rand::betterRand(1, $radius);
-            $resx = $db->Execute("UPDATE {$db->prefix}universe SET distance = ? WHERE sector_id = ?", array($distance, $row['sector_id']));
+            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET distance = ? WHERE sector_id = ?", array($distance, $row['sector_id']));
             Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
             $changed_sectors[$i] = str_replace("[sector]", $row['sector_id'], $langvars['l_admin_updated_distance']);

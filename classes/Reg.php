@@ -24,14 +24,12 @@ final class Reg
     public function __construct($db)
     {
         // Get the config_values from the DB - This is a pdo operation
-        $stmt = "SELECT name,value,type FROM {$db->prefix}gameconfig";
-        $result = $db->query($stmt);
-        Db::logDbErrors($db, $stmt, __LINE__, __FILE__);
+        $stmt = "SELECT name,value,type FROM ".Db::table('gameconfig');
+        $result = Db::query($stmt);
 
         if ($result !== false) // If the database is not live, this will give false, and db calls will fail silently
         {
             $big_array = $result->fetchAll();
-            Db::logDbErrors($db, 'fetchAll from gameconfig', __LINE__, __FILE__);
             if (!empty ($big_array))
             {
                 foreach ($big_array as $row)

@@ -30,11 +30,11 @@ echo "<h1>" . $title . "</h1>\n";
 
 Bnt\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id = ?;", array($playerinfo['sector']));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $sectorinfo = $result2->fields;
 
@@ -50,7 +50,7 @@ if (mb_strlen(trim($beacon_text)) === 0)
 
 if ($playerinfo['dev_beacon'] > 0)
 {
-    $res = $db->Execute("SELECT allow_beacon FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+    $res = $db->Execute("SELECT allow_beacon FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
     Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     $zoneinfo = $res->fields;
     if ($zoneinfo['allow_beacon'] == 'N')
@@ -59,10 +59,10 @@ if ($playerinfo['dev_beacon'] > 0)
     }
     elseif ($zoneinfo['allow_beacon'] == 'L')
     {
-        $result3 = $db->Execute("SELECT * FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+        $result3 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
         Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
         $zoneowner_info = $result3->fields;
-        $result5 = $db->Execute("SELECT team FROM {$db->prefix}ships WHERE ship_id = ?;", array($zoneowner_info['owner']));
+        $result5 = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($zoneowner_info['owner']));
         Bnt\Db::logDbErrors($db, $result5, __LINE__, __FILE__);
         $zoneteam = $result5->fields;
 
@@ -110,9 +110,9 @@ if ($playerinfo['dev_beacon'] > 0)
         {
             $beacon_text = trim(htmlentities($beacon_text, ENT_HTML5, 'UTF-8'));
             echo $langvars['l_beacon_nowreads'] . ": " . $beacon_text . ".<br><br>";
-            $update = $db->Execute("UPDATE {$db->prefix}universe SET beacon = ? WHERE sector_id = ?;", array($beacon_text, $sectorinfo['sector_id']));
+            $update = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET beacon = ? WHERE sector_id = ?;", array($beacon_text, $sectorinfo['sector_id']));
             Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
-            $update = $db->Execute("UPDATE {$db->prefix}ships SET dev_beacon=dev_beacon-1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
+            $update = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET dev_beacon=dev_beacon-1 WHERE ship_id = ?;", array($playerinfo['ship_id']));
             Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
         }
     }

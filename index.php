@@ -33,7 +33,7 @@ else // Else set the language as requested by player
     $link = '?lang=' . $lang;
 }
 
-if (!Bnt\Db::isActive($pdo_db))
+if (!Bnt\Db::isActive())
 {
     // If DB is not active, redirect to create universe to run install
     header('Location: create_universe.php');

@@ -38,7 +38,7 @@ $newpass2  = filter_input(INPUT_POST, 'newpass2', FILTER_SANITIZE_STRING);
 // We chose 8 characters of uniqueness because its reasonable if you have to type it in, and
 // because 8 characters is 4,294,967,296 combinations, and that should be sufficiently secure
 
-$result = $db->SelectLimit("SELECT ship_id, email, recovery_time FROM {$db->prefix}ships WHERE substr(MD5(password),6,8) = ?", 1, -1, array('password' => $reset_code));
+$result = $db->SelectLimit("SELECT ship_id, email, recovery_time FROM ".\Bnt\Db::table('ships')." WHERE substr(MD5(password),6,8) = ?", 1, -1, array('password' => $reset_code));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
 if (!$result->EOF && $result != false)
@@ -84,7 +84,7 @@ if (!$result->EOF && $result != false)
             session_regenerate_id();
 
             // Now update the players password.
-            $rs = $db->Execute("UPDATE {$db->prefix}ships SET password = ? WHERE ship_id = ?;", array($hashed_pass, $playerinfo['ship_id']));
+            $rs = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET password = ? WHERE ship_id = ?;", array($hashed_pass, $playerinfo['ship_id']));
             Bnt\Db::logDbErrors($db, $rs, __LINE__, __FILE__);
 
             // Now check to see if we have a valid update and have ONLY 1 changed record.
@@ -114,7 +114,7 @@ if (!$result->EOF && $result != false)
             mail($playerinfo['email'], $langvars['l_mail_topic'], $langvars['l_mail_message'], "From: {$bntreg->admin_mail}\r\nReply-To: {$bntreg->admin_mail}\r\nX-Mailer: PHP/" . phpversion());
 
             // Reset recovery_time to zero
-            $recovery_update_result = $db->Execute("UPDATE {$db->prefix}ships SET recovery_time = null WHERE email = ?;", array($playerinfo['email']));
+            $recovery_update_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET recovery_time = null WHERE email = ?;", array($playerinfo['email']));
             Bnt\Db::logDbErrors($db, $recovery_update_result, __LINE__, __FILE__);
 
             echo $langvars['l_pwr_success'] . "<br><br>";

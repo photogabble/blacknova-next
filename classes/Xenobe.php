@@ -36,12 +36,12 @@ class Xenobe
         $goods_price = 15;
 
         // Obtain sector information
-        $sectres = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id = ?;", array($playerinfo['sector']));
+        $sectres = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
         \Bnt\Db::logDbErrors($db, $sectres, __LINE__, __FILE__);
         $sectorinfo = $sectres->fields;
 
         // Obtain zone information
-        $zoneres = $db->Execute("SELECT zone_id, allow_attack, allow_trade FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+        $zoneres = $db->Execute("SELECT zone_id, allow_attack, allow_trade FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
         \Bnt\Db::logDbErrors($db, $zoneres, __LINE__, __FILE__);
         $zonerow = $zoneres->fields;
 
@@ -169,9 +169,9 @@ class Xenobe
             $newore = $playerinfo['ship_ore'] + $amount_ore;
             $neworganics = max(0, $playerinfo['ship_organics'] - $amount_organics);
             $newgoods = max(0, $playerinfo['ship_goods'] - $amount_goods);
-            $trade_result = $db->Execute("UPDATE {$db->prefix}ships SET rating = rating + 1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
+            $trade_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET rating = rating + 1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $trade_result, __LINE__, __FILE__);
-            $trade_result2 = $db->Execute("UPDATE {$db->prefix}universe SET port_ore = port_ore - ?, port_organics = port_organics + ?, port_goods = port_goods + ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
+            $trade_result2 = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore = port_ore - ?, port_organics = port_organics + ?, port_goods = port_goods + ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
             \Bnt\Db::logDbErrors($db, $trade_result2, __LINE__, __FILE__);
             \Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_RAW, "Xenobe Trade Results: Sold $amount_organics Organics Sold $amount_goods Goods Bought $amount_ore Ore Cost $total_cost");
         }
@@ -202,9 +202,9 @@ class Xenobe
             $newore = max(0, $playerinfo['ship_ore'] - $amount_ore);
             $neworganics = $playerinfo['ship_organics'] + $amount_organics;
             $newgoods = max(0, $playerinfo['ship_goods'] - $amount_goods);
-            $trade_result = $db->Execute("UPDATE {$db->prefix}ships SET rating = rating + 1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
+            $trade_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET rating = rating + 1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $trade_result, __LINE__, __FILE__);
-            $trade_result2 = $db->Execute("UPDATE {$db->prefix}universe SET port_ore = port_ore + ?, port_organics = port_organics - ?, port_goods = port_goods + ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
+            $trade_result2 = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore = port_ore + ?, port_organics = port_organics - ?, port_goods = port_goods + ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
             \Bnt\Db::logDbErrors($db, $trade_result2, __LINE__, __FILE__);
             \Bnt\PlayerLog::writeLog($db, $playerinfo[ship_id], LOG_RAW, "Xenobe Trade Results: Sold $amount_goods Goods Sold $amount_ore Ore Bought $amount_organics Organics Cost $total_cost");
         }
@@ -235,9 +235,9 @@ class Xenobe
             $newore = max(0, $playerinfo['ship_ore'] - $amount_ore);
             $neworganics = max(0, $playerinfo['ship_organics'] - $amount_organics);
             $newgoods = $playerinfo['ship_goods'] + $amount_goods;
-            $trade_result = $db->Execute("UPDATE {$db->prefix}ships SET rating=rating+1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
+            $trade_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET rating=rating+1, credits = ?, ship_ore = ?, ship_organics = ?, ship_goods = ? WHERE ship_id = ?;", array($newcredits, $newore, $neworganics, $newgoods, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $trade_result, __LINE__, __FILE__);
-            $trade_result2 = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore + ?, port_organics = port_organics + ?, port_goods = port_goods - ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
+            $trade_result2 = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore + ?, port_organics = port_organics + ?, port_goods = port_goods - ? WHERE sector_id = ?;", array($amount_ore, $amount_organics, $amount_goods, $sectorinfo['sector_id']));
             \Bnt\Db::logDbErrors($db, $trade_result2, __LINE__, __FILE__);
             \Bnt\PlayerLog::writeLog($db, $playerinfo[ship_id], LOG_RAW, "Xenobe Trade Results: Sold $amount_ore Ore Sold $amount_organics Organics Bought $amount_goods Goods Cost $total_cost");
         }
@@ -249,14 +249,14 @@ class Xenobe
         global $playerinfo, $planetinfo, $torp_dmg_rate, $level_factor;
         global $rating_combat_factor, $upgrade_cost, $upgrade_factor, $sector_max, $xenobeisdead;
 
-        $resh = $db->Execute("LOCK TABLES {$db->prefix}ships WRITE, {$db->prefix}universe WRITE, {$db->prefix}planets WRITE, {$db->prefix}news WRITE, {$db->prefix}logs WRITE");
+        $resh = $db->Execute("LOCK TABLES ".\Bnt\Db::table('ships')." WRITE, ".\Bnt\Db::table('universe')." WRITE, ".\Bnt\Db::table('planets')." WRITE, ".\Bnt\Db::table('news')." WRITE, ".\Bnt\Db::table('logs')." WRITE");
         \Bnt\Db::logDbErrors($db, $resh, __LINE__, __FILE__);
 
-        $resultp = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id=?", array($planet_id)); // Get target planet information
+        $resultp = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id=?", array($planet_id)); // Get target planet information
         \Bnt\Db::logDbErrors($db, $resultp, __LINE__, __FILE__);
         $planetinfo = $resultp->fields;
 
-        $resulto = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id=?", array($planetinfo['owner'])); // Get target player information
+        $resulto = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($planetinfo['owner'])); // Get target player information
         \Bnt\Db::logDbErrors($db, $resulto, __LINE__, __FILE__);
         $ownerinfo = $resulto->fields;
 
@@ -540,7 +540,7 @@ class Xenobe
             \Bnt\PlayerLog::writeLog($db, $planetinfo['owner'], LOG_PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|Xenobe $playerinfo[character_name]|$free_ore|$free_organics|$free_goods|$ship_salvage_rate|$ship_salvage");
 
             // Update planet
-            $resi = $db->Execute("UPDATE {$db->prefix}planets SET energy=?, fighters=fighters-?, torps=torps-?, ore=ore+?, goods=goods+?, organics=organics+?, credits=credits+? WHERE planet_id=?", array($planetinfo['energy'], $fighters_lost, $targettorps, $free_ore, $free_goods, $free_organics, $ship_salvage, $planetinfo['planet_id']));
+            $resi = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET energy=?, fighters=fighters-?, torps=torps-?, ore=ore+?, goods=goods+?, organics=organics+?, credits=credits+? WHERE planet_id=?", array($planetinfo['energy'], $fighters_lost, $targettorps, $free_ore, $free_goods, $free_organics, $ship_salvage, $planetinfo['planet_id']));
             \Bnt\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
         }
         else  // Must have made it past planet defences
@@ -551,20 +551,20 @@ class Xenobe
             \Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_RAW, "Made it past defenses on planet $planetinfo[name]");
 
             // Update attackers
-            $resj = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy=?, ship_fighters=ship_fighters-?, torps=torps-?, armor_pts=armor_pts-? WHERE ship_id=?", array($playerinfo['ship_energy'], $fighters_lost, $attackertorps, $armor_lost, $playerinfo['ship_id']));
+            $resj = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy=?, ship_fighters=ship_fighters-?, torps=torps-?, armor_pts=armor_pts-? WHERE ship_id=?", array($playerinfo['ship_energy'], $fighters_lost, $attackertorps, $armor_lost, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $resj, __LINE__, __FILE__);
             $playerinfo['ship_fighters'] = $attackerfighters;
             $playerinfo['torps'] = $attackertorps;
             $playerinfo['armor_pts'] = $attackerarmor;
 
             // Update planet
-            $resk = $db->Execute("UPDATE {$db->prefix}planets SET energy=?, fighters=?, torps=torps-? WHERE planet_id=?", array($planetinfo['energy'], $targetfighters, $targettorps, $planetinfo['planet_id']));
+            $resk = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET energy=?, fighters=?, torps=torps-? WHERE planet_id=?", array($planetinfo['energy'], $targetfighters, $targettorps, $planetinfo['planet_id']));
             \Bnt\Db::logDbErrors($db, $resk, __LINE__, __FILE__);
             $planetinfo['fighters'] = $targetfighters;
             $planetinfo['torps'] = $targettorps;
 
             // Now we must attack all ships on the planet one by one
-            $resultps = $db->Execute("SELECT ship_id,ship_name FROM {$db->prefix}ships WHERE planet_id=? AND on_planet='Y'", array($planetinfo['planet_id']));
+            $resultps = $db->Execute("SELECT ship_id,ship_name FROM ".\Bnt\Db::table('ships')." WHERE planet_id=? AND on_planet='Y'", array($planetinfo['planet_id']));
             \Bnt\Db::logDbErrors($db, $resultps, __LINE__, __FILE__);
             $shipsonplanet = $resultps->RecordCount();
             if ($shipsonplanet > 0)
@@ -577,7 +577,7 @@ class Xenobe
                 }
             }
 
-            $resultps = $db->Execute("SELECT ship_id,ship_name FROM {$db->prefix}ships WHERE planet_id=? AND on_planet='Y'", array($planetinfo['planet_id']));
+            $resultps = $db->Execute("SELECT ship_id,ship_name FROM ".\Bnt\Db::table('ships')." WHERE planet_id=? AND on_planet='Y'", array($planetinfo['planet_id']));
             \Bnt\Db::logDbErrors($db, $resultps, __LINE__, __FILE__);
             $shipsonplanet = $resultps->RecordCount();
             if ($shipsonplanet == 0 && $xenobeisdead < 1)
@@ -589,7 +589,7 @@ class Xenobe
                 \Bnt\PlayerLog::writeLog($db, $planetinfo['owner'], LOG_PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
 
                 // Update planet
-                $resl = $db->Execute("UPDATE {$db->prefix}planets SET fighters=0, torps=0, base='N', owner=0, corp=0 WHERE planet_id=?", array($planetinfo['planet_id']));
+                $resl = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET fighters=0, torps=0, base='N', owner=0, corp=0 WHERE planet_id=?", array($planetinfo['planet_id']));
                 \Bnt\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
 
                 \Bnt\Ownership::cancel($db, $planetinfo['sector_id'], $min_bases_to_own, $langvars);
@@ -625,9 +625,9 @@ class Xenobe
         global $xenobeisdead;
 
         // Lookup target details
-        $resa = $db->Execute("LOCK TABLES {$db->prefix}ships WRITE, {$db->prefix}universe WRITE, {$db->prefix}zones READ, {$db->prefix}planets READ, {$db->prefix}news WRITE, {$db->prefix}logs WRITE");
+        $resa = $db->Execute("LOCK TABLES ".\Bnt\Db::table('ships')." WRITE, ".\Bnt\Db::table('universe')." WRITE, ".\Bnt\Db::table('zones')." READ, ".\Bnt\Db::table('planets')." READ, ".\Bnt\Db::table('news')." WRITE, ".\Bnt\Db::table('logs')." WRITE");
         \Bnt\Db::logDbErrors($db, $resa, __LINE__, __FILE__);
-        $resultt = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id = ?;", array($ship_id));
+        $resultt = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($ship_id));
         \Bnt\Db::logDbErrors($db, $resultt, __LINE__, __FILE__);
         $targetinfo = $resultt->fields;
 
@@ -642,10 +642,10 @@ class Xenobe
         }
 
         // Verify sector allows attack
-        $sectres = $db->Execute("SELECT sector_id,zone_id FROM {$db->prefix}universe WHERE sector_id = ?;", array($targetinfo['sector']));
+        $sectres = $db->Execute("SELECT sector_id,zone_id FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($targetinfo['sector']));
         \Bnt\Db::logDbErrors($db, $sectres, __LINE__, __FILE__);
         $sectrow = $sectres->fields;
-        $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectrow['zone_id']));
+        $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectrow['zone_id']));
         \Bnt\Db::logDbErrors($db, $zoneres, __LINE__, __FILE__);
         $zonerow = $zoneres->fields;
         if ($zonerow['allow_attack'] == "N")                        //  Dest link must allow attacking
@@ -660,7 +660,7 @@ class Xenobe
         {
             \Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_ATTACK_EWD, "Xenobe $playerinfo[character_name]");
             $dest_sector = \Bnt\Rand::betterRand(0, $sector_max);
-            $result_warp = $db->Execute("UPDATE {$db->prefix}ships SET sector = ?, dev_emerwarp = dev_emerwarp - 1 WHERE ship_id = ?;", array($dest_sector, $targetinfo['ship_id']));
+            $result_warp = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET sector = ?, dev_emerwarp = dev_emerwarp - 1 WHERE ship_id = ?;", array($dest_sector, $targetinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $result_warp, __LINE__, __FILE__);
 
             return;
@@ -965,7 +965,7 @@ class Xenobe
             // Target had no escape pod
             {
                 $rating=round($targetinfo['rating'] / 2);
-                $resc = $db->Execute("UPDATE {$db->prefix}ships SET hull = 0, engines = 0, power = 0, computer = 0, sensors = 0, beams = 0, torp_launchers = 0, torps = 0, armor = 0, armor_pts = 100, cloak = 0, shields = 0, sector = 0, ship_ore = 0, ship_organics = 0, ship_energy = 1000, ship_colonists = 0, ship_goods = 0, ship_fighters = 100, ship_damage = 0, on_planet='N', planet_id = 0, dev_warpedit = 0, dev_genesis = 0, dev_beacon = 0, dev_emerwarp = 0, dev_escapepod = 'N', dev_fuelscoop = 'N', dev_minedeflector = 0, ship_destroyed = 'N', rating = ?, dev_lssd='N' WHERE ship_id = ?;", array($rating, $targetinfo['ship_id']));
+                $resc = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET hull = 0, engines = 0, power = 0, computer = 0, sensors = 0, beams = 0, torp_launchers = 0, torps = 0, armor = 0, armor_pts = 100, cloak = 0, shields = 0, sector = 0, ship_ore = 0, ship_organics = 0, ship_energy = 1000, ship_colonists = 0, ship_goods = 0, ship_fighters = 100, ship_damage = 0, on_planet='N', planet_id = 0, dev_warpedit = 0, dev_genesis = 0, dev_beacon = 0, dev_emerwarp = 0, dev_escapepod = 'N', dev_fuelscoop = 'N', dev_minedeflector = 0, ship_destroyed = 'N', rating = ?, dev_lssd='N' WHERE ship_id = ?;", array($rating, $targetinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $resc, __LINE__, __FILE__);
                 \Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_ATTACK_LOSE, "Xenobe $playerinfo[character_name]|Y");
             }
@@ -1033,12 +1033,12 @@ class Xenobe
                 $ship_salvage_rate = \Bnt\Rand::betterRand(10, 20);
                 $ship_salvage = $ship_value * $ship_salvage_rate / 100;
                 \Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_RAW, "Attack successful, $targetinfo[character_name] was defeated and salvaged for $ship_salvage credits.");
-                $resd = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, credits = credits + ? WHERE ship_id = ?;", array($salv_ore, $salv_organics, $salv_goods, $ship_salvage, $playerinfo['ship_id']));
+                $resd = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, credits = credits + ? WHERE ship_id = ?;", array($salv_ore, $salv_organics, $salv_goods, $ship_salvage, $playerinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $resd, __LINE__, __FILE__);
                 $armor_lost = $playerinfo['armor_pts'] - $attackerarmor;
                 $fighters_lost = $playerinfo['ship_fighters'] - $attackerfighters;
                 $energy = $playerinfo['ship_energy'];
-                $rese = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy = ?, ship_fighters = ship_fighters - ?, torps = torps - ?, armor_pts = armor_pts - ?, rating = rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $attackertorps, $armor_lost, $rating_change, $playerinfo['ship_id']));
+                $rese = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy = ?, ship_fighters = ship_fighters - ?, torps = torps - ?, armor_pts = armor_pts - ?, rating = rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $attackertorps, $armor_lost, $rating_change, $playerinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
             }
         }
@@ -1056,9 +1056,9 @@ class Xenobe
             $target_energy = $targetinfo['ship_energy'];
             \Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_RAW, "Attack failed, $targetinfo[character_name] survived.");
             \Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_ATTACK_WIN, "Xenobe $playerinfo[character_name]|$target_armor_lost|$target_fighters_lost");
-            $resf = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy = ?, ship_fighters = ship_fighters - ?, torps = torps - ? , armor_pts = armor_pts - ?, rating=rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $attackertorps, $armor_lost, $rating_change, $playerinfo[ship_id]));
+            $resf = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy = ?, ship_fighters = ship_fighters - ?, torps = torps - ? , armor_pts = armor_pts - ?, rating=rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $attackertorps, $armor_lost, $rating_change, $playerinfo[ship_id]));
             \Bnt\Db::logDbErrors($db, $resf, __LINE__, __FILE__);
-            $resg = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy = ?, ship_fighters = ship_fighters - ?, armor_pts=armor_pts - ?, torps=torps - ?, rating = ? WHERE ship_id = ?;", array($target_energy, $target_fighters_lost, $target_armor_lost, $targettorpnum, $target_rating_change, $targetinfo['ship_id']));
+            $resg = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy = ?, ship_fighters = ship_fighters - ?, armor_pts=armor_pts - ?, torps=torps - ?, rating = ? WHERE ship_id = ?;", array($target_energy, $target_fighters_lost, $target_armor_lost, $targettorpnum, $target_rating_change, $targetinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $resg, __LINE__, __FILE__);
         }
 
@@ -1126,12 +1126,12 @@ class Xenobe
                 $ship_salvage = $ship_value * $ship_salvage_rate / 100;
                 \Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_ATTACK_WIN, "Xenobe $playerinfo[character_name]|$armor_lost|$fighters_lost");
                 \Bnt\PlayerLog::writeLog($db, $targetinfo['ship_id'], LOG_RAW, "You destroyed the Xenobe ship and salvaged $salv_ore units of ore, $salv_organics units of organics, $salv_goods units of goods, and salvaged $ship_salvage_rate% of the ship for $ship_salvage credits.");
-                $resh = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, credits = credits + ? WHERE ship_id = ?;", array($salv_ore, $salv_organics, $salv_goods, $ship_salvage, $targetinfo['ship_id']));
+                $resh = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, credits = credits + ? WHERE ship_id = ?;", array($salv_ore, $salv_organics, $salv_goods, $ship_salvage, $targetinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $resh, __LINE__, __FILE__);
                 $armor_lost = $targetinfo['armor_pts'] - $targetarmor;
                 $fighters_lost = $targetinfo['ship_fighters'] - $targetfighters;
                 $energy = $targetinfo['ship_energy'];
-                $resi = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy = ? , ship_fighters = ship_fighters - ?, torps = torps - ?, armor_pts = armor_pts - ?, rating=rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $targettorpnum, $armor_lost, $rating_change, $targetinfo['ship_id']));
+                $resi = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy = ? , ship_fighters = ship_fighters - ?, torps = torps - ?, armor_pts = armor_pts - ?, rating=rating - ? WHERE ship_id = ?;", array($energy, $fighters_lost, $targettorpnum, $armor_lost, $rating_change, $targetinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
             }
         }
@@ -1148,7 +1148,7 @@ class Xenobe
         // Check for sector defenses
         if ($targetlink > 0)
         {
-            $resultf = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? and defence_type ='F' ORDER BY quantity DESC", array($targetlink));
+            $resultf = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? and defence_type ='F' ORDER BY quantity DESC", array($targetlink));
             \Bnt\Db::logDbErrors($db, $resultf, __LINE__, __FILE__);
             $i = 0;
             $total_sector_fighters = 0;
@@ -1163,7 +1163,7 @@ class Xenobe
                 }
             }
 
-            $resultm = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? and defence_type ='M'", array($targetlink));
+            $resultm = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? and defence_type ='M'", array($targetlink));
             \Bnt\Db::logDbErrors($db, $resultm, __LINE__, __FILE__);
             $i = 0;
             $total_sector_mines = 0;
@@ -1302,7 +1302,7 @@ class Xenobe
                 $armor_lost = $playerinfo['armor_pts'] - $playerarmor;
                 $fighters_lost = $playerinfo['ship_fighters'] - $playerfighters;
                 $energy = $playerinfo['ship_energy'];
-                $update1 = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy=?, ship_fighters=ship_fighters-?, armor_pts=armor_pts-?,torps=torps-? WHERE ship_id=?", array($energy, $fighters_lost, $armor_lost, $playertorpnum, $playerinfo['ship_id']));
+                $update1 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy=?, ship_fighters=ship_fighters-?, armor_pts=armor_pts-?,torps=torps-? WHERE ship_id=?", array($energy, $fighters_lost, $armor_lost, $playertorpnum, $playerinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $update1, __LINE__, __FILE__);
 
                 // Check to see if Xenobe is dead
@@ -1336,7 +1336,7 @@ class Xenobe
                     // Shields v. mines
                     if ($playershields >= $mines_left)
                     {
-                        $update2 = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy=ship_energy-? WHERE ship_id=?", array($mines_left, $playerinfo['ship_id']));
+                        $update2 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy=ship_energy-? WHERE ship_id=?", array($mines_left, $playerinfo['ship_id']));
                         \Bnt\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
                     }
                     else
@@ -1346,7 +1346,7 @@ class Xenobe
                         // Armor v. mines
                         if ($playerarmor >= $mines_left)
                         {
-                            $update2 = $db->Execute("UPDATE {$db->prefix}ships SET armor_pts=armor_pts-?, ship_energy=0 WHERE ship_id=?", array($mines_left, $playerinfo['ship_id']));
+                            $update2 = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET armor_pts=armor_pts-?, ship_energy=0 WHERE ship_id=?", array($mines_left, $playerinfo['ship_id']));
                             \Bnt\Db::logDbErrors($db, $update2, __LINE__, __FILE__);
                         }
                         else
@@ -1387,7 +1387,7 @@ class Xenobe
             $targetlink = 0;
         }
 
-        $linkres = $db->Execute("SELECT * FROM {$db->prefix}links WHERE link_start=?", array($playerinfo['sector']));
+        $linkres = $db->Execute("SELECT * FROM ".\Bnt\Db::table('links')." WHERE link_start=?", array($playerinfo['sector']));
         \Bnt\Db::logDbErrors($db, $linkres, __LINE__, __FILE__);
         if ($linkres instanceof ADORecordSet)
         {
@@ -1396,11 +1396,11 @@ class Xenobe
                 $row = $linkres->fields;
 
                 // Obtain sector information
-                $sectres = $db->Execute("SELECT sector_id,zone_id FROM {$db->prefix}universe WHERE sector_id=?", array($row['link_dest']));
+                $sectres = $db->Execute("SELECT sector_id,zone_id FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($row['link_dest']));
                 \Bnt\Db::logDbErrors($db, $sectres, __LINE__, __FILE__);
                 $sectrow = $sectres->fields;
 
-                $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM {$db->prefix}zones WHERE zone_id=?", array($sectrow['zone_id']));
+                $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM ".\Bnt\Db::table('zones')." WHERE zone_id=?", array($sectrow['zone_id']));
                 \Bnt\Db::logDbErrors($db, $zoneres, __LINE__, __FILE__);
                 $zonerow = $zoneres->fields;
                 if ($zonerow['allow_attack'] == "Y") // Dest link must allow attacking
@@ -1422,11 +1422,11 @@ class Xenobe
             while (!$targetlink > 0 && $limitloop < 15)
             {
                 // Obtain sector information
-                $sectres = $db->Execute("SELECT sector_id,zone_id FROM {$db->prefix}universe WHERE sector_id=?", array($wormto));
+                $sectres = $db->Execute("SELECT sector_id,zone_id FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($wormto));
                 \Bnt\Db::logDbErrors($db, $sectres, __LINE__, __FILE__);
                 $sectrow = $sectres->fields;
 
-                $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM {$db->prefix}zones WHERE zone_id=?", array($sectrow['zone_id']));
+                $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM ".\Bnt\Db::table('zones')." WHERE zone_id=?", array($sectrow['zone_id']));
                 \Bnt\Db::logDbErrors($db, $zoneres, __LINE__, __FILE__);
                 $zonerow = $zoneres->fields;
                 if ($zonerow['allow_attack'] == "Y")
@@ -1442,7 +1442,7 @@ class Xenobe
 
         if ($targetlink > 0) // Check for sector defenses
         {
-            $resultf = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? and defence_type ='F' ORDER BY quantity DESC", array($targetlink));
+            $resultf = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? and defence_type ='F' ORDER BY quantity DESC", array($targetlink));
             \Bnt\Db::logDbErrors($db, $resultf, __LINE__, __FILE__);
             $i = 0;
             $total_sector_fighters = 0;
@@ -1457,7 +1457,7 @@ class Xenobe
                 }
             }
 
-            $resultm = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? and defence_type ='M'", array($targetlink));
+            $resultm = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? and defence_type ='M'", array($targetlink));
             \Bnt\Db::logDbErrors($db, $resultm, __LINE__, __FILE__);
             $i = 0;
             $total_sector_mines = 0;
@@ -1492,7 +1492,7 @@ class Xenobe
         if ($targetlink > 0) // Move to target link
         {
             $stamp = date("Y-m-d H:i:s");
-            $move_result = $db->Execute("UPDATE {$db->prefix}ships SET last_login=?, turns_used=turns_used+1, sector=? WHERE ship_id=?", array($stamp, $targetlink, $playerinfo['ship_id']));
+            $move_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login=?, turns_used=turns_used+1, sector=? WHERE ship_id=?", array($stamp, $targetlink, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $move_result, __LINE__, __FILE__);
             if (!$move_result)
             {
@@ -1512,7 +1512,7 @@ class Xenobe
         // Setup general Variables
         global $playerinfo, $targetlink, $xenobeisdead;
 
-        $rescount = $db->Execute("SELECT COUNT(*) AS num_players FROM {$db->prefix}ships WHERE ship_destroyed='N' AND email NOT LIKE '%@xenobe' AND ship_id > 1");
+        $rescount = $db->Execute("SELECT COUNT(*) AS num_players FROM ".\Bnt\Db::table('ships')." WHERE ship_destroyed='N' AND email NOT LIKE '%@xenobe' AND ship_id > 1");
         \Bnt\Db::logDbErrors($db, $rescount, __LINE__, __FILE__);
         $rowcount = $rescount->fields;
         $topnum = min(10, $rowcount['num_players']);
@@ -1523,7 +1523,7 @@ class Xenobe
             return;
         }
 
-        $res = $db->SelectLimit("SELECT * FROM {$db->prefix}ships WHERE ship_destroyed='N' AND email NOT LIKE '%@xenobe' AND ship_id > 1 ORDER BY score DESC", $topnum);
+        $res = $db->SelectLimit("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_destroyed='N' AND email NOT LIKE '%@xenobe' AND ship_id > 1 ORDER BY score DESC", $topnum);
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
         // Choose a target from the top player list
@@ -1548,11 +1548,11 @@ class Xenobe
         }
 
         // Jump to target sector
-        $sectres = $db->Execute("SELECT sector_id, zone_id FROM {$db->prefix}universe WHERE sector_id=?", array($targetinfo['sector']));
+        $sectres = $db->Execute("SELECT sector_id, zone_id FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($targetinfo['sector']));
         \Bnt\Db::logDbErrors($db, $sectres, __LINE__, __FILE__);
         $sectrow = $sectres->fields;
 
-        $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM {$db->prefix}zones WHERE zone_id=?", array($sectrow['zone_id']));
+        $zoneres = $db->Execute("SELECT zone_id,allow_attack FROM ".\Bnt\Db::table('zones')." WHERE zone_id=?", array($sectrow['zone_id']));
         \Bnt\Db::logDbErrors($db, $zoneres, __LINE__, __FILE__);
         $zonerow = $zoneres->fields;
 
@@ -1560,7 +1560,7 @@ class Xenobe
         if ($zonerow['allow_attack'] == "Y")
         {
             $stamp = date("Y-m-d H:i:s");
-            $move_result = $db->Execute("UPDATE {$db->prefix}ships SET last_login=?, turns_used=turns_used+1, sector=? WHERE ship_id=?", array($stamp, $targetinfo['sector'], $playerinfo['ship_id']));
+            $move_result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET last_login=?, turns_used=turns_used+1, sector=? WHERE ship_id=?", array($stamp, $targetinfo['sector'], $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $move_result, __LINE__, __FILE__);
             \Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_RAW, "Xenobe used a wormhole to warp to sector $targetinfo[sector] where he is hunting player $targetinfo[character_name].");
             if (!$move_result)
@@ -1572,7 +1572,7 @@ class Xenobe
             }
 
             // Check for sector defences
-            $resultf = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? AND defence_type ='F' ORDER BY quantity DESC", array($targetinfo['sector']));
+            $resultf = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? AND defence_type ='F' ORDER BY quantity DESC", array($targetinfo['sector']));
             \Bnt\Db::logDbErrors($db, $resultf, __LINE__, __FILE__);
             $i = 0;
             $total_sector_fighters = 0;
@@ -1587,7 +1587,7 @@ class Xenobe
                 }
             }
 
-            $resultm = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? AND defence_type ='M'", array($targetinfo['sector']));
+            $resultm = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? AND defence_type ='M'", array($targetinfo['sector']));
             \Bnt\Db::logDbErrors($db, $resultm, __LINE__, __FILE__);
             $i = 0;
             $total_sector_mines = 0;
@@ -1694,7 +1694,7 @@ class Xenobe
         }
 
         // Update Xenobe record
-        $resg = $db->Execute("UPDATE {$db->prefix}ships SET ship_energy=?, armor_pts=?, ship_fighters=?, torps=?, credits=? WHERE ship_id=?", array($playerinfo['ship_energy'], $playerinfo['armor_pts'], $playerinfo['ship_fighters'], $playerinfo['torps'], $playerinfo['credits'], $playerinfo['ship_id']));
+        $resg = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_energy=?, armor_pts=?, ship_fighters=?, torps=?, credits=? WHERE ship_id=?", array($playerinfo['ship_energy'], $playerinfo['armor_pts'], $playerinfo['ship_fighters'], $playerinfo['torps'], $playerinfo['credits'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resg, __LINE__, __FILE__);
         if (!$gene == null || !$gena == null || !$genf == null || !$gent == null)
         {

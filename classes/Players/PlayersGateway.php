@@ -33,8 +33,8 @@ class PlayersGateway // Gateway for SQL calls related to Players
         // SQL call that selected the number (count) of logged in ships (should be players)
         // where last login time is between the since_stamp, and the current timestamp ($stamp)
         // But it excludes xenobes.
-        $sql = "SELECT COUNT(*) AS loggedin FROM {$this->pdo_db->prefix}ships " .
-               "WHERE {$this->pdo_db->prefix}ships.last_login BETWEEN timestamp '"
+        $sql = "SELECT COUNT(*) AS loggedin FROM ".\Bnt\Db::table('ships')." " .
+               "WHERE ".\Bnt\Db::table('ships').".last_login BETWEEN timestamp '"
                . $since_stamp . "' AND timestamp '" . $stamp . "' AND email NOT LIKE '%@xenobe'";
         $stmt = $this->pdo_db->query($sql); // Query the pdo DB using this SQL call
         \Bnt\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
@@ -45,8 +45,8 @@ class PlayersGateway // Gateway for SQL calls related to Players
 
     public function selectPlayerInfo($email)
     {
-//        $sql = "SELECT lang, ip_address, password, ship_destroyed, ship_id, email, dev_escapepod FROM {$this->pdo_db->prefix}ships WHERE email = :email";
-        $sql = "SELECT * FROM {$this->pdo_db->prefix}ships WHERE email = :email";
+//        $sql = "SELECT lang, ip_address, password, ship_destroyed, ship_id, email, dev_escapepod FROM ".\Bnt\Db::table('ships')." WHERE email = :email";
+        $sql = "SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = :email";
         $stmt = $this->pdo_db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $res = $stmt->execute();

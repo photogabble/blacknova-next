@@ -28,11 +28,11 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('warpedit', 'common', 'global_includes', 'global_funcs', 'footer', 'news'));
 echo "<h1>" . $title . "</h1>\n";
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result4 = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id = ?;", array($playerinfo['sector']));
+$result4 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
 Bnt\Db::logDbErrors($db, $result4, __LINE__, __FILE__);
 $sectorinfo = $result4->fields;
 
@@ -52,7 +52,7 @@ if ($playerinfo['dev_warpedit'] < 1)
     die();
 }
 
-$res = $db->Execute("SELECT allow_warpedit FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+$res = $db->Execute("SELECT allow_warpedit FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 if ($zoneinfo['allow_warpedit'] == 'N')
@@ -65,11 +65,11 @@ if ($zoneinfo['allow_warpedit'] == 'N')
 
 if ($zoneinfo['allow_warpedit'] == 'L')
 {
-    $result3 = $db->Execute("SELECT * FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+    $result3 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
     Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
     $zoneowner_info = $result3->fields;
 
-    $result5 = $db->Execute("SELECT team FROM {$db->prefix}ships WHERE ship_id = ?;", array($zoneowner_info['owner']));
+    $result5 = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($zoneowner_info['owner']));
     Bnt\Db::logDbErrors($db, $result5, __LINE__, __FILE__);
     $zoneteam = $result5->fields;
 
@@ -85,7 +85,7 @@ if ($zoneinfo['allow_warpedit'] == 'L')
     }
 }
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}links WHERE link_start = ? ORDER BY link_dest ASC;", array($playerinfo['sector']));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('links')." WHERE link_start = ? ORDER BY link_dest ASC;", array($playerinfo['sector']));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 if (!$result2 instanceof ADORecordSet)
 {

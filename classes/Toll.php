@@ -23,7 +23,7 @@ class Toll
 {
     public static function distribute($db, $sector, $toll, $total_fighters)
     {
-        $select_def_res = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? AND defence_type ='F'", array($sector));
+        $select_def_res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? AND defence_type ='F'", array($sector));
         Db::logDbErrors($db, $select_def_res, __LINE__, __FILE__);
 
         // Put the defence information into the array "defenceinfo"
@@ -33,7 +33,7 @@ class Toll
             {
                 $row = $select_def_res->fields;
                 $toll_amount = round(($row['quantity'] / $total_fighters) * $toll);
-                $res = $db->Execute("UPDATE {$db->prefix}ships SET credits=credits + ? WHERE ship_id = ?", array($toll_amount, $row['ship_id']));
+                $res = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits=credits + ? WHERE ship_id = ?", array($toll_amount, $row['ship_id']));
                 Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 PlayerLog::writeLog($db, $row['ship_id'], LOG_TOLL_RECV, "$toll_amount|$sector");
                 $select_def_res->MoveNext();

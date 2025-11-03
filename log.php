@@ -39,7 +39,7 @@ $title = $langvars['l_log_titlet'];
 $body_class = 'log';
 Bnt\Header::display($pdo_db, $lang, $template, $title, $body_class);
 
-$res = $db->Execute("SELECT character_name, ship_id FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$res = $db->Execute("SELECT character_name, ship_id FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
@@ -60,7 +60,7 @@ if ($swordfish == ADMIN_PW) // Check if called by admin script
     }
     else
     {
-        $res = $db->Execute("SELECT character_name FROM {$db->prefix}ships WHERE ship_id = ?;", array($player));
+        $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($player));
         Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $targetname = $res->fields;
         $playerinfo['character_name'] = $targetname['character_name'];
@@ -110,7 +110,7 @@ if (empty ($startdate))
     $startdate = date("Y-m-d");
 }
 
-$res = $db->Execute("SELECT * FROM {$db->prefix}logs WHERE ship_id = ? AND time LIKE '$startdate%' ORDER BY time DESC, type DESC;", array($playerinfo['ship_id']));
+$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('logs')." WHERE ship_id = ? AND time LIKE '$startdate%' ORDER BY time DESC, type DESC;", array($playerinfo['ship_id']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
 if ($res instanceof ADORecordSet)
@@ -192,7 +192,7 @@ if ($mode != 'compat')
     $entry = $$log_months_temp . " " . mb_substr($yesterday, 8, 2) . " " . mb_substr($yesterday, 0, 4);
 
     unset($logs);
-    $res = $db->Execute("SELECT * FROM {$db->prefix}logs WHERE ship_id = ? AND time LIKE '$yesterday%' ORDER BY time DESC, type DESC;", array($playerinfo['ship_id']));
+    $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('logs')." WHERE ship_id = ? AND time LIKE '$yesterday%' ORDER BY time DESC, type DESC;", array($playerinfo['ship_id']));
     Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     while (!$res->EOF)
     {
@@ -237,7 +237,7 @@ if ($mode != 'compat')
     $entry = $$log_months_temp . " " . mb_substr($tomorrow, 8, 2) . " " . mb_substr($tomorrow, 0, 4);
 
     unset($logs);
-    $res = $db->Execute("SELECT * FROM {$db->prefix}logs WHERE ship_id = ? AND time LIKE '$tomorrow%' ORDER BY time DESC, type DESC", array($playerinfo['ship_id']));
+    $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('logs')." WHERE ship_id = ? AND time LIKE '$tomorrow%' ORDER BY time DESC, type DESC", array($playerinfo['ship_id']));
     Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     while (!$res->EOF)
     {

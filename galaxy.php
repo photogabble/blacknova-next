@@ -28,10 +28,10 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 echo "<h1>" . $title . "</h1>\n";
 
-$res = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
-$result3 = $db->Execute("SELECT distinct {$db->prefix}movement_log.sector_id, port_type, beacon FROM {$db->prefix}movement_log,{$db->prefix}universe WHERE ship_id = ? AND {$db->prefix}movement_log.sector_id={$db->prefix}universe.sector_id order by sector_id ASC", array($playerinfo['ship_id']));
+$result3 = $db->Execute("SELECT distinct ".\Bnt\Db::table('movement_log').".sector_id, port_type, beacon FROM ".\Bnt\Db::table('movement_log').",".\Bnt\Db::table('universe')." WHERE ship_id = ? AND ".\Bnt\Db::table('movement_log').".sector_id=".\Bnt\Db::table('universe').".sector_id order by sector_id ASC", array($playerinfo['ship_id']));
 Bnt\Db::logDbErrors($db, $result3, __LINE__, __FILE__);
 $row = $result3->fields;
 

@@ -76,10 +76,10 @@ class Ibank
              "<td nowrap><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td nowrap align=right>&nbsp;<a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
              "</tr>";
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET loan = ?, loantime = NOW() WHERE ship_id = ?", array($amount3, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET loan = ?, loantime = NOW() WHERE ship_id = ?", array($amount3, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ships SET credits = credits + ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits = credits + ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
     }
 
@@ -145,15 +145,15 @@ class Ibank
              "<td><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td align=right>&nbsp;<br><a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
              "</tr>";
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET balance = balance - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = balance - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-        $resx = $db->Execute("UPDATE {$db->prefix}ships SET credits=credits + ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits=credits + ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
     }
 
     public static function ibankTransfer($db, $langvars, $playerinfo, $ibank_min_turns)
     {
-        $res = $db->Execute("SELECT character_name, ship_id FROM {$db->prefix}ships WHERE email not like '%@xenobe' AND ship_destroyed ='N' AND turns_used > ? ORDER BY character_name ASC", array($ibank_min_turns));
+        $res = $db->Execute("SELECT character_name, ship_id FROM ".\Bnt\Db::table('ships')." WHERE email not like '%@xenobe' AND ship_destroyed ='N' AND turns_used > ? ORDER BY character_name ASC", array($ibank_min_turns));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
         $ships = array();
@@ -163,7 +163,7 @@ class Ibank
             $res->MoveNext();
         }
 
-        $res = $db->Execute("SELECT name, planet_id, sector_id FROM {$db->prefix}planets WHERE owner=? ORDER BY sector_id ASC", array($playerinfo['ship_id']));
+        $res = $db->Execute("SELECT name, planet_id, sector_id FROM ".\Bnt\Db::table('planets')." WHERE owner=? ORDER BY sector_id ASC", array($playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         while (!$res->EOF)
         {
@@ -274,7 +274,7 @@ class Ibank
         if ($account['loan'] != 0)
         {
             $curtime = time();
-            $res = $db->Execute("SELECT UNIX_TIMESTAMP(loantime) as time FROM {$db->prefix}ibank_accounts WHERE ship_id = ?", array($playerinfo['ship_id']));
+            $res = $db->Execute("SELECT UNIX_TIMESTAMP(loantime) as time FROM ".\Bnt\Db::table('ibank_accounts')." WHERE ship_id = ?", array($playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if (!$res->EOF)
             {
@@ -389,9 +389,9 @@ class Ibank
              "<td nowrap><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td nowrap align=right>&nbsp;<a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
              "</tr>";
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET loan=loan - ?, loantime=? WHERE ship_id = ?", array($amount, $account['loantime'], $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET loan=loan - ?, loantime=? WHERE ship_id = ?", array($amount, $account['loantime'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-        $resx = $db->Execute("UPDATE {$db->prefix}ships SET credits=credits - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits=credits - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
     }
 
@@ -431,7 +431,7 @@ class Ibank
 
         if (isset($ship_id)) // Ship transfer
         {
-            $res = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id=? AND ship_destroyed ='N' AND turns_used > ?;", array($ship_id, $ibank_min_turns));
+            $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id=? AND ship_destroyed ='N' AND turns_used > ?;", array($ship_id, $ibank_min_turns));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
             if ($playerinfo['ship_id'] == $ship_id)
@@ -463,7 +463,7 @@ class Ibank
             {
                 $curtime = time();
                 $curtime -= $ibank_trate * 60;
-                $res = $db->Execute("SELECT UNIX_TIMESTAMP(time) as time FROM {$db->prefix}ibank_transfers WHERE UNIX_TIMESTAMP(time) > ? AND source_id = ? AND dest_id = ?", array($curtime, $playerinfo['ship_id'], $target['ship_id']));
+                $res = $db->Execute("SELECT UNIX_TIMESTAMP(time) as time FROM ".\Bnt\Db::table('ibank_transfers')." WHERE UNIX_TIMESTAMP(time) > ? AND source_id = ? AND dest_id = ?", array($curtime, $playerinfo['ship_id'], $target['ship_id']));
                 \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 if (!$res->EOF)
                 {
@@ -516,7 +516,7 @@ class Ibank
                 Ibank::ibankError($active_template, $langvars, $langvars['l_ibank_errplanetsrcanddest'], "igb.php?command=transfer");
             }
 
-            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM {$db->prefix}planets WHERE planet_id = ?", array($splanet_id));
+            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($splanet_id));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if (!$res || $res->EOF)
             {
@@ -530,7 +530,7 @@ class Ibank
                 $source['name'] = $langvars['l_ibank_unnamed'];
             }
 
-            $res = $db->Execute("SELECT name, credits, owner, sector_id, base FROM {$db->prefix}planets WHERE planet_id = ?", array($dplanet_id));
+            $res = $db->Execute("SELECT name, credits, owner, sector_id, base FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($dplanet_id));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if (!$res || $res->EOF)
             {
@@ -595,7 +595,7 @@ class Ibank
         {
             // Need to check again to prevent cheating by manual posts
 
-            $res = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id = ? AND ship_destroyed ='N' AND turns_used > ?", array($ship_id, $ibank_min_turns));
+            $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ? AND ship_destroyed ='N' AND turns_used > ?", array($ship_id, $ibank_min_turns));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
             if ($playerinfo['ship_id'] == $ship_id)
@@ -627,7 +627,7 @@ class Ibank
             {
                 $curtime = time();
                 $curtime -= $ibank_trate * 60;
-                $res = $db->Execute("SELECT UNIX_TIMESTAMP(time) as time FROM {$db->prefix}ibank_transfers WHERE UNIX_TIMESTAMP(time) > ? AND source_id = ? AND dest_id = ?", array($curtime, $playerinfo['ship_id'], $target['ship_id']));
+                $res = $db->Execute("SELECT UNIX_TIMESTAMP(time) as time FROM ".\Bnt\Db::table('ibank_transfers')." WHERE UNIX_TIMESTAMP(time) > ? AND source_id = ? AND dest_id = ?", array($curtime, $playerinfo['ship_id'], $target['ship_id']));
                 \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                 if (!$res->EOF)
                 {
@@ -685,12 +685,12 @@ class Ibank
                  "<td><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td align=right>&nbsp;<br><a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
                  "</tr>";
 
-            $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET balance = balance - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
+            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = balance - ? WHERE ship_id = ?", array($amount, $playerinfo['ship_id']));
             \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-            $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET balance = balance + ? WHERE ship_id = ?", array($transfer, $target['ship_id']));
+            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = balance + ? WHERE ship_id = ?", array($transfer, $target['ship_id']));
             \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-            $resx = $db->Execute("INSERT INTO {$db->prefix}ibank_transfers VALUES (NULL, ?, ?, NOW(), ?)", array($playerinfo['ship_id'], $target['ship_id'], $transfer));
+            $resx = $db->Execute("INSERT INTO ".\Bnt\Db::table('ibank_transfers')." VALUES (NULL, ?, ?, NOW(), ?)", array($playerinfo['ship_id'], $target['ship_id'], $transfer));
             \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         }
         else
@@ -700,7 +700,7 @@ class Ibank
                 Ibank::ibankError($active_template, $langvars, $langvars['l_ibank_errplanetsrcanddest'], "igb.php?command=transfer");
             }
 
-            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM {$db->prefix}planets WHERE planet_id = ?", array($splanet_id));
+            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($splanet_id));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if (!$res || $res->EOF)
             {
@@ -714,7 +714,7 @@ class Ibank
                 $source['name'] = $langvars['l_ibank_unnamed'];
             }
 
-            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM {$db->prefix}planets WHERE planet_id = ?", array($dplanet_id));
+            $res = $db->Execute("SELECT name, credits, owner, sector_id FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($dplanet_id));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             if (!$res || $res->EOF)
             {
@@ -761,9 +761,9 @@ class Ibank
                  "<td><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td align=right>&nbsp;<br><a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
                  "</tr>";
 
-            $resx = $db->Execute("UPDATE {$db->prefix}planets SET credits=credits - ? WHERE planet_id = ?", array($amount, $splanet_id));
+            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits=credits - ? WHERE planet_id = ?", array($amount, $splanet_id));
             \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-            $resx = $db->Execute("UPDATE {$db->prefix}planets SET credits=credits + ? WHERE planet_id = ?", array($transfer, $dplanet_id));
+            $resx = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits=credits + ? WHERE planet_id = ?", array($transfer, $dplanet_id));
             \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
         }
     }
@@ -815,9 +815,9 @@ class Ibank
              "<td><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td align=right>&nbsp;<br><a href=\"main.php\">" . $langvars['l_ibank_logout'] . "</a></td>" .
              "</tr>";
 
-        $resx = $db->Execute("UPDATE {$db->prefix}ibank_accounts SET balance = balance + ? WHERE ship_id=?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ibank_accounts')." SET balance = balance + ? WHERE ship_id=?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-        $resx = $db->Execute("UPDATE {$db->prefix}ships SET credits = credits - ? WHERE ship_id=?", array($amount, $playerinfo['ship_id']));
+        $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET credits = credits - ? WHERE ship_id=?", array($amount, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
     }
 
@@ -826,7 +826,7 @@ class Ibank
         global $account;
         global $dplanet_id, $minimum, $maximum, $ibank_tconsolidate, $ibank_paymentfee;
 
-        $res = $db->Execute("SELECT name, credits, owner, sector_id FROM {$db->prefix}planets WHERE planet_id = ?", array($dplanet_id));
+        $res = $db->Execute("SELECT name, credits, owner, sector_id FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($dplanet_id));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 
         if (!$res || $res->EOF)
@@ -848,7 +848,7 @@ class Ibank
         $minimum = preg_replace("/[^0-9]/", "", $minimum);
         $maximum = preg_replace("/[^0-9]/", "", $maximum);
 
-        $query = "SELECT SUM(credits) AS total, COUNT(*) AS count FROM {$db->prefix}planets WHERE owner=? AND credits != 0 AND planet_id != ?";
+        $query = "SELECT SUM(credits) AS total, COUNT(*) AS count FROM ".\Bnt\Db::table('planets')." WHERE owner=? AND credits != 0 AND planet_id != ?";
 
         if ($minimum != 0)
         {
@@ -922,7 +922,7 @@ class Ibank
 
     public static function isLoanPending($db, $ship_id, $ibank_lrate)
     {
-        $res = $db->Execute("SELECT loan, UNIX_TIMESTAMP(loantime) AS time FROM {$db->prefix}ibank_accounts WHERE ship_id = ?", array($ship_id));
+        $res = $db->Execute("SELECT loan, UNIX_TIMESTAMP(loantime) AS time FROM ".\Bnt\Db::table('ibank_accounts')." WHERE ship_id = ?", array($ship_id));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         if ($res)
         {
@@ -993,7 +993,7 @@ class Ibank
     {
         global $dplanet_id, $minimum, $maximum, $ibank_tconsolidate, $ibank_paymentfee;
 
-        $res = $db->Execute("SELECT name, credits, owner, sector_id FROM {$db->prefix}planets WHERE planet_id = ?", array($dplanet_id));
+        $res = $db->Execute("SELECT name, credits, owner, sector_id FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($dplanet_id));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         if (!$res || $res->EOF)
         {
@@ -1015,7 +1015,7 @@ class Ibank
         $minimum = preg_replace("/[^0-9]/", "", $minimum);
         $maximum = preg_replace("/[^0-9]/", "", $maximum);
 
-        $query = "SELECT SUM(credits) as total, COUNT(*) AS count FROM {$db->prefix}planets WHERE owner=? AND credits != 0 AND planet_id != ?";
+        $query = "SELECT SUM(credits) as total, COUNT(*) AS count FROM ".\Bnt\Db::table('planets')." WHERE owner=? AND credits != 0 AND planet_id != ?";
 
         if ($minimum != 0)
         {
@@ -1053,7 +1053,7 @@ class Ibank
              "<td><a href='igb.php?command=login'>" . $langvars['l_ibank_back'] . "</a></td><td align=right>&nbsp;<br><a href=\"main.php\">" . $langvars['l_ibank_logout ']. "</a></td>" .
              "</tr>";
 
-        $query = "UPDATE {$db->prefix}planets SET credits=0 WHERE owner=? AND credits != 0 AND planet_id != ?";
+        $query = "UPDATE ".\Bnt\Db::table('planets')." SET credits=0 WHERE owner=? AND credits != 0 AND planet_id != ?";
 
         if ($minimum != 0)
         {
@@ -1067,9 +1067,9 @@ class Ibank
 
         $res = $db->Execute($query, array($playerinfo['ship_id'], $dplanet_id));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
-        $res = $db->Execute("UPDATE {$db->prefix}planets SET credits=credits + ? WHERE planet_id=?", array($transfer, $dplanet_id));
+        $res = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits=credits + ? WHERE planet_id=?", array($transfer, $dplanet_id));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
-        $res = $db->Execute("UPDATE {$db->prefix}ships SET turns=turns - ? WHERE ship_id=?", array($tcost, $playerinfo['ship_id']));
+        $res = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns=turns - ? WHERE ship_id=?", array($tcost, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
     }
 }

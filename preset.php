@@ -30,13 +30,13 @@ Bnt\Header::display($pdo_db, $lang, $template, $title, $body_class);
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('presets', 'common', 'global_includes', 'global_funcs', 'combat', 'footer', 'news'));
 echo "<h1>" . $title . "</h1>\n";
 echo "<body class ='" . $body_class . "'>";
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 // Pull the presets for the player from the db.
 $i=0;
-$debug_query = $db->Execute("SELECT * FROM {$db->prefix}presets WHERE ship_id=?", array($playerinfo['ship_id']));
+$debug_query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('presets')." WHERE ship_id=?", array($playerinfo['ship_id']));
 Bnt\Db::logDbErrors($db, $debug_query ,__LINE__, __FILE__);
 while (!$debug_query->EOF)
 {
@@ -89,7 +89,7 @@ else
     {
         if ($key < $bntreg->preset_max)
         {
-            $update = $db->Execute("UPDATE {$db->prefix}presets SET preset = ? WHERE preset_id = ?;", array($preset_list[$key], $presetinfo[$key]['preset_id']));
+            $update = $db->Execute("UPDATE ".\Bnt\Db::table('presets')." SET preset = ? WHERE preset_id = ?;", array($preset_list[$key], $presetinfo[$key]['preset_id']));
             Bnt\Db::logDbErrors($db, $update, __LINE__, __FILE__);
             $preset_result_echo = str_replace("[preset]", "<a href=rsmove.php?engage=1&destination=$preset_list[$key]>$preset_list[$key]</a>", $langvars['l_pre_set_loop']);
             $preset_result_echo = str_replace("[num]", $key + 1, $preset_result_echo);

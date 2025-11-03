@@ -95,7 +95,7 @@ class Team
 
         // Just a test to see if an team with a name of $name exists.
         // This is just a temp fix until we find a better one.
-        $res = $db->Execute("SELECT COUNT(*) as found FROM {$db->prefix}teams WHERE team_name = ? AND creator != ?;", array($name, $creator));
+        $res = $db->Execute("SELECT COUNT(*) as found FROM ".\Bnt\Db::table('teams')." WHERE team_name = ? AND creator != ?;", array($name, $creator));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $num_res = $res->fields;
         if ($num_res['found'] > 0)
@@ -130,16 +130,16 @@ class Team
         echo "<td><strong><a class='new_link' style='font-size:14px;' href=teams.php?order=character_name&type=$type>" . $langvars['l_team_coord'] . "</a></strong></td>";
         echo "<td><strong><a class='new_link' style='font-size:14px;' href=teams.php?order=total_score&type=$type>" . $langvars['l_score'] . "</a></strong></td>";
         echo "</tr>";
-        $sql_query = "SELECT {$db->prefix}ships.character_name,
+        $sql_query = "SELECT ".\Bnt\Db::table('ships').".character_name,
                     COUNT(*) as number_of_members,
-                    ROUND (SQRT (SUM(POW ({$db->prefix}ships.score, 2)))) as total_score,
-                    {$db->prefix}teams.id,
-                    {$db->prefix}teams.team_name,
-                    {$db->prefix}teams.creator
-                    FROM {$db->prefix}ships
-                    LEFT JOIN {$db->prefix}teams ON {$db->prefix}ships.team = {$db->prefix}teams.id
-                    WHERE {$db->prefix}ships.team = {$db->prefix}teams.id AND admin = 'N'
-                    GROUP BY {$db->prefix}teams.team_name";
+                    ROUND (SQRT (SUM(POW (".\Bnt\Db::table('ships').".score, 2)))) as total_score,
+                    ".\Bnt\Db::table('teams').".id,
+                    ".\Bnt\Db::table('teams').".team_name,
+                    ".\Bnt\Db::table('teams').".creator
+                    FROM ".\Bnt\Db::table('ships')."
+                    LEFT JOIN ".\Bnt\Db::table('teams')." ON ".\Bnt\Db::table('ships').".team = ".\Bnt\Db::table('teams').".id
+                    WHERE ".\Bnt\Db::table('ships').".team = ".\Bnt\Db::table('teams').".id AND admin = 'N'
+                    GROUP BY ".\Bnt\Db::table('teams').".team_name";
 
         // Setting if the order is Ascending or descending, if any.
         // Default is ordered by teams.team_name
@@ -161,7 +161,7 @@ class Team
             echo "<td>{$row['number_of_members']}</td>";
 
             // This fixes it so that it actually displays the coordinator, and not the first member of the team.
-            $res2 = $db->Execute("SELECT character_name FROM {$db->prefix}ships WHERE ship_id = ?;", array($row['creator'])) or die ($db->ErrorMsg());
+            $res2 = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($row['creator'])) or die ($db->ErrorMsg());
             \Bnt\Db::logDbErrors($db, $res2, __LINE__, __FILE__);
             while (!$res2->EOF)
             {
@@ -238,7 +238,7 @@ class Team
         echo "<tr>";
         echo "<td><font color=white>" . $langvars['l_team_members'] . "</font></td>";
         echo "</tr><tr bgcolor=$color_line2>";
-        $result  = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE team = ?;", array($whichteam));
+        $result  = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE team = ?;", array($whichteam));
         \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
         while (!$result->EOF)
         {
@@ -260,7 +260,7 @@ class Team
         }
 
         // Displays for members name
-        $res = $db->Execute("SELECT ship_id, character_name FROM {$db->prefix}ships WHERE team_invite = ?;", array($whichteam));
+        $res = $db->Execute("SELECT ship_id, character_name FROM ".\Bnt\Db::table('ships')." WHERE team_invite = ?;", array($whichteam));
         \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         echo "<td bgcolor=$color_line2><font color=white>" . $langvars['l_team_pending'] . " <strong>" . $team['team_name'] . "</strong></font></td>";
         echo "</tr><tr>";

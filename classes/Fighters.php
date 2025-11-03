@@ -23,7 +23,7 @@ class Fighters
 {
     public static function destroy($db, $sector, $num_fighters)
     {
-        $secdef_res = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id=? AND defence_type ='F' ORDER BY quantity ASC", array($sector));
+        $secdef_res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id=? AND defence_type ='F' ORDER BY quantity ASC", array($sector));
         Db::logDbErrors($db, $secdef_res, __LINE__, __FILE__);
 
         // Put the defence information into the array "defenceinfo"
@@ -34,13 +34,13 @@ class Fighters
                 $row = $secdef_res->fields;
                 if ($row['quantity'] > $num_fighters)
                 {
-                    $update_res = $db->Execute("UPDATE {$db->prefix}sector_defence SET quantity=quantity - ? WHERE defence_id = ?", array($num_fighters, $row['defence_id']));
+                    $update_res = $db->Execute("UPDATE ".\Bnt\Db::table('sector_defence')." SET quantity=quantity - ? WHERE defence_id = ?", array($num_fighters, $row['defence_id']));
                     Db::logDbErrors($db, $update_res, __LINE__, __FILE__);
                     $num_fighters = 0;
                 }
                 else
                 {
-                    $update_res = $db->Execute("DELETE FROM {$db->prefix}sector_defence WHERE defence_id = ?", array($row['defence_id']));
+                    $update_res = $db->Execute("DELETE FROM ".\Bnt\Db::table('sector_defence')." WHERE defence_id = ?", array($row['defence_id']));
                     Db::logDbErrors($db, $update_res, __LINE__, __FILE__);
                     $num_fighters -= $row['quantity'];
                 }

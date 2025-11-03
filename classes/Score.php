@@ -59,7 +59,7 @@ class Score
         $calc_cloak             = "ROUND(POW($upgrade_factor, cloak))";
         $calc_levels            = "($calc_hull + $calc_engines + $calc_power + $calc_computer + $calc_sensors + $calc_beams + $calc_torp_launchers + $calc_shields + $calc_armor + $calc_cloak) * $upgrade_cost";
 
-        $calc_torps             = "{$db->prefix}ships.torps * $torpedo_price";
+        $calc_torps             = "".\Bnt\Db::table('ships').".torps * $torpedo_price";
         $calc_armor_pts         = "armor_pts * $armor_price";
         $calc_ship_ore          = "ship_ore * $ore_price";
         $calc_ship_organics     = "ship_organics * $organics_price";
@@ -79,12 +79,12 @@ class Score
         $calc_dev_minedeflector = "dev_minedeflector * $dev_minedeflector_price";
         $calc_dev               = "$calc_dev_warpedit + $calc_dev_genesis + $calc_dev_beacon + $calc_dev_emerwarp + $calc_dev_escapepod + $calc_dev_fuelscoop + $calc_dev_minedeflector + $calc_dev_lssd";
 
-        $calc_planet_goods      = "SUM({$db->prefix}planets.organics) * $organics_price + SUM({$db->prefix}planets.ore) * $ore_price + SUM({$db->prefix}planets.goods) * $goods_price + SUM({$db->prefix}planets.energy) * $energy_price";
-        $calc_planet_colonists  = "SUM({$db->prefix}planets.colonists) * $colonist_price";
-        $calc_planet_defence    = "SUM({$db->prefix}planets.fighters) * $fighter_price + IF({$db->prefix}planets.base='Y', $base_credits + SUM({$db->prefix}planets.torps) * $torpedo_price, 0)";
-        $calc_planet_credits    = "SUM({$db->prefix}planets.credits)";
+        $calc_planet_goods      = "SUM(".\Bnt\Db::table('planets').".organics) * $organics_price + SUM(".\Bnt\Db::table('planets').".ore) * $ore_price + SUM(".\Bnt\Db::table('planets').".goods) * $goods_price + SUM(".\Bnt\Db::table('planets').".energy) * $energy_price";
+        $calc_planet_colonists  = "SUM(".\Bnt\Db::table('planets').".colonists) * $colonist_price";
+        $calc_planet_defence    = "SUM(".\Bnt\Db::table('planets').".fighters) * $fighter_price + IF(".\Bnt\Db::table('planets').".base='Y', $base_credits + SUM(".\Bnt\Db::table('planets').".torps) * $torpedo_price, 0)";
+        $calc_planet_credits    = "SUM(".\Bnt\Db::table('planets').".credits)";
 
-        $pl_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM {$db->prefix}planets WHERE owner=?", array($ship_id));
+        $pl_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM ".\Bnt\Db::table('planets')." WHERE owner=?", array($ship_id));
         Db::logDbErrors($db, $pl_score_res, __LINE__, __FILE__);
         if ($pl_score_res instanceof ADORecordSet)
         {
@@ -95,7 +95,7 @@ class Score
             $planet_score = null;
         }
 
-        $ship_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + {$db->prefix}ships.credits, 0) AS ship_score FROM {$db->prefix}ships LEFT JOIN {$db->prefix}planets ON {$db->prefix}planets.owner=ship_id WHERE ship_id=? AND ship_destroyed='N'", array($ship_id));
+        $ship_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + ".\Bnt\Db::table('ships').".credits, 0) AS ship_score FROM ".\Bnt\Db::table('ships')." LEFT JOIN ".\Bnt\Db::table('planets')." ON ".\Bnt\Db::table('planets').".owner=ship_id WHERE ship_id=? AND ship_destroyed='N'", array($ship_id));
         Db::logDbErrors($db, $ship_score_res, __LINE__, __FILE__);
         if ($ship_score_res instanceof ADORecordSet)
         {
@@ -106,7 +106,7 @@ class Score
             $ship_score = null;
         }
 
-        $bank_score_res = $db->Execute("SELECT (balance - loan) AS bank_score FROM {$db->prefix}ibank_accounts WHERE ship_id = ?;", array($ship_id));
+        $bank_score_res = $db->Execute("SELECT (balance - loan) AS bank_score FROM ".\Bnt\Db::table('ibank_accounts')." WHERE ship_id = ?;", array($ship_id));
         Db::logDbErrors($db, $bank_score_res, __LINE__, __FILE__);
         if ($bank_score_res instanceof ADORecordSet)
         {
@@ -124,7 +124,7 @@ class Score
         }
 
         $score = (int) round(sqrt($score));
-        $set_score_res = $db->Execute("UPDATE {$db->prefix}ships SET score=? WHERE ship_id=?", array($score, $ship_id));
+        $set_score_res = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET score=? WHERE ship_id=?", array($score, $ship_id));
         Db::logDbErrors($db, $set_score_res, __LINE__, __FILE__);
 
         return $score;

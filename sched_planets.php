@@ -24,7 +24,7 @@ if (strpos($_SERVER['PHP_SELF'], 'sched_planets.php')) // Prevent direct access 
 
 echo "<strong>PLANETS</strong><p>";
 
-$res = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE owner > 0");
+$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE owner > 0");
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 // Using Planet Update Code from BNT version 0.36 due to code bugs.
 // We are now using transactions to off load the SQL stuff in full to the Database Server.
@@ -77,7 +77,7 @@ while (!$res->EOF)
     }
 
     $credits_production = floor($production * $credits_prate * (100.0 - $total_percent) / 100.0);
-    $ret = $db->Execute("UPDATE {$db->prefix}planets SET organics = organics + ?, ore = ore + ?, goods = goods + ?, energy = energy + ?, colonists = colonists + ? - ?, torps = torps + ?, fighters = fighters + ?, credits = credits * ? + ? WHERE planet_id = ? LIMIT 1; ", array($organics_production, $ore_production, $goods_production, $energy_production, $reproduction, $starvation, $torp_production, $fighter_production, $interest_rate, $credits_production, $row['planet_id']));
+    $ret = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET organics = organics + ?, ore = ore + ?, goods = goods + ?, energy = energy + ?, colonists = colonists + ? - ?, torps = torps + ?, fighters = fighters + ?, credits = credits * ? + ? WHERE planet_id = ? LIMIT 1; ", array($organics_production, $ore_production, $goods_production, $energy_production, $reproduction, $starvation, $torp_production, $fighter_production, $interest_rate, $credits_production, $row['planet_id']));
     Bnt\Db::logDbErrors($db, $ret, __LINE__, __FILE__);
     $res->MoveNext();
 }
@@ -86,7 +86,7 @@ $ret = $db->Execute("COMMIT");
 Bnt\Db::logDbErrors($db, $ret, __LINE__, __FILE__);
 if ($bntreg->sched_planet_valid_credits)
 {
-    $ret = $db->Execute("UPDATE {$db->prefix}planets SET credits = ? WHERE credits > ? AND base = 'N';", array($bntreg->max_credits_without_base, $bntreg->max_credits_without_base));
+    $ret = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET credits = ? WHERE credits > ? AND base = 'N';", array($bntreg->max_credits_without_base, $bntreg->max_credits_without_base));
     Bnt\Db::logDbErrors($db, $ret, __LINE__, __FILE__);
 }
 

@@ -74,7 +74,7 @@ class Traderoute
         if ($traderoute['source_type'] == 'P')
         {
             // Retrieve port info here, we'll need it later anyway
-            $result = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?", array($traderoute['source_id']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($traderoute['source_id']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
             if (!$result || $result->EOF)
@@ -92,7 +92,7 @@ class Traderoute
         }
         elseif ($traderoute['source_type'] == 'L' || $traderoute['source_type'] == 'C')  // Get data from planet table
         {
-            $result = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id=? AND (owner = ? OR (corp <> 0 AND corp = ?));", array($traderoute['source_id'], $playerinfo['ship_id'], $playerinfo['team']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id=? AND (owner = ? OR (corp <> 0 AND corp = ?));", array($traderoute['source_id'], $playerinfo['ship_id'], $playerinfo['team']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             if (!$result || $result->EOF)
             {
@@ -132,7 +132,7 @@ class Traderoute
             }
 
             // Store starting port info, we'll need it later
-            $result = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?", array($source['sector_id']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($source['sector_id']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
             if (!$result || $result->EOF)
@@ -146,7 +146,7 @@ class Traderoute
         // Destination Check
         if ($traderoute['dest_type'] == 'P')
         {
-            $result = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?", array($traderoute['dest_id']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($traderoute['dest_id']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
             if (!$result || $result->EOF)
@@ -160,7 +160,7 @@ class Traderoute
         {
             // Check for valid Owned Source Planet
             // This now only returns Planets that the player owns or planets that belong to the team and set as corp planets..
-            $result = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id=? AND (owner = ? OR (corp <> 0 AND corp = ?));", array($traderoute['dest_id'], $playerinfo['ship_id'], $playerinfo['team']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id=? AND (owner = ? OR (corp <> 0 AND corp = ?));", array($traderoute['dest_id'], $playerinfo['ship_id'], $playerinfo['team']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
             if (!$result || $result->EOF)
@@ -189,7 +189,7 @@ class Traderoute
                 }
             }
 
-            $result = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?", array($dest['sector_id']));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?", array($dest['sector_id']));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             if (!$result || $result->EOF)
             {
@@ -212,7 +212,7 @@ class Traderoute
         // Warp or RealSpace and generate distance
         if ($traderoute['move_type'] == 'W')
         {
-            $query = $db->Execute("SELECT link_id FROM {$db->prefix}links WHERE link_start=? AND link_dest=?", array($source['sector_id'], $dest['sector_id']));
+            $query = $db->Execute("SELECT link_id FROM ".\Bnt\Db::table('links')." WHERE link_start=? AND link_dest=?", array($source['sector_id'], $dest['sector_id']));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             if ($query->EOF)
             {
@@ -223,7 +223,7 @@ class Traderoute
 
             if ($traderoute['circuit'] == '2')
             {
-                $query = $db->Execute("SELECT link_id FROM {$db->prefix}links WHERE link_start=? AND link_dest=?", array($dest['sector_id'], $source['sector_id']));
+                $query = $db->Execute("SELECT link_id FROM ".\Bnt\Db::table('links')." WHERE link_start=? AND link_dest=?", array($dest['sector_id'], $source['sector_id']));
                 \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
                 if ($query->EOF)
                 {
@@ -258,12 +258,12 @@ class Traderoute
         // Sector Defense Check
         $hostile = 0;
 
-        $result99 = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id = ? AND ship_id <> ?", array($source['sector_id'], $playerinfo['ship_id']));
+        $result99 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? AND ship_id <> ?", array($source['sector_id'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $result99, __LINE__, __FILE__);
         if (!$result99->EOF)
         {
             $fighters_owner = $result99->fields;
-            $nsresult = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id=?", array($fighters_owner['ship_id']));
+            $nsresult = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($fighters_owner['ship_id']));
             \Bnt\Db::logDbErrors($db, $nsresult, __LINE__, __FILE__);
             $nsfighters = $nsresult->fields;
 
@@ -273,12 +273,12 @@ class Traderoute
             }
         }
 
-        $result98 = $db->Execute("SELECT * FROM {$db->prefix}sector_defence WHERE sector_id = ? AND ship_id <> ?", array($dest['sector_id'], $playerinfo['ship_id']));
+        $result98 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('sector_defence')." WHERE sector_id = ? AND ship_id <> ?", array($dest['sector_id'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $result98, __LINE__, __FILE__);
         if (!$result98->EOF)
         {
             $fighters_owner = $result98->fields;
-            $nsresult = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE ship_id=?", array($fighters_owner['ship_id']));
+            $nsresult = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($fighters_owner['ship_id']));
             \Bnt\Db::logDbErrors($db, $nsresult, __LINE__, __FILE__);
             $nsfighters = $nsresult->fields;
 
@@ -302,7 +302,7 @@ class Traderoute
         // Check if zone allows trading  SRC
         if ($traderoute['source_type'] == 'P')
         {
-            $res = $db->Execute("SELECT * FROM {$db->prefix}zones,{$db->prefix}universe WHERE {$db->prefix}universe.sector_id=? AND {$db->prefix}zones.zone_id={$db->prefix}universe.zone_id;", array($traderoute['source_id']));
+            $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones').",".\Bnt\Db::table('universe')." WHERE ".\Bnt\Db::table('universe').".sector_id=? AND ".\Bnt\Db::table('zones').".zone_id=".\Bnt\Db::table('universe').".zone_id;", array($traderoute['source_id']));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             $zoneinfo = $res->fields;
             if ($zoneinfo['allow_trade'] == 'N')
@@ -313,7 +313,7 @@ class Traderoute
             {
                 if ($zoneinfo['corp_zone'] == 'N')
                 {
-                    $res = $db->Execute("SELECT team FROM {$db->prefix}ships WHERE ship_id=?", array($zoneinfo['owner']));
+                    $res = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($zoneinfo['owner']));
                     \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                     $ownerinfo = $res->fields;
 
@@ -335,7 +335,7 @@ class Traderoute
         // Check if zone allows trading  DEST
         if ($traderoute['dest_type'] == 'P')
         {
-            $res = $db->Execute("SELECT * FROM {$db->prefix}zones,{$db->prefix}universe WHERE {$db->prefix}universe.sector_id=? AND {$db->prefix}zones.zone_id={$db->prefix}universe.zone_id;", array($traderoute['dest_id']));
+            $res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones').",".\Bnt\Db::table('universe')." WHERE ".\Bnt\Db::table('universe').".sector_id=? AND ".\Bnt\Db::table('zones').".zone_id=".\Bnt\Db::table('universe').".zone_id;", array($traderoute['dest_id']));
             \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
             $zoneinfo = $res->fields;
             if ($zoneinfo['allow_trade'] == 'N')
@@ -346,7 +346,7 @@ class Traderoute
             {
                 if ($zoneinfo['corp_zone'] == 'N')
                 {
-                    $res = $db->Execute("SELECT team FROM {$db->prefix}ships WHERE ship_id=?", array($zoneinfo['owner']));
+                    $res = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id=?", array($zoneinfo['owner']));
                     \Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
                     $ownerinfo = $res->fields;
 
@@ -478,7 +478,7 @@ class Traderoute
 
                 if ($traderoute['circuit'] == '1')
                 {
-                    $resb = $db->Execute("UPDATE {$db->prefix}ships SET ship_colonists=ship_colonists+?, ship_fighters=ship_fighters+?,torps=torps+?, ship_energy=ship_energy+? WHERE ship_id=?", array($colonists_buy, $fighters_buy, $torps_buy, $dist['scooped1'], $playerinfo['ship_id']));
+                    $resb = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_colonists=ship_colonists+?, ship_fighters=ship_fighters+?,torps=torps+?, ship_energy=ship_energy+? WHERE ship_id=?", array($colonists_buy, $fighters_buy, $torps_buy, $dist['scooped1'], $playerinfo['ship_id']));
                     \Bnt\Db::logDbErrors($db, $resb, __LINE__, __FILE__);
                 }
             }
@@ -633,7 +633,7 @@ class Traderoute
                     }
                     $playerinfo['ship_ore'] += $ore_buy;
                     $sourcecost -= $ore_buy * $ore_price1;
-                    $resc = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
+                    $resc = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resc, __LINE__, __FILE__);
                 }
 
@@ -663,7 +663,7 @@ class Traderoute
                     $playerinfo['ship_goods'] += $goods_buy;
                     $sourcecost -= $goods_buy * $goods_price1;
 
-                    $resd = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
+                    $resd = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resd, __LINE__, __FILE__);
                 }
 
@@ -693,7 +693,7 @@ class Traderoute
 
                     $playerinfo['ship_organics'] += $organics_buy;
                     $sourcecost -= $organics_buy * $organics_price1;
-                    $rese = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
+                    $rese = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
                     \Bnt\Db::logDbErrors($db, $rese, __LINE__, __FILE__);
                 }
 
@@ -722,7 +722,7 @@ class Traderoute
                     }
                     $playerinfo['ship_energy'] += $energy_buy;
                     $sourcecost -= $energy_buy * $energy_price1;
-                    $resf = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
+                    $resf = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $source['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resf, __LINE__, __FILE__);
                 }
 
@@ -742,7 +742,7 @@ class Traderoute
 
                 if ($traderoute['circuit'] == '1')
                 {
-                    $resf = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore=?, ship_goods=?, ship_organics=?, ship_energy=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_energy'], $playerinfo['ship_id']));
+                    $resf = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore=?, ship_goods=?, ship_organics=?, ship_energy=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_energy'], $playerinfo['ship_id']));
                     \Bnt\Db::logDbErrors($db, $resf, __LINE__, __FILE__);
                 }
             }
@@ -823,7 +823,7 @@ class Traderoute
 
                     if ($traderoute['circuit'] == '1')
                     {
-                        $resg = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore=?, ship_goods=?, ship_organics=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_id']));
+                        $resg = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore=?, ship_goods=?, ship_organics=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_id']));
                         \Bnt\Db::logDbErrors($db, $resg, __LINE__, __FILE__);
                     }
                 }
@@ -831,7 +831,7 @@ class Traderoute
                 {
                 }
 
-                $resh = $db->Execute("UPDATE {$db->prefix}planets SET ore=ore-?, goods=goods-?, organics=organics-? WHERE planet_id=?", array($ore_buy, $goods_buy, $organics_buy, $source['planet_id']));
+                $resh = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET ore=ore-?, goods=goods-?, organics=organics-? WHERE planet_id=?", array($ore_buy, $goods_buy, $organics_buy, $source['planet_id']));
                 \Bnt\Db::logDbErrors($db, $resh, __LINE__, __FILE__);
             }
             // Destination is a planet, so load cols and weapons
@@ -906,11 +906,11 @@ class Traderoute
 
                 if ($traderoute['circuit'] == '1')
                 {
-                    $resi = $db->Execute("UPDATE {$db->prefix}ships SET torps=?, ship_fighters=?, ship_colonists=? WHERE ship_id=?", array($playerinfo['torps'], $playerinfo['ship_fighters'], $playerinfo['ship_colonists'], $playerinfo['ship_id']));
+                    $resi = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET torps=?, ship_fighters=?, ship_colonists=? WHERE ship_id=?", array($playerinfo['torps'], $playerinfo['ship_fighters'], $playerinfo['ship_colonists'], $playerinfo['ship_id']));
                     \Bnt\Db::logDbErrors($db, $resi, __LINE__, __FILE__);
                 }
 
-                $resj = $db->Execute("UPDATE {$db->prefix}planets SET colonists=colonists-?, torps=torps-?, fighters=fighters-? WHERE planet_id=?", array($colonists_buy, $torps_buy, $fighters_buy, $source['planet_id']));
+                $resj = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET colonists=colonists-?, torps=torps-?, fighters=fighters-? WHERE planet_id=?", array($colonists_buy, $torps_buy, $fighters_buy, $source['planet_id']));
                 \Bnt\Db::logDbErrors($db, $resj, __LINE__, __FILE__);
             }
         }
@@ -1091,7 +1091,7 @@ class Traderoute
                         $playerinfo['ship_ore'] += $ore_buy;
                         $destcost -= $ore_buy * $ore_price1;
                     }
-                    $resk = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
+                    $resk = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resk, __LINE__, __FILE__);
                 }
 
@@ -1127,7 +1127,7 @@ class Traderoute
                         $playerinfo['ship_goods'] += $goods_buy;
                         $destcost -= $goods_buy * $goods_price1;
                     }
-                    $resl = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
+                    $resl = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resl, __LINE__, __FILE__);
                 }
 
@@ -1163,7 +1163,7 @@ class Traderoute
                         $playerinfo['ship_organics'] += $organics_buy;
                         $destcost -= $organics_buy * $organics_price1;
                     }
-                    $resm = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
+                    $resm = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resm, __LINE__, __FILE__);
                 }
 
@@ -1205,7 +1205,7 @@ class Traderoute
                         echo $langvars['l_tdr_nothingtotrade'] . "<br>";
                     }
 
-                    $resn = $db->Execute("UPDATE {$db->prefix}universe SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
+                    $resn = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore=port_ore-?, port_energy=port_energy-?, port_goods=port_goods-?, port_organics=port_organics-? WHERE sector_id=?", array($ore_buy, $energy_buy, $goods_buy, $organics_buy, $dest['sector_id']));
                     \Bnt\Db::logDbErrors($db, $resn, __LINE__, __FILE__);
                 }
 
@@ -1218,7 +1218,7 @@ class Traderoute
                         $playerinfo['ship_energy'] = \Bnt\CalcLevels::energy($playerinfo['power'], $level_factor);
                     }
                 }
-                $reso = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore=?, ship_goods=?, ship_organics=?, ship_energy=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_energy'], $playerinfo['ship_id']));
+                $reso = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore=?, ship_goods=?, ship_organics=?, ship_energy=? WHERE ship_id=?", array($playerinfo['ship_ore'], $playerinfo['ship_goods'], $playerinfo['ship_organics'], $playerinfo['ship_energy'], $playerinfo['ship_id']));
                 \Bnt\Db::logDbErrors($db, $reso, __LINE__, __FILE__);
             }
             else // Dest is planet
@@ -1333,24 +1333,24 @@ class Traderoute
                     }
                 }
 
-                $resp = $db->Execute("UPDATE {$db->prefix}planets SET colonists=colonists+?, fighters=fighters+?, torps=torps+? WHERE planet_id=?", array($colonists_buy, $fighters_buy, $torps_buy, $traderoute['dest_id']));
+                $resp = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET colonists=colonists+?, fighters=fighters+?, torps=torps+? WHERE planet_id=?", array($colonists_buy, $fighters_buy, $torps_buy, $traderoute['dest_id']));
                 \Bnt\Db::logDbErrors($db, $resp, __LINE__, __FILE__);
 
                 if ($traderoute['source_type'] == 'L' || $traderoute['source_type'] == 'C')
                 {
-                    $resq = $db->Execute("UPDATE {$db->prefix}ships SET ship_colonists=?, ship_fighters=?, torps=?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
+                    $resq = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_colonists=?, ship_fighters=?, torps=?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
                     \Bnt\Db::logDbErrors($db, $resq, __LINE__, __FILE__);
                 }
                 else
                 {
                     if ($setcol == 1)
                     {
-                        $resr = $db->Execute("UPDATE {$db->prefix}ships SET ship_colonists=?, ship_fighters=ship_fighters-?, torps=torps-?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
+                        $resr = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_colonists=?, ship_fighters=ship_fighters-?, torps=torps-?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
                         \Bnt\Db::logDbErrors($db, $resr, __LINE__, __FILE__);
                     }
                     else
                     {
-                        $ress = $db->Execute("UPDATE {$db->prefix}ships SET ship_colonists=ship_colonists-?, ship_fighters=ship_fighters-?, torps=torps-?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
+                        $ress = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_colonists=ship_colonists-?, ship_fighters=ship_fighters-?, torps=torps-?, ship_energy=ship_energy+? WHERE ship_id=?", array($col_dump, $fight_dump, $torps_dump, $dist['scooped'], $playerinfo['ship_id']));
                         \Bnt\Db::logDbErrors($db, $ress, __LINE__, __FILE__);
                     }
                 }
@@ -1399,7 +1399,7 @@ class Traderoute
         {
             $newsec = $sourceport['sector_id'];
         }
-        $rest = $db->Execute("UPDATE {$db->prefix}ships SET turns=turns-?, credits=credits+?, turns_used=turns_used+?, sector=? WHERE ship_id=?", array($dist['triptime'], $total_profit, $dist['triptime'], $newsec, $playerinfo['ship_id']));
+        $rest = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns=turns-?, credits=credits+?, turns_used=turns_used+?, sector=? WHERE ship_id=?", array($dist['triptime'], $total_profit, $dist['triptime'], $newsec, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $rest, __LINE__, __FILE__);
         $playerinfo['credits']+= $total_profit - $sourcecost;
         $playerinfo['turns']-= $dist['triptime'];
@@ -1433,7 +1433,7 @@ class Traderoute
 
         if (!empty ($traderoute_id))
         {
-            $result = $db->Execute("SELECT * FROM {$db->prefix}traderoutes WHERE traderoute_id=?", array($traderoute_id));
+            $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('traderoutes')." WHERE traderoute_id=?", array($traderoute_id));
             \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
             if (!$result || $result->EOF)
@@ -1469,7 +1469,7 @@ class Traderoute
 
         // Get Planet info Corp and Personal
 
-        $result = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE owner=? ORDER BY sector_id", array($playerinfo['ship_id']));
+        $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE owner=? ORDER BY sector_id", array($playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
         $num_planets = $result->RecordCount();
@@ -1487,7 +1487,7 @@ class Traderoute
             $result->MoveNext();
         }
 
-        $result = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE corp=? AND corp!=0 AND owner<>? ORDER BY sector_id", array($playerinfo['team'], $playerinfo['ship_id']));
+        $result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE corp=? AND corp!=0 AND owner<>? ORDER BY sector_id", array($playerinfo['team'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 
         $num_corp_planets = $result->RecordCount();
@@ -1829,7 +1829,7 @@ class Traderoute
         // Check warp links compatibility
         if ($move == 'warp')
         {
-            $query = $db->Execute("SELECT link_id FROM {$db->prefix}links WHERE link_start=? AND link_dest=?;", array($src['sector_id'], $dest['sector_id']));
+            $query = $db->Execute("SELECT link_id FROM ".\Bnt\Db::table('links')." WHERE link_start=? AND link_dest=?;", array($src['sector_id'], $dest['sector_id']));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             if ($query->EOF)
             {
@@ -1840,7 +1840,7 @@ class Traderoute
 
             if ($circuit == '2')
             {
-                $query = $db->Execute("SELECT link_id FROM {$db->prefix}links WHERE link_start=? AND link_dest=?;", array($dest['sector_id'], $src['sector_id']));
+                $query = $db->Execute("SELECT link_id FROM ".\Bnt\Db::table('links')." WHERE link_start=? AND link_dest=?;", array($dest['sector_id'], $src['sector_id']));
                 \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
                 if ($query->EOF)
                 {
@@ -1897,14 +1897,14 @@ class Traderoute
 
         if ($type1 == 'L')
         {
-            $query = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?;", array($start));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?;", array($start));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             $start = $query->fields;
         }
 
         if ($type2 == 'L')
         {
-            $query = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?;", array($dest));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?;", array($dest));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             $dest = $query->fields;
         }
@@ -2044,7 +2044,7 @@ class Traderoute
                 Traderoute::traderouteDie($db, $pdo_db, $lang, $langvars, $bntreg, $langvars['l_tdr_invalidspoint'], $template);
             }
 
-            $query = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?;", array($port_id1));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?;", array($port_id1));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             if (!$query || $query->EOF)
             {
@@ -2062,7 +2062,7 @@ class Traderoute
         }
         else
         {
-            $query = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id=?;", array($planet_id1));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id=?;", array($planet_id1));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             $source = $query->fields;
             if (!$query || $query->EOF)
@@ -2093,7 +2093,7 @@ class Traderoute
         // OK we have $source, *probably* now lets see if we have ever been there
         // Attempting to fix the map the universe via traderoute bug
 
-        $pl1query = $db->Execute("SELECT * FROM {$db->prefix}movement_log WHERE sector_id=? AND ship_id = ?;", array($source['sector_id'], $playerinfo['ship_id']));
+        $pl1query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('movement_log')." WHERE sector_id=? AND ship_id = ?;", array($source['sector_id'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $pl1query, __LINE__, __FILE__);
         $num_res1 = $pl1query->numRows();
         if ($num_res1 == 0)
@@ -2111,7 +2111,7 @@ class Traderoute
                 Traderoute::traderouteDie($db, $pdo_db, $lang, $langvars, $bntreg, $langvars['l_tdr_invaliddport'], $template);
             }
 
-            $query = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id=?;", array($port_id2));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id=?;", array($port_id2));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             if (!$query || $query->EOF)
             {
@@ -2129,7 +2129,7 @@ class Traderoute
         }
         else
         {
-            $query = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id=?;", array($planet_id2));
+            $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id=?;", array($planet_id2));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             $destination = $query->fields;
             if (!$query || $query->EOF)
@@ -2156,7 +2156,7 @@ class Traderoute
         }
 
         // OK now we have $destination lets see if we've been there.
-        $pl2query = $db->Execute("SELECT * FROM {$db->prefix}movement_log WHERE sector_id=? AND ship_id = ?;", array($destination['sector_id'], $playerinfo['ship_id']));
+        $pl2query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('movement_log')." WHERE sector_id=? AND ship_id = ?;", array($destination['sector_id'], $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $pl2query, __LINE__, __FILE__);
         $num_res2 = $pl2query->numRows();
         if ($num_res2 == 0)
@@ -2235,13 +2235,13 @@ class Traderoute
 
         if (empty ($editing))
         {
-            $query = $db->Execute("INSERT INTO {$db->prefix}traderoutes VALUES(NULL, ?, ?, ?, ?, ?, ?, ?);", array($src_id, $dest_id, $src_type, $dest_type, $mtype, $playerinfo['ship_id'], $circuit_type));
+            $query = $db->Execute("INSERT INTO ".\Bnt\Db::table('traderoutes')." VALUES(NULL, ?, ?, ?, ?, ?, ?, ?);", array($src_id, $dest_id, $src_type, $dest_type, $mtype, $playerinfo['ship_id'], $circuit_type));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             echo "<p>" . $langvars['l_tdr_newtdrcreated'];
         }
         else
         {
-            $query = $db->Execute("UPDATE {$db->prefix}traderoutes SET source_id=?, dest_id=?, source_type=?, dest_type=?, move_type=?, owner=?, circuit=? WHERE traderoute_id=?;", array($src_id, $dest_id, $src_type, $dest_type, $mtype, $playerinfo['ship_id'], $circuit_type, $editing));
+            $query = $db->Execute("UPDATE ".\Bnt\Db::table('traderoutes')." SET source_id=?, dest_id=?, source_type=?, dest_type=?, move_type=?, owner=?, circuit=? WHERE traderoute_id=?;", array($src_id, $dest_id, $src_type, $dest_type, $mtype, $playerinfo['ship_id'], $circuit_type, $editing));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             echo "<p>" . $langvars['l_tdr_modified'];
         }
@@ -2253,7 +2253,7 @@ class Traderoute
 
     public static function traderouteDelete($db, $lang, $langvars, $bntreg, $template, $playerinfo, $confirm, $num_traderoutes, $traderoute_id, $traderoutes)
     {
-        $query = $db->Execute("SELECT * FROM {$db->prefix}traderoutes WHERE traderoute_id=?;", array($traderoute_id));
+        $query = $db->Execute("SELECT * FROM ".\Bnt\Db::table('traderoutes')." WHERE traderoute_id=?;", array($traderoute_id));
         \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
 
         if (!$query || $query->EOF)
@@ -2276,7 +2276,7 @@ class Traderoute
         }
         else
         {
-            $query = $db->Execute("DELETE FROM {$db->prefix}traderoutes WHERE traderoute_id=?;", array($traderoute_id));
+            $query = $db->Execute("DELETE FROM ".\Bnt\Db::table('traderoutes')." WHERE traderoute_id=?;", array($traderoute_id));
             \Bnt\Db::logDbErrors($db, $query, __LINE__, __FILE__);
             $langvars['l_tdr_returnmenu'] = str_replace("[here]", "<a href='traderoute.php'>" . $langvars['l_here'] . "</a>", $langvars['l_tdr_returnmenu']);
             echo $langvars['l_tdr_deleted'] . " " . $langvars['l_tdr_returnmenu'];
@@ -2358,7 +2358,7 @@ class Traderoute
         empty ($fighters) ? $fighters = 'N' : $fighters = 'Y';
         empty ($torps) ? $torps = 'N' : $torps = 'Y';
 
-        $resa = $db->Execute("UPDATE {$db->prefix}ships SET trade_colonists=?, trade_fighters=?, trade_torps=?, trade_energy=? WHERE ship_id=?;", array($colonists, $fighters, $torps, $energy, $playerinfo['ship_id']));
+        $resa = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET trade_colonists=?, trade_fighters=?, trade_torps=?, trade_energy=? WHERE ship_id=?;", array($colonists, $fighters, $torps, $energy, $playerinfo['ship_id']));
         \Bnt\Db::logDbErrors($db, $resa, __LINE__, __FILE__);
 
         $langvars['l_tdr_returnmenu'] = str_replace("[here]", "<a href='traderoute.php'>" . $langvars['l_here'] . "</a>", $langvars['l_tdr_returnmenu']);

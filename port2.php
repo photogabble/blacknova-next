@@ -27,15 +27,15 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('port', 'device', 'report', 'common', 'global_includes', 'global_funcs', 'footer', 'news', 'regional'));
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}universe WHERE sector_id = ?;", array($playerinfo['sector']));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('universe')." WHERE sector_id = ?;", array($playerinfo['sector']));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $sectorinfo = $result2->fields;
 
-$res = $db->Execute("SELECT * FROM {$db->prefix}zones WHERE zone_id = ?;", array($sectorinfo['zone_id']));
+$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('zones')." WHERE zone_id = ?;", array($sectorinfo['zone_id']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $zoneinfo = $res->fields;
 
@@ -52,7 +52,7 @@ elseif ($zoneinfo['allow_trade'] == 'L')
 {
     if ($zoneinfo['corp_zone'] == 'N')
     {
-        $res = $db->Execute("SELECT team FROM {$db->prefix}ships WHERE ship_id = ?;", array($zoneinfo['owner']));
+        $res = $db->Execute("SELECT team FROM ".\Bnt\Db::table('ships')." WHERE ship_id = ?;", array($zoneinfo['owner']));
         Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $ownerinfo = $res->fields;
 
@@ -377,7 +377,7 @@ else
                     </tr>";
 
             //  Total cost is " . number_format(abs($total_cost), 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']) . " credits.<br><br>";
-            $query = "UPDATE {$db->prefix}ships SET credits=credits-$total_cost";
+            $query = "UPDATE ".\Bnt\Db::table('ships')." SET credits=credits-$total_cost";
             if ($hull_upgrade > $playerinfo['hull'])
             {
                 $tempvar = 0;
@@ -544,7 +544,7 @@ else
             {
                 // build_two_col("<span style='color:#f00;'>Detected Illegal Cargo</span>", "<span style='color:#0f0;'>Fixed</span>", "left", "right");
                 echo "<span style='color:#f00; font-weight:bold;'>Detected illegal cargo, as a penalty, we are confiscating all of your cargo, you may now continue.</span>\n";
-                $resx = $db->Execute("UPDATE {$db->prefix}ships SET ship_ore=0, ship_organics=0, ship_goods=0, ship_energy=0, ship_colonists =0 WHERE ship_id = ? LIMIT 1;", array($playerinfo['ship_id']));
+                $resx = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET ship_ore=0, ship_organics=0, ship_goods=0, ship_energy=0, ship_colonists =0 WHERE ship_id = ? LIMIT 1;", array($playerinfo['ship_id']));
                 Bnt\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
                 Bnt\AdminLog::writeLog($db, 5001, "Detected illegal cargo on shipID: {$playerinfo['ship_id']}");
             }
@@ -724,7 +724,7 @@ else
                     </table>";
 
             // Update ship cargo, credits and turns
-            $trade_result     = $db->Execute("UPDATE {$db->prefix}ships SET turns = turns - 1, turns_used = turns_used + 1, rating = rating + 1, credits = credits - ?, ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, ship_energy = ship_energy + ? WHERE ship_id = ?;", array($total_cost, $trade_ore, $trade_organics, $trade_goods, $trade_energy, $playerinfo['ship_id']));
+            $trade_result     = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET turns = turns - 1, turns_used = turns_used + 1, rating = rating + 1, credits = credits - ?, ship_ore = ship_ore + ?, ship_organics = ship_organics + ?, ship_goods = ship_goods + ?, ship_energy = ship_energy + ? WHERE ship_id = ?;", array($total_cost, $trade_ore, $trade_organics, $trade_goods, $trade_energy, $playerinfo['ship_id']));
             Bnt\Db::logDbErrors($db, $trade_result, __LINE__, __FILE__);
 
             // Make all trades positive to change port values
@@ -734,7 +734,7 @@ else
             $trade_energy     = round(abs($trade_energy));
 
             // Decrease supply and demand on port
-            $trade_result2    = $db->Execute("UPDATE {$db->prefix}universe SET port_ore = port_ore - ?, port_organics = port_organics - ?, port_goods = port_goods - ?, port_energy = port_energy - ? WHERE sector_id = ?;", array($trade_ore, $trade_organics, $trade_goods, $trade_energy, $sectorinfo['sector_id']));
+            $trade_result2    = $db->Execute("UPDATE ".\Bnt\Db::table('universe')." SET port_ore = port_ore - ?, port_organics = port_organics - ?, port_goods = port_goods - ?, port_energy = port_energy - ? WHERE sector_id = ?;", array($trade_ore, $trade_organics, $trade_goods, $trade_energy, $sectorinfo['sector_id']));
             Bnt\Db::logDbErrors($db, $trade_result2, __LINE__, __FILE__);
 
             echo $langvars['l_trade_complete'] . ".<br><br>";

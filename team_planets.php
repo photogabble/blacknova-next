@@ -27,7 +27,7 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('team_planets', 'planet_report', 'planet', 'main', 'port', 'common', 'global_includes', 'global_funcs', 'footer', 'news', 'regional'));
 
-$res = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$res = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 $playerinfo = $res->fields;
 
@@ -40,7 +40,7 @@ if ($playerinfo['team'] == 0)
     return;
 }
 
-$query = "SELECT * FROM {$db->prefix}planets WHERE corp=$playerinfo[team]";
+$query = "SELECT * FROM ".\Bnt\Db::table('planets')." WHERE corp=$playerinfo[team]";
 if (!empty ($sort))
 {
     $query .= " ORDER BY";
@@ -142,7 +142,7 @@ else
         }
 
         $owner = $planet[$i]['owner'];
-        $res = $db->Execute("SELECT character_name FROM {$db->prefix}ships WHERE ship_id=$owner");
+        $res = $db->Execute("SELECT character_name FROM ".\Bnt\Db::table('ships')." WHERE ship_id=$owner");
         Bnt\Db::logDbErrors($db, $res, __LINE__, __FILE__);
         $player = $res->fields['character_name'];
 

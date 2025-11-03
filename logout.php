@@ -27,7 +27,7 @@ $langvars = Bnt\Translate::load($pdo_db, $lang, array('logout', 'common', 'globa
 if (array_key_exists('username', $_SESSION))
 {
     $current_score = 0;
-    $result = $db->Execute("SELECT ship_id FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+    $result = $db->Execute("SELECT ship_id FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
     Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
     $playerinfo = $result->fields;
     $current_score = Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);

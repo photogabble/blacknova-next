@@ -27,13 +27,13 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('corp', 'common', 'global_funcs', 'global_includes', 'combat', 'footer', 'news'));
 
-$result = $db->Execute("SELECT * FROM {$db->prefix}ships WHERE email = ?;", array($_SESSION['username']));
+$result = $db->Execute("SELECT * FROM ".\Bnt\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
 $playerinfo = $result->fields;
 
 $planet_id = preg_replace('/[^0-9]/', '', $planet_id);
 
-$result2 = $db->Execute("SELECT * FROM {$db->prefix}planets WHERE planet_id = ?", array($planet_id));
+$result2 = $db->Execute("SELECT * FROM ".\Bnt\Db::table('planets')." WHERE planet_id = ?", array($planet_id));
 Bnt\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 if ($result2)
 {
@@ -46,7 +46,7 @@ if ($planetinfo['owner'] == $playerinfo['ship_id'] || ($planetinfo['corp'] == $p
     if ($action == "planetcorp")
     {
         echo $langvars['l_corpm_tocorp'] . "<br>";
-        $result = $db->Execute("UPDATE {$db->prefix}planets SET corp=?, owner=? WHERE planet_id = ?;", array($playerinfo['team'], $playerinfo['ship_id'], $planet_id));
+        $result = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp=?, owner=? WHERE planet_id = ?;", array($playerinfo['team'], $playerinfo['ship_id'], $planet_id));
         Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
         $ownership = Bnt\Ownership::calc($db, $playerinfo['sector'], $min_bases_to_own, $langvars);
 
@@ -59,12 +59,12 @@ if ($planetinfo['owner'] == $playerinfo['ship_id'] || ($planetinfo['corp'] == $p
     if ($action == "planetpersonal")
     {
         echo $langvars['l_corpm_topersonal'] . "<br>";
-        $result = $db->Execute("UPDATE {$db->prefix}planets SET corp='0', owner = ? WHERE planet_id = ?;", array($playerinfo['ship_id'], $planet_id));
+        $result = $db->Execute("UPDATE ".\Bnt\Db::table('planets')." SET corp='0', owner = ? WHERE planet_id = ?;", array($playerinfo['ship_id'], $planet_id));
         Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
         $ownership = Bnt\Ownership::calc($db, $playerinfo['sector'], $min_bases_to_own, $langvars);
 
         // Kick other players off the planet
-        $result = $db->Execute("UPDATE {$db->prefix}ships SET on_planet='N' WHERE on_planet='Y' AND planet_id = ? AND ship_id <> ?;", array($planet_id, $playerinfo['ship_id']));
+        $result = $db->Execute("UPDATE ".\Bnt\Db::table('ships')." SET on_planet='N' WHERE on_planet='Y' AND planet_id = ? AND ship_id <> ?;", array($planet_id, $playerinfo['ship_id']));
         Bnt\Db::logDbErrors($db, $result, __LINE__, __FILE__);
         if (!empty($ownership))
         {

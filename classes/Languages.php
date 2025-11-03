@@ -24,7 +24,7 @@ class Languages
     public static function listAvailable($pdo_db, $lang)
     {
         // Get a list of supported languages
-        $sql = "SELECT section, name, value FROM {$pdo_db->prefix}languages WHERE category = :category AND (name = :name1 OR name = :name2) ORDER BY section, name;";
+        $sql = "SELECT section, name, value FROM ".Db::table('languages')." WHERE category = :category AND (name = :name1 OR name = :name2) ORDER BY section, name;";
         $stmt = $pdo_db->prepare($sql);
         $stmt->bindValue(':category', 'regional');
         $stmt->bindValue(':name1', 'local_lang_name');

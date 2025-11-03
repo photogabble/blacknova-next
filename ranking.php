@@ -59,7 +59,7 @@ switch ($sort)
         $by = 'rating ASC, character_name ASC';
         break;
     case 'team':
-        $by = "{$db->prefix}teams.team_name DESC, character_name ASC";
+        $by = "".\Bnt\Db::table('teams').".team_name DESC, character_name ASC";
         break;
     case 'efficiency':
         $by = 'efficiency DESC';
@@ -71,7 +71,7 @@ switch ($sort)
 
 $variables['num_players'] = (int) 0;
 
-$rs = $db->SelectLimit("SELECT {$db->prefix}ships.ship_id, {$db->prefix}ships.email, {$db->prefix}ships.ip_address, {$db->prefix}ships.score, {$db->prefix}ships.character_name, {$db->prefix}ships.turns_used, {$db->prefix}ships.last_login,UNIX_TIMESTAMP({$db->prefix}ships.last_login) as online, {$db->prefix}ships.rating, {$db->prefix}teams.team_name, {$db->prefix}teams.admin AS team_admin, if ({$db->prefix}ships.turns_used<150,0,ROUND({$db->prefix}ships.score/{$db->prefix}ships.turns_used)) AS efficiency FROM {$db->prefix}ships LEFT JOIN {$db->prefix}teams ON {$db->prefix}ships.team = {$db->prefix}teams.id  WHERE ship_destroyed='N' and email NOT LIKE '%@xenobe' AND turns_used >0 ORDER BY $by", $bntreg->max_ranks);
+$rs = $db->SelectLimit("SELECT ".\Bnt\Db::table('ships').".ship_id, ".\Bnt\Db::table('ships').".email, ".\Bnt\Db::table('ships').".ip_address, ".\Bnt\Db::table('ships').".score, ".\Bnt\Db::table('ships').".character_name, ".\Bnt\Db::table('ships').".turns_used, ".\Bnt\Db::table('ships').".last_login,UNIX_TIMESTAMP(".\Bnt\Db::table('ships').".last_login) as online, ".\Bnt\Db::table('ships').".rating, ".\Bnt\Db::table('teams').".team_name, ".\Bnt\Db::table('teams').".admin AS team_admin, if (".\Bnt\Db::table('ships').".turns_used<150,0,ROUND(".\Bnt\Db::table('ships').".score/".\Bnt\Db::table('ships').".turns_used)) AS efficiency FROM ".\Bnt\Db::table('ships')." LEFT JOIN ".\Bnt\Db::table('teams')." ON ".\Bnt\Db::table('ships').".team = ".\Bnt\Db::table('teams').".id  WHERE ship_destroyed='N' and email NOT LIKE '%@xenobe' AND turns_used >0 ORDER BY $by", $bntreg->max_ranks);
 Bnt\Db::logDbErrors($db, $rs, __LINE__, __FILE__);
 if ($rs instanceof ADORecordSet)
 {
