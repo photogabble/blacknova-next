@@ -22,7 +22,7 @@ namespace BlackNova\Repositories; // Domain Entity organization pattern, Players
 use BlackNova\Services\Db;
 use PDO;
 
-class PlayersGateway // Gateway for SQL calls related to Players
+class PlayerRepository // Gateway for SQL calls related to Players
 {
     protected $pdo_db; // This will hold a protected version of the pdo_db variable
 
