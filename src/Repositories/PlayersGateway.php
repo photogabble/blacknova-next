@@ -17,7 +17,7 @@
 //
 // File: classes/Players/PlayersGateway.php
 
-namespace Bnt\Players; // Domain Entity organization pattern, Players objects
+namespace BlackNova\Repositories; // Domain Entity organization pattern, Players objects
 
 use BlackNova\Services\Db;
 use PDO;
