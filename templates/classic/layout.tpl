@@ -97,11 +97,11 @@ if (news.initTicker("news_ticker") == true)
 {if $variables['suppress_logo'] == false}
     <p style='float:left; text-align:left'><a href='http://www.sourceforge.net/projects/blacknova'><img style="border:none;" width="{$variables['sf_logo_width']}" height="{$variables['sf_logo_height']}" src="http://sflogo.sourceforge.net/sflogo.php?group_id=14248&amp;type={$variables['sf_logo_type']}" alt="Blacknova Traders at SourceForge.net"></a></p>
 {/if}
-    <p style="font-size:smaller; float:right; text-align:right"><a class="new_link" href="news.php{$variables['sf_logo_link']}">{$langvars['l_local_news']}</a>
+    <p style="font-size:smaller; float:right; text-align:right"><a class="new_link" href="/news{$variables['sf_logo_link']}">{$langvars['l_local_news']}</a>
     <br>&copy; 2000-{$variables['cur_year']} Ron Harwood &amp; the BNT Dev team
 
 {if isset($variables['footer_show_debug']) && $variables['footer_show_debug'] == true}
-    <br>{$variables['elapsed']} {$langvars['l_seconds']} {$langvars['l_time_gen_page']} / {$variables['mem_peak_usage']}{$langvars['l_peak_mem']}
+    <br>{$variables['elapsed']} {$langvars['l_seconds']} {$langvars['l_time_gen_page']} / {$variables['mem_peak_usage']}{$langvars['l_peak_mem']}{if isset($variables['num_queries'])}, {$variables['num_queries']} queries{/if}
 {/if}
 </p>
 

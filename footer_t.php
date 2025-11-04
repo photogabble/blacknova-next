@@ -99,7 +99,7 @@ if ($news_ticker_active == true)
     {
         foreach($row as $item)
         {
-            array_push($news_ticker, array('url' => "news.php", 'text' => $item['headline'], 'type' => $item['news_type'], 'delay' => 5));
+            array_push($news_ticker, array('url' => "/news", 'text' => $item['headline'], 'type' => $item['news_type'], 'delay' => 5));
         }
         array_push($news_ticker, array('url'=>null, 'text' => "End of News", 'type' => null, 'delay' => 5));
     }
