@@ -32,7 +32,8 @@
     "smarty/smarty": "^5.4",
     "symfony/mailer": "^7.1",
     "ext-mbstring": "*",
-    "photogabble/tuppence": "^2.0"
+    "photogabble/tuppence": "^2.0",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {

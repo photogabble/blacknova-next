@@ -3,7 +3,7 @@
     RewriteBase /
 
     # Protect sensitive directories and files
-    RewriteRule ^(src|bootstrap|config|templates|vendor|tests)/.*$ - [F,L]
+    RewriteRule ^(src|bootstrap|config|vendor|tests)/.*$ - [F,L]
     RewriteRule ^(composer\.(json|lock)|\.env|\.git)$ - [F,L]
 
     # Allow direct access to existing assets

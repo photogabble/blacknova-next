@@ -55,7 +55,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td>" . $langvars['l_opt_select'] . "</td><td><select name=newlang>\n";
 
-$avail_langs = Bnt\Languages::listAvailable($pdo_db, $lang);
+$avail_langs = Bnt\Languages::listAvailable($lang);
 foreach($avail_langs as $language_list_item_name => $language_list_item)
 {
     if ($language_list_item_name == $playerinfo['lang'])

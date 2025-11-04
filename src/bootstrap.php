@@ -20,6 +20,8 @@
 use Photogabble\Tuppence\App;
 use Smarty\Smarty;
 
+define('APP_START', microtime(true));
+
 if (!defined('APP_ROOT')) define('APP_ROOT', realpath(__DIR__ . '/../'));
 
 include APP_ROOT . '/vendor/autoload.php';
@@ -38,12 +40,15 @@ $app = new App();
 // Get the DI container
 $container = $app->getContainer();
 
-// Register database connection
-$container->add('db', function () {
-    return \BlackNova\Services\Db::initDb();
+// Initiate database connection
+\BlackNova\Services\Db::initDb(APP_ROOT . '/config/db_config.php');
+
+// Load Configuration
+$container->add('config', function () {
+    return new \Bnt\Reg();
 });
-//
-//// Register template engine
+
+// Register template engine
 $container->add(Smarty::class, function() {
     if (!is_dir(APP_ROOT . '/templates')) {
         die('Error: The templates/ subdirectory under the main BNT directory does not exist. Please create it.');
@@ -91,5 +96,19 @@ $container->add(Smarty::class, function() {
 //        $container->get(SessionManager::class)
 //    );
 //});
+
+function app(): App {
+    return App::getInstance();
+}
+
+function config(?string $key = null, mixed $default = null): mixed {
+    $app = App::getInstance();
+
+    /** @var \Bnt\Reg $config */
+    $config = $app->getContainer()->get('config');
+
+    if (is_null($key)) return $config;
+    return $config->{$key} ?? $default;
+}
 
 return $app;

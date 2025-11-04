@@ -23,8 +23,7 @@ if (\BlackNova\Services\Db::isActive())
 {
     $stamp = date("Y-m-d H:i:s", time()); // Now (as seen by PHP)
     $since_stamp = date("Y-m-d H:i:s", time() - 5 * 60); // Five minutes ago
-    $players_gateway = new \Bnt\Players\PlayersGateway($pdo_db); // Build a player gateway object to handle the SQL calls
-    $online = $players_gateway->selectPlayersLoggedIn($since_stamp, $stamp); // Online is the (int) count of the numbers of players currently logged in via SQL select
+    $online = \Bnt\Players\PlayersGateway::selectPlayersLoggedIn($since_stamp, $stamp); // Online is the (int) count of the numbers of players currently logged in via SQL select
 }
 
 $elapsed = (int) 999; // Default value for elapsed, overridden with an actual value if its available
@@ -47,8 +46,7 @@ if (!\BlackNova\Services\Db::isActive())
 }
 
 // Update counter
-$scheduler_gateway = new \Bnt\Scheduler\SchedulerGateway($pdo_db); // Build a scheduler gateway object to handle the SQL calls
-$last_run = $scheduler_gateway->selectSchedulerLastRun(); // Last run is the (int) count of the numbers of players currently logged in via SQL select or false if DB is not active
+$last_run = \Bnt\Scheduler\SchedulerGateway::selectSchedulerLastRun(); // Last run is the (int) count of the numbers of players currently logged in via SQL select or false if DB is not active
 if ($last_run !== false)
 {
     $seconds_left = ($bntreg->sched_ticks * 60) - (time() - $last_run);
@@ -87,8 +85,7 @@ if ($news_ticker_active == true)
     // $langvars = array_unique ($langvars);
 
     // SQL call that selects all of the news items between the start date beginning of day, and the end of day.
-    $news_gateway = new \Bnt\News\NewsGateway($pdo_db); // Build a scheduler gateway object to handle the SQL calls
-    $row = $news_gateway->selectNewsByDay(date('Y-m-d'));
+    $row = \Bnt\News\NewsGateway::selectNewsByDay(date('Y-m-d'));
 
     $news_ticker = array();
     if (count($row) == 0)

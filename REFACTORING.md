@@ -58,6 +58,47 @@ This is almost as big an undertaking as refactoring the database service. I can 
 
 The application makes use of the [Smarty Template Engine](https://www.smarty.net/) which I haven't much experience with but shall continue using.
 
+#### Refactoring Templates
+This task encompasses converting `main.php` to being template driven. However, I shall begin with `index.php` as it's the first page that a player sees and while quite simple on the surface, it's a good place to start.
+
+As with most tasks, when you dig beneath the surface of the code, you find that it's not quite as simple as you might think.
+
+For example, `index.php` has a dependency upon: `common.php`, `classes/Translate.php`, `classes/Languages.php` and `footer_t.php`. Each of these has their own dependencies, and so on.
+
+There is duplication of code in `index.php` and `common.php` relating to language selection. I'm using **Tuppence** to handle the routing and so can create middleware to handle language selection.
+
+The `footer_t.php` file is used by a number of pages to define shared variables for the pages such as player online count, etc. This is the perfect candidate for where to begin refactoring.
+
+- [x] Have `Reg` class be loaded into IoC as config container and available via `config(...)` helper function
+- [x] Refactor `footer_t.php`
+  - [x] Create helper function for `bnttimer` for the elapsed load time
+  - [ ] Update `PlayersGateway` to be aware of `Db` refactoring
+  - [ ] Update `SchedulerGateway` to be aware of `Db` refactoring
+  - [ ] Update `NewsGateway` to be aware of `Db` refactoring
+  - [ ] Create a `view` helper function to render templates, passing in the common values set in `footer_t.php`
+
+**Common values from `footer_t.php`**:
+
+- `cur_year` this year
+- `footer_show_debug` passed through from `Bnt->footer_show_debug`
+- `mem_peak_usage` calculated from `memory_get_peak_usage()`
+- `elapsed` processing time in seconds
+- `sf_logo_*`, there are four values for the Stack Forge logo, these change depending on the type of page:
+  - `sf_logo_link`
+  - `sf_logo_width`
+  - `sf_logo_height`
+  - `sf_logo_type`
+- `players_online` value obtained from `PlayersGateway`
+- `update_ticker` array of values from `SchedulerGateway`
+
+#### Refactoring Translations / Locale
+To refactor templates, I need to also refactor how translations are handled. I will be creating `LocaleMiddleware` to handle language selection, but also need a way of loading the translations from the database. The existing `Translate` class is functional but can be improved. Instead of passing a list of `$categories` to it, I want to
+instead be able to call `Translate::get('category', 'key')` and have it return the translation for the given category and key. 
+
+- [ ] Create `LocaleMiddleware` to handle language selection, listens to a GET parameter and persists it in session
+- [ ] Create `Translate::get` method
+- [ ] Create `lang()` helper function
+
 ### Refactoring Reg
 `classes/Reg.php` is used as a global registry for the game configuration loading it from the database if existing or else from an ini file.
 
@@ -72,6 +113,7 @@ Part of **migrating all files to use templates** will be detangling markup from 
 
 I have previously written [Tuppence](https://github.com/photogabble/tuppence) a micro-framework for PHP that I have used in other projects. I think that it would be a good idea to use that as a starting point for this refactoring. This is because it provides a powerful PSR-11 dependency injection container, a fast PSR-7 router supporting PSR-15 middleware and a simple and effective PSR-14 event dispatcher all provided by **The League of Extraordinary Packages**.
 
+- [x] Install Tuppence
 - [ ] Implement Post→Redirect→Get pattern
 
 Once the application is to the point where all files have been converted to use templates for presentation and controllers for business logic, the Post→Redirect→Get pattern will naturally be implemented.

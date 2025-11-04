@@ -774,16 +774,16 @@
         },
         {
             "name": "photogabble/tuppence",
-            "version": "2.0.4",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/photogabble/tuppence.git",
-                "reference": "ac87d75e673ade904dabea4bfe73926e880a97dc"
+                "reference": "16984498a49b32e6bc20b830a5b7e0d23b6cdcf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/photogabble/tuppence/zipball/ac87d75e673ade904dabea4bfe73926e880a97dc",
-                "reference": "ac87d75e673ade904dabea4bfe73926e880a97dc",
+                "url": "https://api.github.com/repos/photogabble/tuppence/zipball/16984498a49b32e6bc20b830a5b7e0d23b6cdcf7",
+                "reference": "16984498a49b32e6bc20b830a5b7e0d23b6cdcf7",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +795,7 @@
                 "php": "^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.5"
+                "phpunit/phpunit": "^11.3"
             },
             "type": "library",
             "extra": {
@@ -822,9 +822,9 @@
             "description": "Extremely small framework.",
             "support": {
                 "issues": "https://github.com/photogabble/tuppence/issues",
-                "source": "https://github.com/photogabble/tuppence/tree/2.0.4"
+                "source": "https://github.com/photogabble/tuppence/tree/2.0.6"
             },
-            "time": "2024-05-14T08:18:09+00:00"
+            "time": "2025-11-04T08:51:29+00:00"
         },
         {
             "name": "psr/container",

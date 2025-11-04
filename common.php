@@ -76,7 +76,7 @@ ob_start(array('Bnt\Compress', 'compress'));       // Start a buffer, and when i
 $pdo_db = \BlackNova\Services\Db::connection();
 $db = \BlackNova\Services\Db::connection();
 
-$bntreg = new Bnt\Reg($pdo_db);                    // BNT Registry object -  passing config variables via classes
+$bntreg = new Bnt\Reg();                           // BNT Registry object -  passing config variables via classes
 $bntreg->bnttimer = new Bnt\Timer;                 // Create a benchmark timer to get benchmarking data for everything
 $bntreg->bnttimer->start();                        // Start benchmarking immediately
 $langvars = null;                                  // Language variables in every page, set them to a null value first
