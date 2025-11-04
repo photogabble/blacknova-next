@@ -19,33 +19,25 @@
 
 namespace Bnt\Scheduler; // Domain Entity organization pattern, Players objects
 
+use BlackNova\Services\Db;
+
 class SchedulerGateway // Gateway for SQL calls related to Players
 {
-    protected $pdo_db; // This will hold a protected version of the pdo_db variable
-
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
-    {
-        $this->pdo_db = $pdo_db;
-    }
-
-    public function selectSchedulerLastRun()
+    public static function selectSchedulerLastRun(): false|int
     {
         // It is possible to have this call run before the game is setup, so we need to test to ensure the db is active
-        if (\BlackNova\Services\Db::isActive())
-        {
-            // SQL call that selects the last run of the scheduler, and only one record
-            $sql = "SELECT last_run FROM ".\BlackNova\Services\Db::table('scheduler')." LIMIT 1";
-            $stmt = $this->pdo_db->query($sql); // Query the pdo DB using this SQL call
-            $row = $stmt->fetchObject();
-            \BlackNova\Services\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
+        if (!Db::isActive()) return false;
 
-            if (is_object($row))
-            {
-                return (int) $row->last_run; // Return the int value of the last scheduler run
-            }
+        // SQL call that selects the last run of the scheduler, and only one record
+        $sql = "SELECT last_run FROM ". Db::table('scheduler')." LIMIT 1";
+        $stmt = Db::query($sql);
+        $row = $stmt->fetchObject();
+
+        if (is_object($row)) {
+            return (int) $row->last_run; // Return the int value of the last scheduler run
         }
+
 
         return false; // If anything goes wrong, db not active, etc, return false
     }
 }
-?>

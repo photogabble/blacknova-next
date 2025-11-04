@@ -20,13 +20,15 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+
 class Languages
 {
-    public static function listAvailable($pdo_db, $lang)
+    public static function listAvailable(string $lang): array
     {
         // Get a list of supported languages
-        $sql = "SELECT section, name, value FROM ".\BlackNova\Services\Db::table('languages')." WHERE category = :category AND (name = :name1 OR name = :name2) ORDER BY section, name;";
-        $stmt = $pdo_db->prepare($sql);
+        $sql = "SELECT section, name, value FROM ". Db::table('languages')." WHERE category = :category AND (name = :name1 OR name = :name2) ORDER BY section, name;";
+        $stmt = Db::prepare($sql);
         $stmt->bindValue(':category', 'regional');
         $stmt->bindValue(':name1', 'local_lang_name');
         $stmt->bindValue(':name2', 'local_lang_flag');
@@ -68,4 +70,3 @@ class Languages
         return $list_of_langs;
     }
 }
-?>
