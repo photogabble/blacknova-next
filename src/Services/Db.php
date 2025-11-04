@@ -21,6 +21,7 @@
 
 namespace BlackNova\Services;
 
+use Bnt\AdminLog;
 use PDO;
 use PDOException;
 
