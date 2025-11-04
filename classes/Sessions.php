@@ -19,6 +19,7 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
 use PDO;
 
 class Sessions
@@ -77,7 +78,7 @@ class Sessions
 
     public function read(string $sesskey): string
     {
-        $table = $this->pdo_db->prefix . 'sessions';
+        $table = Db::table('sessions');
         $qry = 'SELECT sessdata FROM ' . $table . ' where sesskey=:sesskey and expiry>=:expiry';
         $stmt = $this->pdo_db->prepare($qry);
         $stmt->bindParam(':sesskey', $sesskey);
@@ -98,7 +99,7 @@ class Sessions
         // Set the error mode to be exceptions, so that we can catch them -- This fucks everything in game except for sessions
         $this->pdo_db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $table = $this->pdo_db->prefix . 'sessions';
+        $table = Db::table('sessions');
         try
         {
             // Try to insert the record. This will fail if the record already exists, which will trigger catch below..
@@ -125,7 +126,7 @@ class Sessions
 
     public function destroy(string $sesskey): bool
     {
-        $table = $this->pdo_db->prefix . 'sessions';
+        $table = Db::table('sessions');
         $qry = 'DELETE from ' . $table . ' where sesskey=:sesskey';
         $stmt = $this->pdo_db->prepare($qry);
         $stmt->bindParam(':sesskey', $sesskey);
@@ -135,7 +136,7 @@ class Sessions
 
     public function gc($maxlifetime): bool
     {
-        $table = $this->pdo_db->prefix . 'sessions';
+        $table = Db::table('sessions');
         $qry = 'DELETE from ' . $table . ' where expiry>:expiry';
         $stmt = $this->pdo_db->prepare($qry);
         $stmt->bindParam(':expiry', $this->expiry);
@@ -148,7 +149,7 @@ class Sessions
         $old_id = session_id();
         session_regenerate_id(); // results in $this->write being called
         $new_id = session_id();
-        $table = $this->pdo_db->prefix . 'sessions';
+        $table = Db::table('sessions');
         $qry = 'UPDATE ' . $table . ' SET sesskey=:newkey where sesskey=:sesskey';
         $stmt = $this->pdo_db->prepare($qry);
         $stmt->bindParam(':newkey', $new_id);
