@@ -30,6 +30,7 @@ class Db
     public static string $type = '';
     public static string $prefix = '';
     private static bool $logErrors = true;
+    private static bool $isActive = false;
 
     /**
      * Check if the database can be connected to and the game has been installed.
@@ -37,11 +38,13 @@ class Db
      */
     public static function isActive(): bool
     {
+        if (self::$isActive) return true;
         try {
             $pdo = self::connection();
             $results = $pdo->query("SELECT * FROM " . self::$prefix . "gameconfig LIMIT 1");
 
-            return $results !== false && $results->rowCount() > 0;
+            self::$isActive = $results !== false && $results->rowCount() > 0;
+            return self::$isActive;
         } catch (PDOException $e) {
             return false;
         }
