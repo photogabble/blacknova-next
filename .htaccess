@@ -22,7 +22,6 @@
     # - New routes like /login, /main, /api/*
     # - Non-existent files
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ public/index.php [L,QSA]
 </IfModule>
 

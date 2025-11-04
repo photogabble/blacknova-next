@@ -19,6 +19,7 @@
 
 namespace BlackNova\Http\Controllers;
 
+use Bnt\Languages;
 use Bnt\News;
 use Bnt\Translate;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +27,19 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class PagesController extends Controller
 {
+    public function homepage(): ResponseInterface
+    {
+        return $this->view('index.tpl', [
+            'title' => Translate::get('index.l_welcome_bnt'),
+            'list_of_langs' => Languages::listAvailable('english'),
+
+            'link_forums' => $this->reg->link_forums,
+            'admin_mail' => $this->reg->admin_mail,
+
+            'body_class' => 'index',
+            'news_ticker_active' => false,
+        ]);
+    }
 
     public function news(ServerRequestInterface $request): ResponseInterface
     {
