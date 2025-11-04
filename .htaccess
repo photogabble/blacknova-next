@@ -1,0 +1,37 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Protect sensitive directories and files
+    RewriteRule ^(src|bootstrap|config|templates|vendor|tests)/.*$ - [F,L]
+    RewriteRule ^(composer\.(json|lock)|\.env|\.git)$ - [F,L]
+
+    # Allow direct access to existing assets
+    RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|pdf)$
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Serve existing PHP files directly (legacy behavior)
+    # This catches files like login.php, main.php, etc. in root
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_URI} \.php$
+    RewriteRule ^ - [L]
+
+    # Route everything else through Tuppence
+    # This includes:
+    # - New routes like /login, /main, /api/*
+    # - Non-existent files
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ public/index.php [L,QSA]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Additional security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

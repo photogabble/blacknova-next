@@ -31,12 +31,14 @@
     "ezyang/htmlpurifier": "^4.17",
     "smarty/smarty": "^5.4",
     "symfony/mailer": "^7.1",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "photogabble/tuppence": "^2.0"
   },
   "autoload": {
     "psr-4": {
       "Bnt\\": "classes/",
-      "Bad\\": "classes/"
+      "Bad\\": "classes/",
+      "BlackNova\\": "src/"
     }
   }
 }
