@@ -17,7 +17,11 @@
 //
 // File: classes/Player.php
 
-namespace Bnt;
+namespace BlackNova\Models;
+
+use Bnt\CheckBan;
+use Bnt\Footer;
+use Bnt\Header;
 
 class Player
 {
