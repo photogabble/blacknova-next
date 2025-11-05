@@ -17,7 +17,13 @@
 //
 // File: classes/Ship.php
 
-namespace Bnt;
+namespace BlackNova\Models;
+
+use Bnt\ADORecordSet;
+use Bnt\Db;
+use Bnt\Footer;
+use Bnt\Header;
+use Bnt\PlayerLog;
 
 class Ship
 {
