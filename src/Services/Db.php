@@ -129,6 +129,20 @@ class Db
         }
     }
 
+    public static function exec(string $sql, array $params = []): int
+    {
+        $stmt = self::prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, match (gettype($value)) {
+                'boolean' => PDO::PARAM_BOOL,
+                'integer' => PDO::PARAM_INT,
+                'NULL' => PDO::PARAM_NULL,
+                default => PDO::PARAM_STR,
+            });
+        }
+        return $stmt->execute();
+    }
+
     public static function prepare(string $sql): \PDOStatement
     {
         try {
