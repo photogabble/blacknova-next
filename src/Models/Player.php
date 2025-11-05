@@ -1,6 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
+// Copyright (C) 2025 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -15,7 +16,7 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// File: classes/Player.php
+// File: src/Models/Player.php
 
 namespace BlackNova\Models;
 
@@ -23,8 +24,55 @@ use Bnt\CheckBan;
 use Bnt\Footer;
 use Bnt\Header;
 
-class Player
+final readonly class Player
 {
+    public function __construct(
+        public int    $shipId,
+        public string $email,
+        public string $characterName,
+        public string $passwordHash,
+        public int    $turns,
+        public string $ipAddress,
+        public Ship   $ship,
+        public ?int   $lastLogin = null,
+    )
+    {
+    }
+
+    public function isNew(): bool
+    {
+        if (!config('newbie_nice', false)) return false;
+
+        return ($this->ship->hull <= config('newbie_hull', 0)) &&
+            ($this->ship->engines <= config('newbie_engines', 0)) &&
+            ($this->ship->power <= config('newbie_power', 0)) &&
+            ($this->ship->computer <= config('newbie_computer', 0)) &&
+            ($this->ship->sensors <= config('newbie_sensors', 0)) &&
+            ($this->ship->armor <= config('newbie_armor', 0)) &&
+            ($this->ship->shields <= config('newbie_shields', 0)) &&
+            ($this->ship->beams <= config('newbie_beams', 0)) &&
+            ($this->ship->torpLaunchers <= config('newbie_torp_launchers', 0)) &&
+            ($this->ship->cloak <= config('newbie_cloak', 0));
+    }
+
+    public function verifyPassword(string $password): bool
+    {
+        return password_verify($password, $this->passwordHash);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'ship_id' => $this->shipId,
+            'email' => $this->email,
+            'character_name' => $this->characterName,
+            'turns' => $this->turns,
+            'ip_address' => $this->ipAddress,
+            'last_login' => $this->lastLogin,
+            ...$this->ship->toArray(),
+        ];
+    }
+
     public static function HandleAuth($pdo_db, $lang, $langvars, $bntreg, $template)
     {
         $flag = true;
@@ -146,4 +194,3 @@ class Player
         }
     }
 }
-?>

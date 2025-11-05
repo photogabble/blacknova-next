@@ -1,6 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
+// Copyright (C) 2025 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -19,57 +20,67 @@
 
 namespace BlackNova\Models;
 
-use Bnt\ADORecordSet;
-use Bnt\Db;
-use Bnt\Footer;
-use Bnt\Header;
+use ADORecordSet;
+use BlackNova\Services\Db;
 use Bnt\PlayerLog;
 
-class Ship
+final readonly class Ship
 {
-    public static function isDestroyed($pdo_db, $lang, $bntreg, $langvars, $template, $playerinfo)
+    public function __construct(
+        public string $name,
+        public int    $sector,
+        public bool   $destroyed,
+        public int    $hull,
+        public int    $engines,
+        public int    $power,
+        public int    $computer,
+        public int    $sensors,
+        public int    $armor,
+        public int    $shields,
+        public int    $beams,
+        public int    $torpLaunchers,
+        public int    $cloak,
+        public array  $devices = [],
+    )
     {
-        // Check for destroyed ship
-        if ($playerinfo['ship_destroyed'] === 'Y')
-        {
-            // if the player has an escapepod, set the player up with a new ship
-            if ($playerinfo['dev_escapepod'] === 'Y')
-            {
-                $sql = "UPDATE {$pdo_db->prefix}ships SET hull=0, engines=0, power=0," .
-                               "computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, " .
-                               "armor_pts=100, cloak=0, shields=0, sector=1, ship_ore=0, " .
-                               "ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, " .
-                               "ship_fighters=100, ship_damage=0, on_planet='N', dev_warpedit=0, " .
-                               "dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', " .
-                               "dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', " .
-                               "dev_lssd='N' WHERE email=:email";
-                $stmt = $pdo_db->prepare($sql);
-                $stmt->bindParam(':email', $_SESSION['username']);
-                $stmt->execute();
-                Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
+    }
 
-                $error_status = str_replace('[here]', "<a href='main.php'>" . $langvars['l_here'] . '</a>', $langvars['l_login_died']);
+    public function isDestroyed(): bool
+    {
+        return $this->destroyed;
+    }
+
+    public function hasDevice(string $device): bool
+    {
+        if (array_key_exists($device, $this->devices)) {
+            if (is_bool($this->devices[$device])) {
+                return $this->devices[$device];
             }
-            else
-            {
-                // if the player doesn't have an escapepod - they're dead, delete them.
-                // But we can't delete them yet. (This prevents the self-distruct inherit bug)
-                $error_status .= str_replace('[here]', "<a href='log.php'>" .
-                                 ucfirst($langvars['l_here']) . '</a>', $langvars['l_global_died']) .
-                                 '<br><br>' . $langvars['l_global_died2'];
-                $error_status .= str_replace('[logout]', "<a href='logout.php'>" .
-                                 $langvars['l_logout'] . '</a>', $langvars['l_die_please']);
-                $title = $langvars['l_error'];
-                Header::display($pdo_db, $lang, $template, $title);
-                echo $error_status;
-                Footer::display($pdo_db, $lang, $bntreg, $template);
-                die();
-            }
+
+            return $this->devices[$device] >= 1;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'ship_name' => $this->name,
+            'sector' => $this->sector,
+            'destroyed' => $this->destroyed,
+            'hull' => $this->hull,
+            'engines' => $this->engines,
+            'power' => $this->power,
+            'computer' => $this->computer,
+            'sensors' => $this->sensors,
+            'armor' => $this->armor,
+            'shields' => $this->shields,
+            'beams' => $this->beams,
+            'torp_launchers' => $this->torpLaunchers,
+            'cloak' => $this->cloak,
+            'devices' => $this->devices,
+        ];
     }
 
     public static function leavePlanet($db, $ship_id)
@@ -100,4 +111,4 @@ class Ship
         }
     }
 }
-?>
+
