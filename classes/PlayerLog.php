@@ -19,6 +19,8 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+
 class PlayerLog
 {
     public static function writeLog($db, $sid, $log_type, $data = null)
@@ -29,9 +31,10 @@ class PlayerLog
         // Write log_entry to the player's log - identified by player's ship_id - sid.
         if ($sid != null && !empty($log_type))
         {
-            $res = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('logs')." (ship_id, type, time, data) VALUES (?, ?, ?, ?)", array($sid, $log_type, $stamp, $data));
-            Db::logDbErrors($db, $res, __LINE__, __FILE__);
+            Db::exec(
+                "INSERT INTO ". Db::table('logs')." (ship_id, type, time, data) VALUES (:ship_id, :type, :time, :data)",
+                ['ship_id' => $sid, 'type' => $log_type, 'time' => $stamp, 'data' => $data]
+            );
         }
     }
 }
-?>
