@@ -31,6 +31,7 @@ class Db
     private static ?PDO $connection = null;
     public static string $type = '';
     public static string $prefix = '';
+    private static bool $inTransaction = false;
     private static bool $logErrors = true;
     private static bool $isActive = false;
 
@@ -104,10 +105,7 @@ class Db
      */
     public static function connection(): PDO
     {
-        if (self::$connection === null) {
-            self::initDb();
-        }
-
+        if (self::$connection === null) self::initDb();
         return self::$connection;
     }
 
@@ -158,11 +156,40 @@ class Db
         self::$logErrors = $enabled;
     }
 
+    public static function beginTransaction(): bool
+    {
+        if (self::$inTransaction) return false; // Already in transaction}
+
+        self::$inTransaction = self::connection()->beginTransaction();
+        return self::$inTransaction;
+    }
+
+    public static function commit(): bool
+    {
+        if (!self::$inTransaction) return false;
+
+        $result = self::connection()->commit();
+        self::$inTransaction = false;
+        return $result;
+    }
+
+    public static function rollback(): bool
+    {
+        if (!self::$inTransaction) return false;
+
+        $result = self::connection()->rollBack();
+        self::$inTransaction = false;
+        return $result;
+    }
+
+    public static function inTransaction(): bool
+    {
+        return self::$inTransaction;
+    }
+
     private static function handleException(PDOException $e, string $query): void
     {
-        if (!self::$logErrors) {
-            return;
-        }
+        if (!self::$logErrors) return;
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         $caller = $trace[2] ?? $trace[1] ?? [];

@@ -19,16 +19,17 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+use DirectoryIterator;
+
 class Schema
 {
-    public static function destroy($db, $db_prefix, $dbtype)
+    public static function destroy(string $schemaDirectory): array
     {
-        // Need to set this or all hell breaks loose.
-        $db->inactive = true;
-
         $i = 0;
-        $schema_files = new \DirectoryIterator('schema/' . $dbtype);
-        $destroy_table_results = array();
+
+        $schema_files = new DirectoryIterator($schemaDirectory);
+        $destroy_table_results = [];
 
         foreach ($schema_files as $schema_filename)
         {
@@ -50,25 +51,18 @@ class Schema
 
                 if (!$persist_file)
                 {
-                    $drop_res = $db->exec('DROP TABLE ' . $db_prefix . $tablename);
-                    \BlackNova\Services\Db::logDbErrors($db, $drop_res, __LINE__, __FILE__);
-
-                    if ($drop_res !== false)
+                    if (Db::exec('DROP TABLE ' . Db::table($tablename)))
                     {
                         $destroy_table_results[$i]['result'] = true;
-                    }
-                    else
-                    {
-                        $errorinfo = $db->errorInfo();
+                    } else {
+                        $errorinfo = Db::connection()->errorInfo();
                         $destroy_table_results[$i]['result'] = $errorinfo[1] . ': ' . $errorinfo[2];
                     }
-                }
-                else
-                {
+                } else {
                     $destroy_table_results[$i]['result'] = 'Skipped - Persistent table';
                 }
 
-                $destroy_table_results[$i]['name'] = $db_prefix . $tablename;
+                $destroy_table_results[$i]['name'] = Db::table($tablename);
                 $table_timer->stop();
                 $destroy_table_results[$i]['time'] = $table_timer->elapsed();
                 $i++;
@@ -78,11 +72,11 @@ class Schema
         return $destroy_table_results;
     }
 
-    public static function create($db, $db_prefix, $dbtype)
+    public static function create(string $schemaDirectory): array
     {
         $i = 0;
         define('PDO_SUCCESS', (string) '00000'); // PDO gives an error code of string 00000 if successful. Not extremely helpful.
-        $schema_files = new \DirectoryIterator('schema/' . $dbtype);
+        $schema_files = new DirectoryIterator($schemaDirectory);
 
         // New SQL Schema table creation
         $create_table_results = array();
@@ -106,29 +100,23 @@ class Schema
                 }
 
                 // Slurp the SQL call from schema, and turn it into an SQL string
-                $sql_query = file_get_contents('schema/' . $dbtype . '/' . $schema_filename);
+                $sql_query = file_get_contents($schemaDirectory . '/' . $schema_filename);
 
                 // Replace the default prefix (bnt_) with the chosen table prefix from the game.
-                $sql_query = preg_replace('/bnt_/', $db_prefix, $sql_query);
+                $sql_query = preg_replace('/bnt_/', Db::$prefix, $sql_query);
 
                 // TODO: Remove all comments from SQL
-
                 // TODO: Test handling invalid SQL to ensure it hits the error logger below AND the visible output during running
-                $sth = $db->prepare($sql_query);
-                $execute_res = $sth->execute();
+                Db::prepare($sql_query)->execute();
 
-                if ($db->errorCode() !== PDO_SUCCESS)
-                {
-                    $errorinfo = $db->errorInfo();
+                if (Db::connection()->errorCode() !== PDO_SUCCESS) {
+                    $errorinfo = Db::connection()->errorInfo();
                     $create_table_results[$i]['result'] = $errorinfo[1] . ': ' . $errorinfo[2];
-                }
-                else
-                {
+                } else {
                     $create_table_results[$i]['result'] = true;
                 }
 
-                \BlackNova\Services\Db::logDbErrors($db, $execute_res, __LINE__, __FILE__);
-                $create_table_results[$i]['name'] = $db_prefix . $tablename;
+                $create_table_results[$i]['name'] = Db::table($tablename);
                 $table_timer->stop();
                 $create_table_results[$i]['time'] = $table_timer->elapsed();
                 $i++;

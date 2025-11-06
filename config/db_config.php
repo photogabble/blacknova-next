@@ -37,7 +37,7 @@ $db_user = 'bnt';
 $db_pwd = 'bnt';
 
 // Name of the SQL database:
-$db_name = 'bnt';
+$db_name = getenv('DB_DATABASE') ?: 'bnt';
 
 // Type of the SQL database.
 // "mysqli" for MySQLi - needed for transaction support or "postgres9" for PostgreSQL ver 9 and up
@@ -50,4 +50,3 @@ $db_type = 'mysqli';
 // names conflict with tables you already have in your db, you will
 // need to change this
 $db_prefix = 'bnt_';
-?>

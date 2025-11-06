@@ -19,6 +19,7 @@
 
 use Photogabble\Tuppence\App;
 use Smarty\Smarty;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 
 define('APP_START', microtime(true));
 
@@ -34,8 +35,8 @@ include APP_ROOT . '/vendor/autoload.php';
 //$dbConfig = require __DIR__ . '/../config/database.php';
 //$appConfig = require __DIR__ . '/../config/app.php';
 
-// Create Tuppence app
-$app = new App();
+/** @var EmitterInterface|null $emitter set if in UnitTesting */
+$app = new App($emitter ?? null);
 
 // Get the DI container
 $container = $app->getContainer();
@@ -44,8 +45,8 @@ $container = $app->getContainer();
 \BlackNova\Services\Db::initDb(APP_ROOT . '/config/db_config.php');
 
 // Load Configuration
-$container->add('config', function () {
-    return new \Bnt\Reg();
+$container->addShared(\Bnt\Reg::class, function (){
+    return new \Bnt\Reg(APP_ROOT . '/config/classic_config.ini.php');
 });
 
 // Register template engine
@@ -97,18 +98,27 @@ $container->add(Smarty::class, function() {
 //    );
 //});
 
-function app(): App {
-    return App::getInstance();
+// Load routes
+$routes = require APP_ROOT . '/config/routes.php';
+$routes($app->getRouter());
+
+if (!function_exists('app')) {
+    function app(): App
+    {
+        return App::getInstance();
+    }
 }
 
-function config(?string $key = null, mixed $default = null): mixed {
-    $app = App::getInstance();
+if (!function_exists('config')) {
+    function config(?string $key = null, mixed $default = null): mixed {
+        /** @var \Bnt\Reg $config */
+        $config = App::getInstance()
+            ->getContainer()
+            ->get(\Bnt\Reg::class);
 
-    /** @var \Bnt\Reg $config */
-    $config = $app->getContainer()->get('config');
-
-    if (is_null($key)) return $config;
-    return $config->{$key} ?? $default;
+        if (is_null($key)) return $config;
+        return $config->{$key} ?? $default;
+    }
 }
 
 return $app;
