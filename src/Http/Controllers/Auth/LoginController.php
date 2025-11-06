@@ -136,12 +136,12 @@ if ($playerfound)
                 {
                     $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=1, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
                     \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
-                    $langvars['l_login_died'] = str_replace("[here]", "<a href='main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_died']);
+                    $langvars['l_login_died'] = str_replace("[here]", "<a href='../../../../main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_died']);
                     echo $langvars['l_login_died'];
                 }
                 else
                 {
-                    echo "You have died in a horrible incident, <a href=log.php>here</a> is the blackbox information that was retrieved from your ships wreckage.<br><br>";
+                    echo "You have died in a horrible incident, <a href=../../../../log.php>here</a> is the blackbox information that was retrieved from your ships wreckage.<br><br>";
 
                     // Check if $newbie_nice is set, if so, verify ship limits
                     if ($bntreg->newbie_nice)
@@ -156,7 +156,7 @@ if ($playerfound)
                             $resx = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET hull=0, engines=0, power=0, computer=0, sensors=0, beams=0, torp_launchers=0, torps=0, armor=0, armor_pts=100, cloak=0, shields=0, sector=0, ship_ore=0, ship_organics=0, ship_energy=1000, ship_colonists=0, ship_goods=0, ship_fighters=100, ship_damage=0, credits=1000, on_planet='N', dev_warpedit=0, dev_genesis=0, dev_beacon=0, dev_emerwarp=0, dev_escapepod='N', dev_fuelscoop='N', dev_minedeflector=0, ship_destroyed='N', dev_lssd='N' WHERE ship_id = ?", array($playerinfo['ship_id']));
                             \BlackNova\Services\Db::logDbErrors($db, $resx, __LINE__, __FILE__);
 
-                            $langvars['l_login_newlife'] = str_replace("[here]", "<a href='main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_newlife']);
+                            $langvars['l_login_newlife'] = str_replace("[here]", "<a href='../../../../main.php'>" . $langvars['l_here'] . "</a>", $langvars['l_login_newlife']);
                             echo $langvars['l_login_newlife'];
                         }
                         else
