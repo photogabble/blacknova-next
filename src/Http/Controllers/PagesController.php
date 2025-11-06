@@ -38,6 +38,8 @@ final class PagesController extends Controller
 
             'body_class' => 'index',
             'news_ticker_active' => false,
+
+            'error_message' => session()->getFlash('error_message'),
         ]);
     }
 

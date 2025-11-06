@@ -34,6 +34,7 @@ class Db
     private static bool $inTransaction = false;
     private static bool $logErrors = true;
     private static bool $isActive = false;
+    private static array $queryLog = [];
 
     /**
      * Check if the database can be connected to and the game has been installed.
@@ -120,6 +121,7 @@ class Db
     public static function query(string $sql): \PDOStatement
     {
         try {
+            self::$queryLog[] = $sql;
             return self::connection()->query($sql);
         } catch (PDOException $e) {
             self::handleException($e, $sql);
@@ -144,11 +146,22 @@ class Db
     public static function prepare(string $sql): \PDOStatement
     {
         try {
+            self::$queryLog[] = $sql;
             return self::connection()->prepare($sql);
         } catch (PDOException $e) {
             self::handleException($e, $sql);
             throw $e;
         }
+    }
+
+    public static function lastInsertId(): int
+    {
+        return self::connection()->lastInsertId();
+    }
+
+    public static function getQueryLog(): array
+    {
+        return self::$queryLog;
     }
 
     public static function setErrorLogging(bool $enabled): void

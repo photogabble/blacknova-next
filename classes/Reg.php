@@ -35,7 +35,7 @@ final class Reg
 {
     private array $config = [];
 
-    public function __construct()
+    public function __construct(string $iniFilePath = 'config/classic_config.ini.php')
     {
         if (Db::isActive()) {
             // Get the config_values from the DB - This is a pdo operation
@@ -55,8 +55,7 @@ final class Reg
         }
 
         // Slurp in config variables from the ini file directly
-        $ini_file = 'config/classic_config.ini.php'; // This is hard-coded for now, but when we get multiple game support, we may need to change this.
-        $ini_keys = parse_ini_file($ini_file, true);
+        $ini_keys = parse_ini_file($iniFilePath, true);
         foreach ($ini_keys as $config_category => $config_line)
         {
             foreach ($config_line as $config_key => $config_value)

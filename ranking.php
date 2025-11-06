@@ -128,7 +128,7 @@ if ($rs instanceof ADORecordSet)
             }
 
             // Check for banned players.
-            $ban_result = Bnt\CheckBan::isBanned($pdo_db, $lang, null, $row);
+            $ban_result = \BlackNova\Repositories\BanRepository::isBanned($pdo_db, $lang, null, $row);
 
             if ($ban_result === false || (array_key_exists('ban_type', $ban_result) && $ban_result['ban_type'] === ID_WATCH))
             {

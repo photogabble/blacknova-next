@@ -190,7 +190,7 @@ switch ($teamwhat)
                     }
                 }
                 Bnt\Defense::defenceVsDefence($db, $playerinfo['ship_id'], $langvars);
-                Bnt\Ship::leavePlanet($db, $playerinfo['ship_id']);
+                \BlackNova\Models\Ship::leavePlanet($db, $playerinfo['ship_id']);
 
                 $langvars['l_team_onlymember'] = str_replace("[team_name]", "<strong>$team[team_name]</strong>", $langvars['l_team_onlymember']);
                 echo $langvars['l_team_onlymember'] . "<br><br>";
@@ -250,7 +250,7 @@ switch ($teamwhat)
 
                     echo $langvars['l_team_youveleft'] . " <strong>" . $team['team_name'] . "</strong>.<br><br>";
                     Bnt\Defense::defenceVsDefence($db, $playerinfo['ship_id'], $langvars);
-                    Bnt\Ship::leavePlanet($db, $playerinfo['ship_id']);
+                    \BlackNova\Models\Ship::leavePlanet($db, $playerinfo['ship_id']);
                     Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_TEAM_LEAVE, $team['team_name']);
                     Bnt\PlayerLog::writeLog($db, $team['creator'], LOG_TEAM_NOT_LEAVE, $playerinfo['character_name']);
                 }

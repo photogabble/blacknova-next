@@ -19,9 +19,9 @@
 
 namespace BlackNova\Http\Controllers;
 
+use BlackNova\Repositories\PlayerRepository;
 use BlackNova\Services\Db;
 use Bnt\News\NewsGateway;
-use Bnt\Players\PlayersGateway;
 use Bnt\Reg;
 use Bnt\Translate;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -38,7 +38,7 @@ abstract class Controller
         $this->smarty = $smarty;
     }
 
-    public function view($view, $data = []): HtmlResponse
+    public function view($view, $data = [], int $status = 200): HtmlResponse
     {
         // Default Data originally obtained from `footer_t.php`
         // TODO: replace hard coded values with dynamic values
@@ -84,7 +84,7 @@ abstract class Controller
         $newsTickerActive = $data['news_ticker_active'] ?? true;
 
         if ($dbActive) {
-            $online = PlayersGateway::selectPlayersLoggedIn(
+            $online = PlayerRepository::selectPlayersLoggedIn(
                 date("Y-m-d H:i:s", time() - 5 * 60), // Five minutes ago
                 date("Y-m-d H:i:s", time())
             );
@@ -159,6 +159,6 @@ abstract class Controller
         $this->smarty->assign('template_dir', 'templates/classic');
 
         $this->smarty->assign('langvars', $langvars);
-        return new HtmlResponse($this->smarty->fetch($view));
+        return new HtmlResponse($this->smarty->fetch($view), $status);
     }
 }

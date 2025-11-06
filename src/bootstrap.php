@@ -17,6 +17,8 @@
 //
 // File: src/bootstrap.php
 
+use BlackNova\Services\Auth\SessionInterface;
+use BlackNova\Services\Auth\SessionManager;
 use Photogabble\Tuppence\App;
 use Smarty\Smarty;
 use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -26,6 +28,7 @@ define('APP_START', microtime(true));
 if (!defined('APP_ROOT')) define('APP_ROOT', realpath(__DIR__ . '/../'));
 
 include APP_ROOT . '/vendor/autoload.php';
+include APP_ROOT . '/global_defines.php';
 
 // Load environment variables
 //$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
@@ -77,26 +80,10 @@ $container->add(Smarty::class, function() {
 });
 
 //
-//// Register session manager
-//$container->add(SessionManager::class, function() {
-//    return new SessionManager();
-//});
-//
-//// Register repositories
-//$container->add(PlayerRepository::class, function() use ($container, $dbConfig) {
-//    return new PlayerRepository(
-//        $container->get('db'),
-//        $dbConfig['prefix'] ?? 'bnt_'
-//    );
-//});
-//
-//// Register services
-//$container->add(AuthenticationService::class, function() use ($container) {
-//    return new AuthenticationService(
-//        $container->get(PlayerRepository::class),
-//        $container->get(SessionManager::class)
-//    );
-//});
+// Register session manager
+$container->add(SessionInterface::class, function() {
+    return new SessionManager();
+});
 
 // Load routes
 $routes = require APP_ROOT . '/config/routes.php';
@@ -118,6 +105,15 @@ if (!function_exists('config')) {
 
         if (is_null($key)) return $config;
         return $config->{$key} ?? $default;
+    }
+}
+
+if (!function_exists('session')) {
+    function session(): SessionManager
+    {
+        return App::getInstance()
+            ->getContainer()
+            ->get(SessionManager::class);
     }
 }
 

@@ -45,17 +45,20 @@
 <div class="index-welcome">
 <h1 class="index-h1">{$langvars['l_welcome_bnt']}</h1>
 <p>{$langvars['l_bnt_description']}<br></p>
-<form accept-charset="utf-8" action="login2.php{$variables['link']}" method="post">
-<dl class="twocolumn-form">
-<dt><label for="email">{$langvars['l_login_email']}</label></dt>
-<dd><input type="email" id="email" name="email" size="20" maxlength="40" placeholder="someone@example.com"></dd>
-<dt><label for="pass">{$langvars['l_login_pw']}:</label></dt>
-<dd><input type="password" id="pass" name="pass" size="20" maxlength="20"></dd>
-</dl>
+<form accept-charset="utf-8" action="/login" method="post">
+    {if $variables['error_message']}
+    <div style="color:red;">{$variables['error_message']}</div>
+    {/if}
+    <dl class="twocolumn-form">
+        <dt><label for="email">{$langvars['l_login_email']}</label></dt>
+        <dd><input type="email" id="email" name="email" placeholder="someone@example.com"></dd>
+        <dt><label for="pass">{$langvars['l_login_pw']}:</label></dt>
+        <dd><input type="password" id="pass" name="pass"></dd>
+    </dl>
 <br style="clear:both">
 <div style="text-align:center">{$langvars['l_login_forgotpw']}</div><br>
 <div style="text-align:center">
-<span class="button green"><a class="nocolor" href="#" onclick="document.forms[0].submit();return false;"><span class="shine"></span>{$langvars['l_login_title']}</a></span>
+<button type="submit" class="button green"><span class="shine"></span>{$langvars['l_login_title']}</button>
 <div style="width: 0; height: 0; overflow: hidden;"><input type="submit" value="{$langvars['l_login_title']}"></div>
 </div>
 </form>

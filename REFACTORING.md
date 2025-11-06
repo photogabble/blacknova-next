@@ -72,10 +72,10 @@ The `footer_t.php` file is used by a number of pages to define shared variables 
 - [x] Have `Reg` class be loaded into IoC as config container and available via `config(...)` helper function
 - [x] Refactor `footer_t.php`
   - [x] Create helper function for `bnttimer` for the elapsed load time
-  - [ ] Update `PlayersGateway` to be aware of `Db` refactoring
-  - [ ] Update `SchedulerGateway` to be aware of `Db` refactoring
-  - [ ] Update `NewsGateway` to be aware of `Db` refactoring
-  - [ ] Create a `view` helper function to render templates, passing in the common values set in `footer_t.php`
+  - [x] Update `PlayersGateway` to be aware of `Db` refactoring
+  - [x] Update `SchedulerGateway` to be aware of `Db` refactoring
+  - [x] Update `NewsGateway` to be aware of `Db` refactoring
+  - [x] Create a `view` helper function to render templates, passing in the common values set in `footer_t.php`
 
 **Common values from `footer_t.php`**:
 
@@ -90,6 +90,49 @@ The `footer_t.php` file is used by a number of pages to define shared variables 
   - `sf_logo_type`
 - `players_online` value obtained from `PlayersGateway`
 - `update_ticker` array of values from `SchedulerGateway`
+
+#### Refactoring Authentication: Login
+This section relates to my refactoring of `login2.php`. Interestingly, the login action checks to see if the player ship has been destroyed and at this point does two checks: the first to see if the player has an escape pod installed and the second to see if the player is new to the game. If so, they are spared the game over and end up on a new basic ship having only lost the resources that were stored within the ship they were flying.
+
+It seems odd to do this on login, when elsewhere in the code we have `Ship::isDestroyed` which only checks to see if the ship has an escape pod installed. During refactoring of this section, I shall be having the player ship state set when it's destroyed, not on login. Then on login if their ship was destroyed while they were offline the player will be in a new ship or be redirected to the game over screen explaining that they need to create a fresh character.
+
+- [ ] Move `classes/Login.php` -> `src/Http/Middleware/AuthMiddleware.php` and convert into Middleware
+- [x] Move `classes/CheckBan.php` -> `src/Repositories/BanRepository.php` and convert into Repository
+- [ ] Move `login2.php` -> `src/Http/Controllers/Auth/LoginController.php` and convert into Controller
+- [x] Move `classes/Player.php` -> `src/Models/Player.php` and convert into Model
+- [x] Move `classes/Ship.php` -> `src/Models/Ship.php` and convert into Model
+- [x] Handle Game Closure (via `$bntreg->game_closed`)
+- [ ] Create a fitting template for `auth/player-banned.tpl`, this needs some thought 
+
+As part of this refactoring while converting `classes/CheckBan.php` into `BanRepository` I came to realise that the `bnt_bans` table wasn't being used. The separate `bnt_ip_bans` table is used by `admin/bans_editor.php` but I couldn't find any code that used it (although maybe I missed something). In any case, this has meant I am now adding a new refactoring task to overhaul the player moderation system.
+
+#### Refactoring Authentication: Login Notifications
+There are a number of different notification end states that can occur during login. These include:
+- Player ship destroyed with escape pod
+- Player ship destroyed but new to the game
+- Player ship destroyed but not new to the game (Game Over)
+- Player Banned
+
+The original game would output a sentence or two to explain what had happened, for example:
+> You have died in a horrible incident, [here] is the blackbox information that was retrieved from your ships wreckage.
+
+I think it would be a good idea to have a *notification template* that can be used to display these messages and maybe even commission some art work for each of the different states. I think it would be cool to see ship wreckage showing what happened.
+
+I initially created `auth/player-banned.tpl` but I think that can be replaced with a `notification.tpl` template that can accept a header image and a message and potentially buttons to take the player to different pages.
+
+#### Refactoring Authentication: Password Reset
+
+...
+
+#### Refactoring Authentication: Signup
+
+...
+
+#### Refactoring Authentication: Player Moderation / Bans
+As part of refactoring the login system I built the `BanRepository` class and soon came to realise that the table it uses isn't being used by `admin/bans_editor.php` and I can't find any code that creates or updates bans. I shall therefore be overhauling the player moderation system.
+
+- [ ] Remove schema for `bnt_ip_bans`
+- [ ] Refactor schema for `bnt_bans` to add a `not_after` column
 
 #### Refactoring Translations / Locale
 To refactor templates, I need to also refactor how translations are handled. I will be creating `LocaleMiddleware` to handle language selection, but also need a way of loading the translations from the database. The existing `Translate` class is functional but can be improved. Instead of passing a list of `$categories` to it, I want to

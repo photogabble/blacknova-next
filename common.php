@@ -112,8 +112,8 @@ if (\BlackNova\Services\Db::isActive())
     }
     else // The user has logged in, so use his preference from the database
     {
-        $players_gateway = new \Bnt\Players\PlayersGateway($pdo_db); // Build a player gateway object to handle the SQL calls
-        $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
+        $players_gateway = new \BlackNova\Repositories\PlayerRepository(); // Build a player gateway object to handle the SQL calls
+        $playerinfo = $players_gateway->findByEmail($_SESSION['username']);
         $lang = $playerinfo['lang'];
     }
 }

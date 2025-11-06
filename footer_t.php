@@ -23,7 +23,7 @@ if (\BlackNova\Services\Db::isActive())
 {
     $stamp = date("Y-m-d H:i:s", time()); // Now (as seen by PHP)
     $since_stamp = date("Y-m-d H:i:s", time() - 5 * 60); // Five minutes ago
-    $online = \Bnt\Players\PlayersGateway::selectPlayersLoggedIn($since_stamp, $stamp); // Online is the (int) count of the numbers of players currently logged in via SQL select
+    $online = \BlackNova\Repositories\PlayerRepository::selectPlayersLoggedIn($since_stamp, $stamp); // Online is the (int) count of the numbers of players currently logged in via SQL select
 }
 
 $elapsed = (int) 999; // Default value for elapsed, overridden with an actual value if its available
