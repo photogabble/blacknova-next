@@ -50,6 +50,11 @@ $lang = $_POST['newlang']; // Set the language to the language chosen during cre
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('common', 'regional', 'footer', 'global_includes', 'create_universe', 'news'));
 
+$universeTable = \BlackNova\Services\Db::table('universe');
+$zonesTable = \BlackNova\Services\Db::table('zones');
+$planetsTable = \BlackNova\Services\Db::table('planets');
+$linksTable =  \BlackNova\Services\Db::table('links');
+
 $p_skip = 0;
 $z = 0;
 
@@ -57,7 +62,7 @@ $local_table_timer = new Bnt\Timer;
 $local_table_timer->start(); // Start benchmarking
 
 // Get the sector id for any sector that allows planets
-$sth = $pdo_db->prepare("SELECT {$pdo_db->prefix}universe.sector_id FROM {$pdo_db->prefix}universe, {$pdo_db->prefix}zones WHERE {$pdo_db->prefix}zones.zone_id={$pdo_db->prefix}universe.zone_id AND {$pdo_db->prefix}zones.allow_planet='Y'");
+$sth = $pdo_db->prepare("SELECT $universeTable.sector_id FROM $universeTable, $zonesTable WHERE $zonesTable.zone_id=$universeTable.zone_id AND $zonesTable.allow_planet='Y'");
 $sth->execute();
 
 // Place those id's into an array.
@@ -77,7 +82,7 @@ shuffle($open_sectors_array); // Internally, shuffle uses rand() so it isn't ide
 
 // Prep the beginning of the insert SQL call
 $p_add = 0;
-$planet_insert_sql = "INSERT INTO {$pdo_db->prefix}planets (colonists, owner, corp, prod_ore, prod_organics, prod_goods, prod_energy, prod_fighters, prod_torp, sector_id) VALUES (2, 0, 0, $bntreg->default_prod_ore, $bntreg->default_prod_organics, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, $open_sectors_array[$p_add])";
+$planet_insert_sql = "INSERT INTO $planetsTable (colonists, owner, corp, prod_ore, prod_organics, prod_goods, prod_energy, prod_fighters, prod_torp, sector_id) VALUES (2, 0, 0, $bntreg->default_prod_ore, $bntreg->default_prod_organics, $bntreg->default_prod_goods, $bntreg->default_prod_energy, $bntreg->default_prod_fighters, $bntreg->default_prod_torp, $open_sectors_array[$p_add])";
 $p_add++;
 do
 {
@@ -141,7 +146,7 @@ $start = 1;
 for ($i = 1; $i <= $loops; $i++)
 {
     $local_table_timer->start(); // Start benchmarking
-    $update = "INSERT INTO {$pdo_db->prefix}links (link_start,link_dest) VALUES ";
+    $update = "INSERT INTO $linksTable (link_start,link_dest) VALUES ";
     for ($j = $start; $j <= $finish; $j++)
     {
         $k = $j + 1;
@@ -198,7 +203,7 @@ $start = 1;
 for ($i = 1; $i <= $loops; $i++)
 {
     $local_table_timer->start(); // Start benchmarking
-    $insert = "INSERT INTO {$pdo_db->prefix}links (link_start,link_dest) VALUES ";
+    $insert = "INSERT INTO $linksTable (link_start,link_dest) VALUES ";
     for ($j = $start; $j <= $finish; $j++)
     {
         $link1 = intval(Bnt\Rand::betterRand(1, $bntreg->sector_max - 1));
@@ -257,7 +262,7 @@ $start = 1;
 for ($i = 1; $i <= $loops; $i++)
 {
     $local_table_timer->start(); // Start benchmarking
-    $insert = "INSERT INTO {$pdo_db->prefix}links (link_start,link_dest) VALUES ";
+    $insert = "INSERT INTO $linksTable (link_start,link_dest) VALUES ";
     for ($j = $start; $j <= $finish; $j++)
     {
         $link1 = intval(Bnt\Rand::betterRand(1, $bntreg->sector_max - 1));
@@ -294,7 +299,7 @@ for ($i = 1; $i <= $loops; $i++)
 }
 
 $local_table_timer->start(); // Start benchmarking
-$sql = "DELETE FROM {$pdo_db->prefix}links WHERE link_start = :linkstart OR link_dest = :linkdest";
+$sql = "DELETE FROM $linksTable WHERE link_start = :linkstart OR link_dest = :linkdest";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':linkstart', $bntreg->sector_max);
 $stmt->bindParam(':linkdest', $bntreg->sector_max);

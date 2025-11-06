@@ -49,6 +49,8 @@ $lang = $_POST['newlang']; // Set the language to the language chosen during cre
 
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('common', 'regional', 'footer', 'global_includes', 'create_universe', 'news'));
+$universeTable = \BlackNova\Services\Db::table('universe');
+$zonesTable = \BlackNova\Services\Db::table('zones');
 
 $z = 0;
 $initsore = $bntreg->ore_limit * $variables['initscommod'] / 100.0;
@@ -61,7 +63,7 @@ $initbgoods = $bntreg->goods_limit * $variables['initbcommod'] / 100.0;
 $initbenergy = $bntreg->energy_limit * $variables['initbcommod'] / 100.0;
 $local_table_timer = new Bnt\Timer;
 $local_table_timer->start(); // Start benchmarking
-$insert = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}universe (sector_id, sector_name, zone_id, port_type, port_organics, port_ore, port_goods, port_energy, beacon, angle1, angle2, distance) VALUES ('1', 'Sol', '1', 'special', '0', '0', '0', '0', 'Sol: Hub of the Universe', '0', '0', '0')");
+$insert = $pdo_db->exec("INSERT INTO $universeTable (sector_id, sector_name, zone_id, port_type, port_organics, port_ore, port_goods, port_energy, beacon, angle1, angle2, distance) VALUES ('1', 'Sol', '1', 'special', '0', '0', '0', '0', 'Sol: Hub of the Universe', '0', '0', '0')");
 $variables['create_sol_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $insert, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_sol_results']['result'];
 $z++;
@@ -69,7 +71,7 @@ $local_table_timer->stop();
 $variables['create_sol_results']['time'] = $local_table_timer->elapsed();
 
 $local_table_timer->start(); // Start benchmarking
-$insert = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}universe (sector_id, sector_name, zone_id, port_type, port_organics, port_ore, port_goods, port_energy, beacon, angle1, angle2, distance) VALUES ('2', 'Alpha Centauri', '1', 'energy',  '0', '0', '0', '0', 'Alpha Centauri: Gateway to the Galaxy', '0', '0', '1')");
+$insert = $pdo_db->exec("INSERT INTO $universeTable (sector_id, sector_name, zone_id, port_type, port_organics, port_ore, port_goods, port_energy, beacon, angle1, angle2, distance) VALUES ('2', 'Alpha Centauri', '1', 'energy',  '0', '0', '0', '0', 'Alpha Centauri: Gateway to the Galaxy', '0', '0', '1')");
 $variables['create_ac_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $insert, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_ac_results']['result'];
 $z++;
@@ -98,7 +100,7 @@ $start = 3; // We added sol (1), and alpha centauri (2), so start at 3.
 for ($i = 1; $i <= $loops; $i++)
 {
     $local_table_timer->start(); // Start benchmarking
-    $insert = "INSERT INTO {$pdo_db->prefix}universe " .
+    $insert = "INSERT INTO $universeTable " .
               "(sector_id, zone_id, angle1, angle2, distance) VALUES ";
     for ($j = $start; $j <= $finish; $j++)
     {
@@ -140,7 +142,7 @@ for ($i = 1; $i <= $loops; $i++)
 /// Insert zones - Unchartered, fed, free trade, war & Fed space
 
 $local_table_timer->start(); // Start benchmarking
-$replace = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}zones (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Unchartered space', 0, 'N', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', '0' )");
+$replace = $pdo_db->exec("INSERT INTO $zonesTable (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Unchartered space', 0, 'N', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', '0' )");
 $variables['create_unchartered_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $replace, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_unchartered_results']['result'];
 $z++;
@@ -148,7 +150,7 @@ $local_table_timer->stop();
 $variables['create_unchartered_results']['time'] = $local_table_timer->elapsed();
 
 $local_table_timer->start(); // Start benchmarking
-$replace = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}zones (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Federation space', 0, 'N', 'N', 'N', 'N', 'N', 'N',  'Y', 'N', '$bntreg->fed_max_hull')");
+$replace = $pdo_db->exec("INSERT INTO $zonesTable (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Federation space', 0, 'N', 'N', 'N', 'N', 'N', 'N',  'Y', 'N', '$bntreg->fed_max_hull')");
 $variables['create_fedspace_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $replace, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_fedspace_results']['result'];
 $z++;
@@ -156,7 +158,7 @@ $local_table_timer->stop();
 $variables['create_fedspace_results']['time'] = $local_table_timer->elapsed();
 
 $local_table_timer->start(); // Start benchmarking
-$replace = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}zones (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Free-Trade space', 0, 'N', 'N', 'Y', 'N', 'N', 'N','Y', 'N', '0')");
+$replace = $pdo_db->exec("INSERT INTO $zonesTable (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('Free-Trade space', 0, 'N', 'N', 'Y', 'N', 'N', 'N','Y', 'N', '0')");
 $variables['create_free_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $replace, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_free_results']['result'];
 $z++;
@@ -164,7 +166,7 @@ $local_table_timer->stop();
 $variables['create_free_results']['time'] = $local_table_timer->elapsed();
 
 $local_table_timer->start(); // Start benchmarking
-$replace = $pdo_db->exec("INSERT INTO {$pdo_db->prefix}zones (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('War Zone', 0, 'N', 'Y', 'Y', 'Y', 'Y', 'Y','N', 'Y', '0')");
+$replace = $pdo_db->exec("INSERT INTO $zonesTable (zone_name, owner, corp_zone, allow_beacon, allow_attack, allow_planetattack, allow_warpedit, allow_planet, allow_trade, allow_defenses, max_hull) VALUES ('War Zone', 0, 'N', 'Y', 'Y', 'Y', 'Y', 'Y','N', 'Y', '0')");
 $variables['create_warzone_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $replace, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_warzone_results']['result'];
 $z++;
@@ -172,7 +174,7 @@ $local_table_timer->stop();
 $variables['create_warzone_results']['time'] = $local_table_timer->elapsed();
 
 $local_table_timer->start(); // Start benchmarking
-$update = $pdo_db->exec("UPDATE {$pdo_db->prefix}universe SET zone_id='2' WHERE sector_id<=" . $variables['fedsecs']);
+$update = $pdo_db->exec("UPDATE $universeTable SET zone_id='2' WHERE sector_id<=" . $variables['fedsecs']);
 $variables['create_fed_sectors_results']['result'] = \BlackNova\Services\Db::logDbErrors($pdo_db, $update, __LINE__, __FILE__);
 $catch_results[$z] = $variables['create_fed_sectors_results']['result'];
 $z++;
@@ -204,7 +206,7 @@ $start = 1;
 
 $local_table_timer->start(); // Start benchmarking
 
-$sql = "SELECT sector_id FROM {$pdo_db->prefix}universe WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
+$sql = "SELECT sector_id FROM $universeTable WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':limit', $variables['spp']);
 $stmt->execute();
@@ -216,7 +218,7 @@ $z++;
 
 for ($i = 1; $i <= $loops; $i++)
 {
-    $update = "UPDATE {$pdo_db->prefix}universe SET zone_id='3',port_type='special' WHERE ";
+    $update = "UPDATE $universeTable SET zone_id='3',port_type='special' WHERE ";
     for ($j = $start; $j < $finish; $j++)
     {
         $result = $sql_query[$j];
@@ -274,7 +276,7 @@ $start = 0;
 
 $local_table_timer->start(); // Start benchmarking
 
-$sql = "SELECT sector_id FROM {$pdo_db->prefix}universe WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
+$sql = "SELECT sector_id FROM $universeTable WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':limit', $variables['oep']);
 $stmt->execute();
@@ -283,11 +285,11 @@ $sql_query = $stmt->fetchAll();
 // TODO: This select should have an error check that is reflected in the template
 $catch_results[$z] = \BlackNova\Services\Db::logDbErrors($pdo_db, $sql_query, __LINE__, __FILE__);
 $z++;
-$update = "UPDATE {$pdo_db->prefix}universe SET port_type='ore',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
+$update = "UPDATE $universeTable SET port_type='ore',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
 
 for ($i = 1; $i <= $loops; $i++)
 {
-    $update = "UPDATE {$pdo_db->prefix}universe SET port_type='ore',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
+    $update = "UPDATE $universeTable SET port_type='ore',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
     for ($j = $start; $j < $finish; $j++)
     {
         $result = $sql_query[$j];
@@ -345,7 +347,7 @@ $start = 0;
 
 $local_table_timer->start(); // Start benchmarking
 
-$sql = "SELECT sector_id FROM {$pdo_db->prefix}universe WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
+$sql = "SELECT sector_id FROM $universeTable WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':limit', $variables['ogp']);
 $stmt->execute();
@@ -354,11 +356,11 @@ $sql_query = $stmt->fetchAll();
 // TODO: This select should have an error check that is reflected in the template
 $catch_results[$z] = \BlackNova\Services\Db::logDbErrors($pdo_db, $sql_query, __LINE__, __FILE__);
 $z++;
-$update = "UPDATE {$pdo_db->prefix}universe SET port_type='organics',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
+$update = "UPDATE $universeTable SET port_type='organics',port_ore=$initsore,port_organics=$initborganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
 
 for ($i = 1; $i <= $loops; $i++)
 {
-    $update = "UPDATE {$pdo_db->prefix}universe SET port_type='organics',port_ore=$initbore,port_organics=$initsorganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
+    $update = "UPDATE $universeTable SET port_type='organics',port_ore=$initbore,port_organics=$initsorganics,port_goods=$initbgoods,port_energy=$initbenergy WHERE ";
     for ($j = $start; $j < $finish; $j++)
     {
         $result = $sql_query[$j];
@@ -416,7 +418,7 @@ $start = 0;
 
 $local_table_timer->start(); // Start benchmarking
 
-$sql = "SELECT sector_id FROM {$pdo_db->prefix}universe WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
+$sql = "SELECT sector_id FROM $universeTable WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':limit', $variables['gop']);
 $stmt->execute();
@@ -425,11 +427,11 @@ $sql_query = $stmt->fetchAll();
 // TODO: This select should have an error check that is reflected in the template
 $catch_results[$z] = \BlackNova\Services\Db::logDbErrors($pdo_db, $sql_query, __LINE__, __FILE__);
 $z++;
-$update = "UPDATE {$pdo_db->prefix}universe SET port_type='goods',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
+$update = "UPDATE $universeTable SET port_type='goods',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
 
 for ($i = 1; $i <= $loops; $i++)
 {
-    $update = "UPDATE {$pdo_db->prefix}universe SET port_type='goods',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
+    $update = "UPDATE $universeTable SET port_type='goods',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
     for ($j = $start; $j < $finish; $j++)
     {
         $result = $sql_query[$j];
@@ -488,7 +490,7 @@ $start = 1;
 
 $local_table_timer->start(); // Start benchmarking
 
-$sql = "SELECT sector_id FROM {$pdo_db->prefix}universe WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
+$sql = "SELECT sector_id FROM $universeTable WHERE port_type='none' ORDER BY RAND() DESC LIMIT :limit";
 $stmt = $pdo_db->prepare($sql);
 $stmt->bindParam(':limit', $variables['enp']);
 $stmt->execute();
@@ -497,11 +499,11 @@ $sql_query = $stmt->fetchAll();
 // TODO: This select should have an error check that is reflected in the template
 $catch_results[$z] = \BlackNova\Services\Db::logDbErrors($pdo_db, $sql_query, __LINE__, __FILE__);
 $z++;
-$update = "UPDATE {$pdo_db->prefix}universe SET port_type='energy',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
+$update = "UPDATE $universeTable SET port_type='energy',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
 
 for ($i = 1; $i <= $loops; $i++)
 {
-    $update = "UPDATE {$pdo_db->prefix}universe SET port_type='energy',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
+    $update = "UPDATE $universeTable SET port_type='energy',port_ore=$initbore,port_organics=$initborganics,port_goods=$initsgoods,port_energy=$initbenergy WHERE ";
     for ($j = $start; $j < $finish; $j++)
     {
         $result = $sql_query[$j];

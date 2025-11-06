@@ -29,6 +29,7 @@ if (!extension_loaded('mbstring')) // Test to ensure mbstring extension is loade
 
 require_once './vendor/autoload.php';              // Load the auto-loader
 require_once './global_defines.php';               // Defines used in many places
+if (!defined('APP_ROOT')) define('APP_ROOT', realpath(__DIR__));
 mb_http_output('UTF-8');                           // Our output should be served in UTF-8 no matter what.
 mb_internal_encoding('UTF-8');                     // We are explicitly UTF-8, with Unicode language variables.
 ini_set('include_path', '.');                      // Set include path to avoid issues on a few platforms

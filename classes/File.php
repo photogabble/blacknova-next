@@ -22,6 +22,8 @@
 
 namespace Bnt;
 
+use BlackNova\Services\Db;
+
 class File
 {
     public static function iniToDb($db, $ini_file, $ini_table, $section, $bntreg)
@@ -37,7 +39,7 @@ class File
         $start_tran_res = $db->beginTransaction(); // We enclose the inserts in a transaction as it is roughly 30 times faster
         \BlackNova\Services\Db::logDbErrors($db, $start_tran_res, __LINE__, __FILE__);
 
-        $insert_sql = 'INSERT into ' . $db->prefix. $ini_table . ' (name, category, value, section, type) VALUES (:config_key, :config_category, :config_value, :section, :type)';
+        $insert_sql = 'INSERT into ' . Db::table($ini_table) . ' (name, category, value, section, type) VALUES (:config_key, :config_category, :config_value, :section, :type)';
         $stmt = $db->prepare($insert_sql);
 
         foreach($ini_keys as $config_category => $config_line)

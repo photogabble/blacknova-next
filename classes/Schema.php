@@ -51,7 +51,7 @@ class Schema
 
                 if (!$persist_file)
                 {
-                    if (Db::exec('DROP TABLE ' . Db::table($tablename)))
+                    if (Db::exec('DROP TABLE IF EXISTS ' . Db::table($tablename)))
                     {
                         $destroy_table_results[$i]['result'] = true;
                     } else {
