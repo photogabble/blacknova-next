@@ -239,7 +239,7 @@ else
             $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id=?;", array($traderoutes[$i]['source_id']));
             \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $port1 = $result->fields;
-            echo "&nbsp;" . Bnt\Ports::getType($port1['port_type'], $langvars) . "</font></td>";
+            echo "&nbsp;" . \BlackNova\Models\Ports::from($port1['port_type'])->getLocalizedName($langvars) . "</font></td>";
         }
         else
         {
@@ -279,7 +279,7 @@ else
             $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('universe')." WHERE sector_id=?;", array($traderoutes[$i]['dest_id']));
             \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
             $port2 = $result->fields;
-            echo "&nbsp;" . Bnt\Ports::getType($port2['port_type'], $langvars) . "</font></td>";
+            echo "&nbsp;" . \BlackNova\Models\Ports::from($port2['port_type'])->getLocalizedName($langvars) . "</font></td>";
         }
         else
         {

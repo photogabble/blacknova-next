@@ -16,9 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// File: classes/Ports.php
+// Origin: classes/Ports.php
+// File: src/Models/Ports.php
 
-namespace Bnt;
+namespace BlackNova\Models;
+
+use Bnt\Translate;
 
 enum Ports: string
 {

@@ -128,7 +128,7 @@ if ($sector == "*")
 
         if ($port_type != "none")
         {
-            $icon_alt_text = ucfirst(Bnt\Ports::getType($port_type, $langvars));
+            $icon_alt_text = ucfirst(\BlackNova\Models\Ports::from($port_type)->getLocalizedName($langvars));
             $icon_port_type_name = $port_type . ".png";
             $image_string = "<img align=absmiddle height=12 width=12 alt=\"$icon_alt_text\" src=\"images/$icon_port_type_name\">&nbsp;";
         }
@@ -137,7 +137,7 @@ if ($sector == "*")
             $image_string = "&nbsp;";
         }
 
-        echo "<tr bgcolor=\"$bntreg->color\"><td><a href=move.php?sector=$row[link_dest]>$row[link_dest]</a></td><td><a href=lrscan.php?sector=$row[link_dest]>Scan</a></td><td>$num_links</td><td>$num_ships</td><td width=12>$image_string</td><td>" . Bnt\Ports::getType($port_type, $langvars) . "</td><td>$has_planet</td><td>$has_mines</td><td>$has_fighters</td>";
+        echo "<tr bgcolor=\"$bntreg->color\"><td><a href=move.php?sector=$row[link_dest]>$row[link_dest]</a></td><td><a href=lrscan.php?sector=$row[link_dest]>Scan</a></td><td>$num_links</td><td>$num_ships</td><td width=12>$image_string</td><td>" . \BlackNova\Models\Ports::from($port_type)->getLocalizedName($langvars) . "</td><td>$has_planet</td><td>$has_mines</td><td>$has_fighters</td>";
         if ($playerinfo['dev_lssd'] == 'Y')
         {
             $resx = $db->SelectLimit("SELECT * from ".\BlackNova\Services\Db::table('movement_log')." WHERE ship_id <> ? AND sector_id = ? ORDER BY time DESC", 1, -1, array('ship_id' => $playerinfo['ship_id'], 'sector_id' => $row['link_dest']));
@@ -320,11 +320,11 @@ else
         if ($sectorinfo['port_type'] != "none")
         {
             $port_type = $sectorinfo['port_type'];
-            $icon_alt_text = ucfirst(Bnt\Ports::getType($port_type, $langvars));
+            $icon_alt_text = ucfirst(\BlackNova\Models\Ports::from($port_type)->getLocalizedName($langvars));
             $icon_port_type_name = $port_type . ".png";
             $image_string = "<img align=absmiddle height=12 width=12 alt=\"$icon_alt_text\" src=\"images/$icon_port_type_name\">";
         }
-        echo "$image_string " . Bnt\Ports::getType($sectorinfo['port_type'], $langvars);
+        echo "$image_string " . \BlackNova\Models\Ports::from($sectorinfo['port_type'])->getLocalizedName($langvars);
     }
     echo "</td></tr>";
     echo "<tr bgcolor=\"$bntreg->color_line2\"><td><strong>" . $langvars['l_planets'] . "</strong></td></tr>";
