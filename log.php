@@ -20,7 +20,7 @@
 require_once './common.php';
 require_once './config/admin_config.php';
 
-\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\AuthMiddleware::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 // Hack for log bug issue - this really needs to be fixed
 $log_list = array(null,

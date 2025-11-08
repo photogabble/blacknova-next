@@ -21,7 +21,7 @@
 
 require_once './common.php';
 
-\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\AuthMiddleware::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('rsmove', 'common', 'global_funcs', 'global_includes', 'combat', 'footer', 'news', 'regional'));
