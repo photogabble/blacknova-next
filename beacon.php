@@ -28,7 +28,7 @@ Bnt\Header::display($pdo_db, $lang, $template, $title);
 
 echo "<h1>" . $title . "</h1>\n";
 
-Bnt\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 $result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
 \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);

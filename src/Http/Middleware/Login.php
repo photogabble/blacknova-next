@@ -17,7 +17,12 @@
 //
 // File: classes/Login.php
 
-namespace Bnt;
+namespace BlackNova\Http\Middleware;
+
+use Bnt\Game;
+use Bnt\Player;
+use Bnt\Ship;
+use Bnt\Translate;
 
 class Login
 {

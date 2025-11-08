@@ -21,7 +21,7 @@ require_once './common.php';
 
 // TODO: This should not be hard-coded, but for now, I need to be able to clear the errors
 $active_template = 'classic';
-Bnt\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 // Database driven language entries
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('igb', 'common', 'global_includes', 'global_funcs', 'footer', 'news', 'regional'));

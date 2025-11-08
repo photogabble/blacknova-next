@@ -19,7 +19,7 @@
 
 require_once './common.php';
 
-Bnt\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 $body_class = 'options';
 

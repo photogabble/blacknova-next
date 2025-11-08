@@ -19,7 +19,7 @@
 
 require_once './common.php';
 
-Bnt\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
+\BlackNova\Http\Middleware\Login::checkLogin($pdo_db, $lang, $langvars, $bntreg, $template);
 
 $langvars = Bnt\Translate::load($pdo_db, $lang, array('presets'));
 $title = $langvars['l_pre_title'];
