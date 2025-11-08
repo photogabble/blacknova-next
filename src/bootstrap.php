@@ -87,7 +87,7 @@ $container->add(SessionInterface::class, function() {
 
 // Load routes
 $routes = require APP_ROOT . '/config/routes.php';
-$routes($app->getRouter());
+$routes($app->getRouter(), $app);
 
 if (!function_exists('app')) {
     function app(): App

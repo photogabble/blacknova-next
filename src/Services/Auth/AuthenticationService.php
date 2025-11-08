@@ -101,8 +101,8 @@ final class AuthenticationService
     public function user(): ?Player
     {
         if (!$this->check()) return null;
+        if (!$userId = $this->sessionManager->getUserId()) return null;
 
-        $userId = $this->sessionManager->getUserId();
         return $this->playerRepository->findById($userId);
     }
 
