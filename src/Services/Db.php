@@ -129,9 +129,35 @@ class Db
         }
     }
 
-    public static function exec(string $sql, array $params = []): int
+    public static function select(string $sql, array $params = []): array
     {
         $stmt = self::prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, match (gettype($value)) {
+                'boolean' => PDO::PARAM_BOOL,
+                'integer' => PDO::PARAM_INT,
+                'NULL' => PDO::PARAM_NULL,
+                default => PDO::PARAM_STR,
+            });
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public static function exec(string $sql, array $params = []): bool
+    {
+        $stmt = self::prepare($sql);
+        $params = array_map(function($param) {
+            if ($param instanceof \BackedEnum) {
+                return $param->value;
+            }
+            if ($param instanceof \UnitEnum) {
+                return $param->name;
+            }
+
+            return $param;
+        }, $params);
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, match (gettype($value)) {
                 'boolean' => PDO::PARAM_BOOL,

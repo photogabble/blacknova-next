@@ -21,17 +21,24 @@
 namespace BlackNova\Models;
 
 use BlackNova\Repositories\BanRepository;
+use BlackNova\Services\Db;
 use Bnt\Footer;
 use Bnt\Header;
+use Bnt\Languages;
+use SensitiveParameter;
 
 final readonly class Player
 {
     public function __construct(
         public int    $shipId,
         public string $email,
+        public int    $score,
+        public int    $credits,
         public string $characterName,
-        public string $passwordHash,
+        #[SensitiveParameter] public string $passwordHash,
+        public string $lang,
         public int    $turns,
+        public int    $turns_used,
         public string $ipAddress,
         public Ship   $ship,
         public ?int   $lastLogin = null,
@@ -55,9 +62,27 @@ final readonly class Player
             ($this->ship->cloak <= config('newbie_cloak', 0));
     }
 
+    public function isOnPlanet(): bool
+    {
+        return $this->ship->onPlanet;
+    }
+
     public function verifyPassword(string $password): bool
     {
         return password_verify($password, $this->passwordHash);
+    }
+
+    public function getInsignia(): string
+    {
+        for ($i = 0; $i < 20; $i++) {
+            $value = pow(2, $i * 2) * 1000;
+            if ($this->score <= $value) {
+                return 'l_insignia_' . $i;
+            }
+        }
+
+        // Player has outranked our highest rank, so just return that.
+        return 'l_insignia_19';
     }
 
     public function toArray(): array
@@ -66,10 +91,15 @@ final readonly class Player
             'ship_id' => $this->shipId,
             'email' => $this->email,
             'character_name' => $this->characterName,
-            'turns' => $this->turns,
+            'score' => $this->score,
+            'credits' => $this->credits,
+            'turns' => [
+                'available' => $this->turns,
+                'consumed' => $this->turns_used,
+            ],
             'ip_address' => $this->ipAddress,
             'last_login' => $this->lastLogin,
-            ...$this->ship->toArray(),
+            'ship' => $this->ship->toArray(),
         ];
     }
 
@@ -83,14 +113,9 @@ final readonly class Player
             $_SESSION['username'] = null;
         }
 
-        if (array_key_exists('password', $_SESSION) === false)
+        if (is_null($_SESSION['username']) === false)
         {
-            $_SESSION['password'] = null;
-        }
-
-        if (is_null($_SESSION['username']) === false && is_null($_SESSION['password']) === false)
-        {
-            $sql = "SELECT ip_address, password, last_login, ship_id, ship_destroyed, dev_escapepod FROM {$pdo_db->prefix}ships WHERE email=:email LIMIT 1";
+            $sql = "SELECT ip_address, password, last_login, ship_id, ship_destroyed, dev_escapepod FROM ". Db::table('ships') ." WHERE email=:email LIMIT 1";
             $stmt = $pdo_db->prepare($sql);
             $stmt->bindParam(':email', $_SESSION['username']);
             $stmt->execute();
@@ -98,31 +123,26 @@ final readonly class Player
 
             if ($playerinfo !== false)
             {
-                // Check the password against the stored hashed password
-                // Check the cookie to see if username/password are empty - check password against database
-                if (password_verify($_SESSION['password'], $playerinfo['password']))
+                $stamp = date('Y-m-d H:i:s');
+                $timestamp['now']  = (int) strtotime($stamp);
+                $timestamp['last'] = (int) strtotime($playerinfo['last_login']);
+
+                // Update the players last_login every 60 seconds to cut back SQL Queries.
+                if ($timestamp['now'] >= ($timestamp['last'] + 60))
                 {
-                    $stamp = date('Y-m-d H:i:s');
-                    $timestamp['now']  = (int) strtotime($stamp);
-                    $timestamp['last'] = (int) strtotime($playerinfo['last_login']);
+                    $sql = "UPDATE ". Db::table('ships') ." SET last_login = :last_login, ip_address = :ip_address WHERE ship_id=:ship_id";
+                    $stmt = $pdo_db->prepare($sql);
+                    $stmt->bindParam(':last_login', $stamp);
+                    $stmt->bindParam(':ip_address', $_SERVER['REMOTE_ADDR']);
+                    $stmt->bindParam(':ship_id', $playerinfo['ship_id']);
+                    $stmt->execute();
+                    \BlackNova\Services\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
 
-                    // Update the players last_login every 60 seconds to cut back SQL Queries.
-                    if ($timestamp['now'] >= ($timestamp['last'] + 60))
-                    {
-                        $sql = "UPDATE {$pdo_db->prefix}ships SET last_login = :last_login, ip_address = :ip_address WHERE ship_id=:ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':last_login', $stamp);
-                        $stmt->bindParam(':ip_address', $_SERVER['REMOTE_ADDR']);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id']);
-                        $stmt->execute();
-                        \BlackNova\Services\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        // Reset the last activity time on the session so that the session renews - this is the
-                        // replacement for the (now removed) update_cookie function.
-                        $_SESSION['last_activity'] = $timestamp['now'];
-                    }
-                    $flag = false;
+                    // Reset the last activity time on the session so that the session renews - this is the
+                    // replacement for the (now removed) update_cookie function.
+                    $_SESSION['last_activity'] = $timestamp['now'];
                 }
+                $flag = false;
             }
         }
 

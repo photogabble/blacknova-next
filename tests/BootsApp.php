@@ -19,6 +19,11 @@
 
 namespace BlackNova\Tests;
 
+use BlackNova\Models\Ports;
+use BlackNova\Models\Sector\ZoneSettings;
+use BlackNova\Repositories\PlayerRepository;
+use BlackNova\Repositories\SectorRepository;
+use BlackNova\Repositories\ZoneRepository;
 use BlackNova\Services\Auth\SessionInterface;
 use BlackNova\Services\Db;
 use Photogabble\Tuppence\App;
@@ -32,6 +37,12 @@ abstract class BootsApp extends TestCase
     protected TestEmitter $emitter;
 
     protected TestSessionManager $session;
+
+    protected PlayerRepository $playerRepository;
+
+    protected SectorRepository $sectorRepository;
+
+    protected ZoneRepository $zoneRepository;
 
     // NOTE: set this to false in tests that need to run in a transaction.
     protected bool $useTransactions = true;
@@ -49,6 +60,15 @@ abstract class BootsApp extends TestCase
     {
         $this->cleanSession();
         $this->bootApp();
+
+        $this->playerRepository = $this->app->getContainer()
+            ->get(PlayerRepository::class);
+
+        $this->sectorRepository = $this->app->getContainer()
+            ->get(SectorRepository::class);
+
+        $this->zoneRepository = $this->app->getContainer()
+            ->get(ZoneRepository::class);
 
         if ($this->useTransactions && Db::isActive()) {
             Db::beginTransaction();
@@ -180,6 +200,28 @@ abstract class BootsApp extends TestCase
             $expectedValue,
             $flash[$key],
             "Flash message '{$key}' does not match expected value"
+        );
+    }
+
+    protected function actingAs(int $playerId): void
+    {
+        $this->session->login($this->playerRepository->findById($playerId));
+    }
+
+    protected function seedUniverse(): void
+    {
+        $zoneId = $this->zoneRepository->create('Sol', new ZoneSettings());
+        $this->sectorRepository->create($zoneId, 0, 0, 0,Ports::SPECIAL, 'Sol');
+    }
+
+    protected function createTestPlayer(string $email, string $password, string $ipAddress = '127.0.0.1'): int
+    {
+        return $this->playerRepository->create(
+            email: $email,
+            characterName: 'Test Character',
+            shipName: 'Test Ship',
+            passwordHash: password_hash($password, PASSWORD_DEFAULT),
+            ipAddress: $ipAddress,
         );
     }
 }

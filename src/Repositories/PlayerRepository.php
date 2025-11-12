@@ -23,6 +23,7 @@ namespace BlackNova\Repositories;
 use BlackNova\Models\Player;
 use BlackNova\Models\Ship;
 use BlackNova\Services\Db;
+use Bnt\Scan;
 
 class PlayerRepository // Gateway for SQL calls related to Players
 {
@@ -64,7 +65,7 @@ class PlayerRepository // Gateway for SQL calls related to Players
         string $passwordHash,
         string $ipAddress,
         string $lang = 'english'
-    ): int {
+    ): false|int {
         $config = config();
 
         // Calculate starting turns based on game state
@@ -78,7 +79,7 @@ class PlayerRepository // Gateway for SQL calls related to Players
 
         $timestamp = date('Y-m-d H:i:s');
 
-        $stmt = Db::prepare(
+        if (!Db::exec(
             "INSERT INTO $this->tableName (
                 ship_name, ship_destroyed, character_name, password, email,
                 armor_pts, credits, ship_energy, ship_fighters, turns,
@@ -95,31 +96,28 @@ class PlayerRepository // Gateway for SQL calls related to Players
                 :last_login, :ip_address,
                 'Y', 'N', 'N', 'Y',
                 NULL, :lang
-            )"
-        );
-
-        $stmt->execute([
-            'ship_name' => $shipName,
-            'character_name' => $characterName,
-            'password' => $passwordHash,
-            'email' => $email,
-            'armor_pts' => $config->start_armor,
-            'credits' => $config->start_credits,
-            'ship_energy' => $config->start_energy,
-            'ship_fighters' => $config->start_fighters,
-            'turns' => $mturns,
-            'dev_warpedit' => $config->start_editors,
-            'dev_genesis' => $config->start_genesis,
-            'dev_beacon' => $config->start_beacon,
-            'dev_emerwarp' => $config->start_emerwarp,
-            'dev_escapepod' => $config->start_escape_pod,
-            'dev_fuelscoop' => $config->start_scoop,
-            'dev_minedeflector' => $config->start_minedeflectors,
-            'dev_lssd' => $config->start_lssd,
-            'last_login' => $timestamp,
-            'ip_address' => $ipAddress,
-            'lang' => $lang,
-        ]);
+            )", [
+                'ship_name' => $shipName,
+                'character_name' => $characterName,
+                'password' => $passwordHash,
+                'email' => $email,
+                'armor_pts' => $config->start_armor,
+                'credits' => $config->start_credits,
+                'ship_energy' => $config->start_energy,
+                'ship_fighters' => $config->start_fighters,
+                'turns' => $mturns,
+                'dev_warpedit' => $config->start_editors,
+                'dev_genesis' => $config->start_genesis,
+                'dev_beacon' => $config->start_beacon,
+                'dev_emerwarp' => $config->start_emerwarp,
+                'dev_escapepod' => $config->start_escape_pod,
+                'dev_fuelscoop' => $config->start_scoop,
+                'dev_minedeflector' => $config->start_minedeflectors,
+                'dev_lssd' => $config->start_lssd,
+                'last_login' => $timestamp,
+                'ip_address' => $ipAddress,
+                'lang' => $lang,
+            ])) return false;
 
         return Db::lastInsertId();
     }
@@ -142,6 +140,21 @@ class PlayerRepository // Gateway for SQL calls related to Players
         if (!$row = $stmt->fetch()) return null;
 
         return $this->mapToPlayer($row);
+    }
+
+    /**
+     * @param array $ids
+     * @return Player[]
+     */
+    public function findByIds(array $ids): array
+    {
+        if (count($ids) === 0) return [];
+
+        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = Db::prepare("SELECT * FROM $this->tableName WHERE ship_id IN ($placeholders) LIMIT ?");
+        $stmt->execute([...array_values($ids), count($ids)]);
+
+        return array_map(fn ($row) => $this->mapToPlayer($row), $stmt->fetchAll());
     }
 
     /**
@@ -256,6 +269,20 @@ class PlayerRepository // Gateway for SQL calls related to Players
         return $this->destroyShipById($player->shipId);
     }
 
+    public function landOnPlanet(int $shipId, int $planetId): bool
+    {
+        $stmt = Db::prepare(
+            "UPDATE $this->tableName 
+             SET on_planet = 'Y', planet_id = :planet_id 
+             WHERE ship_id = :ship_id"
+        );
+
+        return $stmt->execute([
+            'planet_id' => $planetId,
+            'ship_id' => $shipId
+        ]);
+    }
+
     public function updateLastLogin(int $shipId, string $ipAddress): bool
     {
         $stmt = Db::prepare(
@@ -280,6 +307,36 @@ class PlayerRepository // Gateway for SQL calls related to Players
         $result = $stmt->fetch();
 
         return $result['count'] > 0;
+    }
+
+    /**
+     * @param Player $player
+     * @param int $sectorId
+     * @return Player[] other players ships detected in the sector
+     */
+    public function detectInSector(Player $player, int $sectorId): array
+    {
+        $teamsTable = Db::table('teams');
+
+        $stmt = Db::prepare("
+            SELECT $this->tableName.*, $teamsTable.team_name FROM $this->tableName
+            LEFT OUTER JOIN $teamsTable ON $this->tableName.team = $teamsTable.id
+            WHERE $this->tableName.ship_id <> :ship_id AND $this->tableName.sector = :sector_id AND $this->tableName.on_planet='N'
+            ORDER BY RAND()
+        ");
+
+        $stmt->execute([
+            'ship_id' => $player->shipId,
+            'sector_id' => $sectorId,
+        ]);
+
+        $found = array_map(fn ($row) => $this->mapToPlayer($row), $stmt->fetchAll());
+
+        return array_filter($found, function (Player $scanned) use ($player) {
+            $success = max(5, min(Scan::success($player->ship->sensors, $scanned->ship->cloak), 95));
+            $roll = mt_rand(1, 100);
+            return $roll < $success;
+        });
     }
 
     private function mapToPlayer(array $row): Player
@@ -309,14 +366,27 @@ class PlayerRepository // Gateway for SQL calls related to Players
                 'fuelScoop' => $row['dev_fuelscoop'] === 'Y',
                 'lssd' => $row['dev_lssd'] === 'Y',
             ],
+            cargo: new Ship\Cargo(
+                ore: (int)$row['ship_ore'],
+                organics: (int)$row['ship_organics'],
+                goods: (int)$row['ship_goods'],
+                energy: (int)$row['ship_energy'],
+                colonists: (int)$row['ship_colonists'],
+            ),
+            onPlanet: $row['on_planet'] === 'Y',
+            planetId: (int)$row['planet_id'],
         );
 
         return new Player(
             shipId: (int)$row['ship_id'],
             email: $row['email'],
+            score: $row['score'],
+            credits: (int)$row['credits'],
             characterName: $row['character_name'],
             passwordHash: $row['password'],
+            lang: $row['lang'],
             turns: (int)$row['turns'],
+            turns_used: (int)$row['turns_used'],
             ipAddress: $row['ip_address'],
             ship: $ship,
             lastLogin: $row['last_login'] ? (int)$row['last_login'] : null,

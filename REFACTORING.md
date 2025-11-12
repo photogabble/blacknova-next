@@ -51,7 +51,7 @@ There is some interesting mixed-usage of `$db` and `$pdo_db` throughout the code
 ### Migrate all files to use templates
 This is listed as a feature request; however, there is also a separate todo for converting `main.php` to be template driven. 
 
-- [ ] Convert main to be template driven
+- [x] Convert main to be template driven
 - [ ] Migrate all files to use templates
 
 This is almost as big an undertaking as refactoring the database service. I can see that the original developers made a good effort to separate the presentation from the business logic, but it's not a complete separation.
@@ -96,9 +96,9 @@ This section relates to my refactoring of `login2.php`. Interestingly, the login
 
 It seems odd to do this on login, when elsewhere in the code we have `Ship::isDestroyed` which only checks to see if the ship has an escape pod installed. During refactoring of this section, I shall be having the player ship state set when it's destroyed, not on login. Then on login if their ship was destroyed while they were offline the player will be in a new ship or be redirected to the game over screen explaining that they need to create a fresh character.
 
-- [ ] Move `classes/Login.php` -> `src/Http/Middleware/AuthMiddleware.php` and convert into Middleware
+- [x] Move `classes/Login.php` -> `src/Http/Middleware/AuthMiddleware.php` and convert into Middleware
 - [x] Move `classes/CheckBan.php` -> `src/Repositories/BanRepository.php` and convert into Repository
-- [ ] Move `login2.php` -> `src/Http/Controllers/Auth/LoginController.php` and convert into Controller
+- [x] Move `login2.php` -> `src/Http/Controllers/Auth/LoginController.php` and convert into Controller
 - [x] Move `classes/Player.php` -> `src/Models/Player.php` and convert into Model
 - [x] Move `classes/Ship.php` -> `src/Models/Ship.php` and convert into Model
 - [x] Handle Game Closure (via `$bntreg->game_closed`)
@@ -139,8 +139,26 @@ To refactor templates, I need to also refactor how translations are handled. I w
 instead be able to call `Translate::get('category', 'key')` and have it return the translation for the given category and key. 
 
 - [ ] Create `LocaleMiddleware` to handle language selection, listens to a GET parameter and persists it in session
-- [ ] Create `Translate::get` method
+- [x] Create `Translate::get` method
 - [ ] Create `lang()` helper function
+
+#### Refactoring Templates: Main
+`main.php` is the games dashboard providing the player with their current game state and is the first page that a player sees upon logging in.
+
+Being the main dashboard for displaying game state this page requires a lot of additional work to be done before it will function correctly.
+
+- [x] Create `MainController`
+- [x] Create Sector Repository and Model
+- [x] Create WarpGate Repository and Model
+- [x] Create Preset Repository and Model
+- [x] Create Planet Repository and Model
+- [x] Update Player Repository and Player/Ship models to be cargo aware
+- [x] Create SectorDefense Repository
+- [x] Refactor existing SectorDefense class into Model
+- [ ] Move SectorDefense Model into new src folder
+- [ ] `main.php` to become `main.tpl`
+
+Refactoring `main.php` involved creation of a number of new classes but wasn't overly complex. I did however, stumble upon a bug in `modify_defences.php`. This file doesn't appear to be loading the languages nor grabbing the `defence_id` from `$_GET`. I shall hold off on fixing that bug until I get to refactoring the sector defence system.
 
 ### Refactoring Reg
 `classes/Reg.php` is used as a global registry for the game configuration loading it from the database if existing or else from an ini file.
@@ -172,3 +190,32 @@ In some cases this is where the classes appear to have originated from PHP4, or 
 
 - [x] Refactor `classes/Reg.php` to be a Property Bag
 - [x] Refactor `classes/Db.php`, the game appears to maintain two connections to the database, one using PHP's PDO and another using AdoDB. There is a TODO from 2013 in `docs/todo` to *"Convert all SQL calls from adodb to PDO"*. This isn't a small amount of work but needs to be done.
+
+## Extensions
+In this section I will list any extensions that I would like to add to the game. These will be added to the game once I have completed refactoring and will eventually be moved from this document into its own file and/or GitHub issues.
+
+### Sector Defense Deploy Location
+Currently, when a player deploys a defence, it is deployed to the **sector** as a whole. I'd like to extend this by attaching the defence to a specific **planet** or **warp gate**. 
+
+This would allow more tactical usage of defence systems, for example, denying a specific warp gate or adding perimeter defence to a specific planet.
+
+Fighters may attack or attempt to toll players who have entered a sector with a defence deployed to it, but only instantly if the player has entered the sector at the place where they are deployed. Fighters that are deployed elsewhere may be configured to be aggressive, in which case there will be a delay between when their target arrives and when they can attack. This delay will be determined upon the defence level.
+
+### Sector Defense Levels
+Currently, we have two forms of sector defence: fighters and mines. I'd like to extend these by adding a level, or otherwise adding attributes to the defences which play a role in their attack strength.
+
+For example, we may have multiple types of fighters, each being more expensive than the previous, or having different special abilities. Maybe only one type of fighter is available at the **Special Port** and the others have to be researched and are only manufactured on player planets.
+
+### Research & Development Mechanic
+This continues on from Sector Defense Levels, and likely blocks that from being completed. I'd like to add a research and development mechanic to the game, similar to how EveOnline has player skills.
+
+These can then be used to unlock functionality. I quite like how EveOnline gates skills behind skill books because these can be scattered around the game map as items for the player to collect. I'm unsure about having skills take time to *learn,* but I think it would be a good idea to have a skill tree that can be unlocked by completing a number of tasks, with branches of the tree being added by skill book discoveries.
+
+### Extended Planet Management
+The existing planet management system is quite basic. With the player limited to base building and setting production limits. 
+
+Once players get large enough ships, they can dump an extortionate amount of resources into a planet, triggering exponential population growth that ends up giving them near endless amounts of resources.
+
+I consider this to be a broken mechanic and would like to limit the growth by making Planets require more work to manage. For example, the population will be limited by the availability of housing. Different planets can have different resources available and therefore different production limits.
+
+Starving populations should rebel, causing the player to lose the planet and any defences becoming hostile to the player. Overpopulated planets should be more at risk of pandemics that can cause rapid population loss.

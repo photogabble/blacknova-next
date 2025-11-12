@@ -90,8 +90,7 @@ $routes = require APP_ROOT . '/config/routes.php';
 $routes($app->getRouter(), $app);
 
 if (!function_exists('app')) {
-    function app(): App
-    {
+    function app(): App {
         return App::getInstance();
     }
 }
@@ -114,6 +113,13 @@ if (!function_exists('session')) {
         return App::getInstance()
             ->getContainer()
             ->get(SessionManager::class);
+    }
+}
+
+if (!function_exists('dd')) {
+    function dd(...$args) {
+        dump(...$args);
+        die();
     }
 }
 

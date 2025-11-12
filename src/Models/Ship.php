@@ -16,12 +16,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// Origin: classes/BntShip.php
 // File: src/Models/Ship.php
 
 namespace BlackNova\Models;
 
 use ADORecordSet;
+use BlackNova\Models\Ship\Cargo;
 use BlackNova\Services\Db;
+use Bnt\CalcLevels;
 use Bnt\PlayerLog;
 
 final readonly class Ship
@@ -41,6 +44,11 @@ final readonly class Ship
         public int    $torpLaunchers,
         public int    $cloak,
         public array  $devices = [],
+        public Cargo  $cargo = new Cargo(
+            ore: 0,organics: 0,goods: 0,energy: 0, colonists: 0
+        ),
+        public bool   $onPlanet = false,
+        public ?int   $planetId = null,
     )
     {
     }
@@ -63,10 +71,43 @@ final readonly class Ship
         return false;
     }
 
+    public function getLevel(): int
+    {
+        $level = CalcLevels::avgTech([
+            'hull' => $this->hull,
+            'engines' => $this->engines,
+            'computer' => $this->computer,
+            'armor' => $this->armor,
+            'shields' => $this->shields,
+            'beams' => $this->beams,
+            'torp_launchers' => $this->torpLaunchers,
+        ]);
+
+        if ($level < 8) return 0;
+        if ($level < 12) return 1;
+        if ($level < 16) return 2;
+        if ($level < 20) return 3;
+
+        return 4;
+    }
+
+    public function image(): string
+    {
+        return match($this->getLevel()) {
+            0 => 'tinyship.png',
+            1 => 'smallship.png',
+            2 => 'mediumship.png',
+            3 => 'largeship.png',
+            4 => 'hugeship.png',
+        };
+    }
+
     public function toArray(): array
     {
         return [
-            'ship_name' => $this->name,
+            'name' => $this->name,
+            'level' => $this->getLevel(),
+            'image' => $this->image(),
             'sector' => $this->sector,
             'destroyed' => $this->destroyed,
             'hull' => $this->hull,
@@ -80,9 +121,16 @@ final readonly class Ship
             'torp_launchers' => $this->torpLaunchers,
             'cloak' => $this->cloak,
             'devices' => $this->devices,
+            'cargo' => $this->cargo->toArray(),
         ];
     }
 
+    /**
+     * @deprecated will be moved to ShipRepository/PlayerRepository
+     * @param $db
+     * @param $ship_id
+     * @return void
+     */
     public static function leavePlanet($db, $ship_id)
     {
         $own_pl_result = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner = ?", array($ship_id));

@@ -26,6 +26,13 @@ class SessionManager implements SessionInterface
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {
+            // Configure session settings
+            ini_set('session.use_only_cookies', '1');
+            ini_set('session.cookie_httponly', '1');
+            ini_set('session.use_trans_sid', '0');
+            // ini_set('session.cookie_secure', '1'); // If using HTTPS
+
+            session_name('blacknova_session');
             session_start();
         }
     }
@@ -33,6 +40,7 @@ class SessionManager implements SessionInterface
     public function login(Player $player): void
     {
         $_SESSION['user_id'] = $player->shipId;
+        $_SESSION['username'] = $player->email;
         $_SESSION['logged_in'] = true;
 
         // Regenerate session ID for security

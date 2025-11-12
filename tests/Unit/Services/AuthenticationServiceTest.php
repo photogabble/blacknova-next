@@ -91,11 +91,16 @@ final class AuthenticationServiceTest extends TestCase
         $player = new Player(
             shipId: 1,
             email: 'test@example.com',
+            score: 0,
+            credits: 1000,
             characterName: 'Test Player',
             passwordHash: password_hash('password', PASSWORD_DEFAULT),
+            lang: 'english',
             turns: 100,
+            turns_used: 0,
             ipAddress: '192.168.1.1',
-            ship: $ship
+            ship: $ship,
+            lastLogin: null
         );
 
         $this->playerRepository

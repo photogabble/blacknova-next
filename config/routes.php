@@ -1,6 +1,7 @@
 <?php
 
 use BlackNova\Http\Controllers\Auth\LoginController;
+use BlackNova\Http\Controllers\MainController;
 use BlackNova\Http\Controllers\PagesController;
 use BlackNova\Http\Middleware\AuthMiddleware;
 use BlackNova\Http\Middleware\LocaleMiddleware;
@@ -17,4 +18,10 @@ return function(Router $router, App $app) {
 
     $router->map('GET', '/', [PagesController::class, 'homepage']);
     $router->map('GET', '/news', [PagesController::class, 'news']);
+
+    $router
+        ->group('/', function (RouteGroup $router) use ($app) {
+            $router->middleware(new AuthMiddleware($app->getContainer()->get(AuthenticationService::class)));
+            $router->map('GET', '/main', [MainController::class, 'dashboard']);
+        });
 };

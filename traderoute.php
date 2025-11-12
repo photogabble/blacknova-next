@@ -104,8 +104,8 @@ if (mb_strlen(trim($tr_repeat)) === 0)
 }
 
 // Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$command = null;
-$command = filter_input(INPUT_POST, 'command', FILTER_SANITIZE_STRING);
+$command = filter_input(INPUT_GET, 'command', FILTER_SANITIZE_STRING) ?? '';
+
 if (mb_strlen(trim($command)) === 0)
 {
     $command = false;
@@ -114,7 +114,7 @@ if (mb_strlen(trim($command)) === 0)
 if ($command == 'new')
 {
     // Displays new trade route form
-    Bad\Traderoute::traderouteNew($pdo_db, $lang, $langvars, $bntreg, null, $template, $num_traderoutes, $playerinfo, $color_line1, $color_line2, $color_header);
+    Bad\Traderoute::traderouteNew($db, $pdo_db, $lang, $langvars, $bntreg, null, $template, $num_traderoutes, $playerinfo, $color_line1, $color_line2, $color_header);
 }
 elseif ($command == 'create')
 {

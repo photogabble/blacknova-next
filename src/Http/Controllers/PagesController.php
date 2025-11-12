@@ -33,8 +33,8 @@ final class PagesController extends Controller
             'title' => Translate::get('index.l_welcome_bnt'),
             'list_of_langs' => Languages::listAvailable('english'),
 
-            'link_forums' => $this->reg->link_forums,
-            'admin_mail' => $this->reg->admin_mail,
+            'link_forums' => config('link_forums'),
+            'admin_mail' => config('admin_mail'),
 
             'body_class' => 'index',
             'news_ticker_active' => false,

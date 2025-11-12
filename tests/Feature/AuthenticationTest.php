@@ -20,22 +20,17 @@
 namespace BlackNova\Tests\Feature;
 
 use BlackNova\Repositories\BanRepository;
-use BlackNova\Repositories\PlayerRepository;
 use BlackNova\Tests\BootsApp;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 
 final class AuthenticationTest extends BootsApp
 {
-
-    private PlayerRepository $playerRepository;
     private BanRepository $banRepository;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->playerRepository = $this->app->getContainer()
-            ->get(PlayerRepository::class);
 
         $this->banRepository = $this->app->getContainer()
             ->get(BanRepository::class);
@@ -225,17 +220,6 @@ final class AuthenticationTest extends BootsApp
         // Should still process with default IP 0.0.0.0
         $player = $this->playerRepository->findById($id);
         $this->assertEquals('0.0.0.0', $player->ipAddress);
-    }
-
-    private function createTestPlayer(string $email, string $password, string $ipAddress = '127.0.0.1'): int
-    {
-        return $this->playerRepository->create(
-            email: $email,
-            characterName: 'Test Character',
-            shipName: 'Test Ship',
-            passwordHash: password_hash($password, PASSWORD_DEFAULT),
-            ipAddress: $ipAddress,
-        );
     }
 
     private function createTestPlayerWithDestroyedShip(string $email, string $password): int

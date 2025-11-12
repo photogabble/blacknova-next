@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
-// Copyright (C) 2001-2014 Ron Harwood and the BNT development team
+// Copyright (C) 2025 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -15,18 +15,18 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// File: classes/LogMove.php
+// File: src/Models/Message.php
 
-namespace Bnt;
+namespace BlackNova\Models;
 
-use BlackNova\Services\Db;
-
-class LogMove
-{
-    public static function writeLog($db, $ship_id, $sector_id)
-    {
-        $res = $db->Execute("INSERT INTO ".\BlackNova\Services\Db::table('movement_log')." (ship_id, sector_id, time) VALUES (?, ?, NOW())", array($ship_id, $sector_id));
-        Db::logDbErrors($db, $res, __LINE__, __FILE__);
-    }
+class Message {
+    public function __construct(
+        public int $id,
+        public string $subject,
+        public string $message,
+        public int $sender,
+        public int $receiver,
+        public int $sentAt,
+        public bool $notified = false
+    ) {}
 }
-?>

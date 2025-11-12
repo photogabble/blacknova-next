@@ -32,10 +32,10 @@ abstract class Controller
     protected Smarty $smarty;
     protected Reg $reg;
 
-    public function __construct(Smarty $smarty, Reg $reg)
+    public function __construct()
     {
-        $this->reg = $reg;
-        $this->smarty = $smarty;
+        $this->reg = app()->getContainer()->get(Reg::class);
+        $this->smarty = app()->getContainer()->get(Smarty::class);
     }
 
     public function view($view, $data = [], int $status = 200): HtmlResponse
@@ -54,7 +54,9 @@ abstract class Controller
             'regional',
             'footer',
             'global_includes',
-            'news'
+            'news',
+            'admin',
+            'combat',
         ]);
 
         // Make the SF logo a little bit larger to balance the extra line from
@@ -120,6 +122,8 @@ abstract class Controller
         }
 
         $default = [
+            'body_class' => 'bnt',
+
             // TODO: add helper function to get current language
             'lang' => 'english',
             'link' => '',
