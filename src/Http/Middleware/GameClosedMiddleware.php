@@ -15,11 +15,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// File: classes/Game.php
+// Origin: classes/Game.php
+// File: src/Http/Middleware/GameClosedMiddleware.php
 
-namespace Bnt;
+namespace BlackNova\Http\Middleware;
 
-class Game
+use Bnt\Footer;
+use Bnt\Header;
+
+class GameClosedMiddleware
 {
     public static function isGameClosed($pdo_db, $bntreg, $lang, $template, $langvars)
     {
