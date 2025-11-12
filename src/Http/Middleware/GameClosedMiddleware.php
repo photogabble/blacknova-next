@@ -1,6 +1,7 @@
 <?php
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
+// Copyright (C) 2025 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -20,25 +21,17 @@
 
 namespace BlackNova\Http\Middleware;
 
-use Bnt\Footer;
-use Bnt\Header;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class GameClosedMiddleware
+class GameClosedMiddleware implements MiddlewareInterface
 {
-    public static function isGameClosed($pdo_db, $bntreg, $lang, $template, $langvars)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-
-        if ($bntreg->game_closed)
-        {
-            $title = $langvars['l_login_closed_message'];
-            Header::display($pdo_db, $lang, $template, $title);
-            echo $langvars['l_login_closed_message'];
-            Footer::display($pdo_db, $lang, $bntreg, $template);
-            die();
-        }
-        else
-        {
-            return false;
-        }
+        if (!config('game_closed')) return $handler->handle($request);
+        return new HtmlResponse(view('game_closed.tpl'), 503);
     }
 }

@@ -23,7 +23,6 @@ namespace BlackNova\Http\Middleware;
 
 use BlackNova\Models\Player;
 use BlackNova\Services\Auth\AuthenticationService;
-use Bnt\Game;
 use Bnt\Ship;
 use Bnt\Translate;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -59,7 +58,7 @@ class AuthMiddleware implements MiddlewareInterface
         $langvars = Translate::load($pdo_db, $lang, array('login', 'global_funcs', 'common', 'footer', 'self_destruct'));
 
         // Check if game is closed - Ignore the false return if it is open
-        Game::isGameClosed($pdo_db, $bntreg, $lang, $template, $langvars);
+        //Game::isGameClosed($pdo_db, $bntreg, $lang, $template, $langvars);
 
         // Handle authentication check - Will die if fails, or return correct playerinfo
         $playerinfo = Player::HandleAuth($pdo_db, $lang, $langvars, $bntreg, $template);
