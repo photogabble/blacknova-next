@@ -90,7 +90,9 @@ $routes = require APP_ROOT . '/config/routes.php';
 $routes($app->getRouter(), $app);
 
 if (!function_exists('app')) {
-    function app(): App {
+    function app(?string $abstract = null): mixed
+    {
+        if (!is_null($abstract)) return App::getInstance()->getContainer()->get($abstract);
         return App::getInstance();
     }
 }
