@@ -44,7 +44,7 @@ final class AuthenticationTest extends BootsApp
         $this->assertResponseOk();
     }
 
-    public function test_login_redirects_to_home_when_game_is_closed(): void
+    public function test_game_closed_middleware_returns_when_game_is_closed(): void
     {
         // Set the game_closed flag to true
         config()->game_closed = true;
@@ -57,8 +57,7 @@ final class AuthenticationTest extends BootsApp
                 'pass' => 'password123'
             ]));
 
-        $this->assertResponseRedirectsTo('/');
-        $this->assertSessionFlashEquals('error_message', 'The game is currently closed');
+        $this->assertResponseCodeEquals(503);
     }
 
     public function test_login_redirects_to_main_when_already_authenticated(): void

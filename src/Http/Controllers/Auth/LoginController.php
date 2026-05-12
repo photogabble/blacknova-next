@@ -47,12 +47,6 @@ final class LoginController extends Controller
 
     public function processLogin(ServerRequestInterface $request): ResponseInterface
     {
-        // If game is closed redirect to the home page
-        if ($this->reg->game_closed) {
-            $this->session->flash('error_message', 'The game is currently closed'); // TODO: Translate (l_login_closed_message)
-            return new RedirectResponse('/');
-        }
-
         // If already logged in, redirect to the main page
         if ($this->authService->check()) {
             return new RedirectResponse('/main');
