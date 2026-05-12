@@ -165,7 +165,7 @@ if ($planetinfo['sells'] == 'Y')
     }
 }
 
-\BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+\BlackNova\Services\Score::updateScore($playerinfo['ship_id']);
 Bnt\Text::gotoMain($db, $lang, $langvars);
 Bnt\Footer::display($pdo_db, $lang, $bntreg, $template);
 ?>

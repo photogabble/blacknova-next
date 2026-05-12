@@ -1,6 +1,7 @@
 <?php
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
+// Copyright (C) 2026 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -19,35 +20,32 @@
 
 namespace BlackNova\Services;
 
-use Bnt\Db;
-use Bnt\ADORecordSet;
-
 class Score
 {
-    public static function updateScore($db, $ship_id, $bntreg)
+    public static function updateScore(int $ship_id): int
     {
-        $upgrade_factor = $bntreg->upgrade_factor;
-        $upgrade_cost = $bntreg->upgrade_cost;
-        $torpedo_price = $bntreg->torpedo_price;
-        $armor_price = $bntreg->armor_price;
-        $fighter_price = $bntreg->fighter_price;
-        $ore_price = $bntreg->ore_price;
-        $organics_price = $bntreg->organics_price;
-        $goods_price = $bntreg->goods_price;
-        $energy_price = $bntreg->energy_price;
-        $colonist_price = $bntreg->colonist_price;
-        $dev_genesis_price = $bntreg->dev_genesis_price;
-        $dev_beacon_price = $bntreg->dev_beacon_price;
-        $dev_emerwarp_price = $bntreg->dev_emerwarp_price;
-        $dev_warpedit_price = $bntreg->dev_warpedit_price;
-        $dev_minedeflector_price = $bntreg->dev_minedeflector_price;
-        $dev_escapepod_price = $bntreg->dev_escapepod_price;
-        $dev_fuelscoop_price = $bntreg->dev_fuelscoop_price;
-        $dev_lssd_price = $bntreg->dev_lssd_price;
-        $base_ore = $bntreg->base_ore;
-        $base_goods = $bntreg->base_goods;
-        $base_organics = $bntreg->base_organics;
-        $base_credits = $bntreg->base_credits;
+        $upgrade_factor = config('upgrade_factor');
+        $upgrade_cost = config('upgrade_cost');
+        $torpedo_price = config('torpedo_price');
+        $armor_price = config('armor_price');
+        $fighter_price = config('fighter_price');
+        $ore_price = config('ore_price');
+        $organics_price = config('organics_price');
+        $goods_price = config('goods_price');
+        $energy_price = config('energy_price');
+        $colonist_price = config('colonist_price');
+        $dev_genesis_price = config('dev_genesis_price');
+        $dev_beacon_price = config('dev_beacon_price');
+        $dev_emerwarp_price = config('dev_emerwarp_price');
+        $dev_warpedit_price = config('dev_warpedit_price');
+        $dev_minedeflector_price = config('dev_minedeflector_price');
+        $dev_escapepod_price = config('dev_escapepod_price');
+        $dev_fuelscoop_price = config('dev_fuelscoop_price');
+        $dev_lssd_price = config('dev_lssd_price');
+        $base_ore = config('base_ore');
+        $base_goods = config('base_goods');
+        $base_organics = config('base_organics');
+        $base_credits = config('base_credits');
 
         // These are all SQL Queries, so treat them like them.
         $calc_hull              = "ROUND(POW($upgrade_factor, hull))";
@@ -62,7 +60,7 @@ class Score
         $calc_cloak             = "ROUND(POW($upgrade_factor, cloak))";
         $calc_levels            = "($calc_hull + $calc_engines + $calc_power + $calc_computer + $calc_sensors + $calc_beams + $calc_torp_launchers + $calc_shields + $calc_armor + $calc_cloak) * $upgrade_cost";
 
-        $calc_torps             = "".\BlackNova\Services\Db::table('ships').".torps * $torpedo_price";
+        $calc_torps             = Db::table('ships') .".torps * $torpedo_price";
         $calc_armor_pts         = "armor_pts * $armor_price";
         $calc_ship_ore          = "ship_ore * $ore_price";
         $calc_ship_organics     = "ship_organics * $organics_price";
@@ -82,55 +80,47 @@ class Score
         $calc_dev_minedeflector = "dev_minedeflector * $dev_minedeflector_price";
         $calc_dev               = "$calc_dev_warpedit + $calc_dev_genesis + $calc_dev_beacon + $calc_dev_emerwarp + $calc_dev_escapepod + $calc_dev_fuelscoop + $calc_dev_minedeflector + $calc_dev_lssd";
 
-        $calc_planet_goods      = "SUM(".\BlackNova\Services\Db::table('planets').".organics) * $organics_price + SUM(".\BlackNova\Services\Db::table('planets').".ore) * $ore_price + SUM(".\BlackNova\Services\Db::table('planets').".goods) * $goods_price + SUM(".\BlackNova\Services\Db::table('planets').".energy) * $energy_price";
-        $calc_planet_colonists  = "SUM(".\BlackNova\Services\Db::table('planets').".colonists) * $colonist_price";
-        $calc_planet_defence    = "SUM(".\BlackNova\Services\Db::table('planets').".fighters) * $fighter_price + IF(".\BlackNova\Services\Db::table('planets').".base='Y', $base_credits + SUM(".\BlackNova\Services\Db::table('planets').".torps) * $torpedo_price, 0)";
-        $calc_planet_credits    = "SUM(".\BlackNova\Services\Db::table('planets').".credits)";
+        $calc_planet_goods      = "SUM(".Db::table('planets').".organics) * $organics_price + SUM(".Db::table('planets').".ore) * $ore_price + SUM(".Db::table('planets').".goods) * $goods_price + SUM(".Db::table('planets').".energy) * $energy_price";
+        $calc_planet_colonists  = "SUM(".Db::table('planets').".colonists) * $colonist_price";
+        $calc_planet_defence    = "SUM(".Db::table('planets').".fighters) * $fighter_price + IF(".Db::table('planets').".base='Y', $base_credits + SUM(".Db::table('planets').".torps) * $torpedo_price, 0)";
+        $calc_planet_credits    = "SUM(".Db::table('planets').".credits)";
 
-        $pl_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM ".\BlackNova\Services\Db::table('planets')." WHERE owner=?", array($ship_id));
-        Db::logDbErrors($db, $pl_score_res, __LINE__, __FILE__);
-        if ($pl_score_res instanceof ADORecordSet)
-        {
-            $planet_score = $pl_score_res->fields['planet_score'];
-        }
-        else
-        {
-            $planet_score = null;
-        }
+        $pl_score_res = Db::select(
+            "SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM ".Db::table('planets')." WHERE owner=?",
+            [$ship_id]
+        );
 
-        $ship_score_res = $db->Execute("SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + ".\BlackNova\Services\Db::table('ships').".credits, 0) AS ship_score FROM ".\BlackNova\Services\Db::table('ships')." LEFT JOIN ".\BlackNova\Services\Db::table('planets')." ON ".\BlackNova\Services\Db::table('planets').".owner=ship_id WHERE ship_id=? AND ship_destroyed='N'", array($ship_id));
-        Db::logDbErrors($db, $ship_score_res, __LINE__, __FILE__);
-        if ($ship_score_res instanceof ADORecordSet)
-        {
-            $ship_score = $ship_score_res->fields['ship_score'];
-        }
-        else
-        {
-            $ship_score = null;
-        }
+        $planet_score = (count($pl_score_res) === 1)
+            ? $pl_score_res[0]['planet_score']
+            : 0;
 
-        $bank_score_res = $db->Execute("SELECT (balance - loan) AS bank_score FROM ".\BlackNova\Services\Db::table('ibank_accounts')." WHERE ship_id = ?;", array($ship_id));
-        Db::logDbErrors($db, $bank_score_res, __LINE__, __FILE__);
-        if ($bank_score_res instanceof ADORecordSet)
-        {
-            $bank_score = $bank_score_res->fields['bank_score'];
-        }
-        else
-        {
-            $bank_score = null;
-        }
+        $ship_score_res = Db::select(
+            "SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + ".Db::table('ships').".credits, 0) AS ship_score FROM ".Db::table('ships')." LEFT JOIN ".Db::table('planets')." ON ".Db::table('planets').".owner=ship_id WHERE ship_id=? AND ship_destroyed='N'",
+            [$ship_id]
+        );
+
+        $ship_score = (count($ship_score_res) === 1)
+            ? $ship_score_res[0]['ship_score']
+            : 0;
+
+        $bank_score_res = Db::select(
+            "SELECT (balance - loan) AS bank_score FROM ".Db::table('ibank_accounts')." WHERE ship_id = ?;",
+            [$ship_id]
+        );
+
+        $bank_score = (count($bank_score_res) === 1)
+            ? $bank_score_res[0]['bank_score']
+            : 0;
 
         $score = $ship_score + $planet_score + $bank_score;
-        if ($score < 0)
-        {
-            $score = 0;
-        }
+        if ($score < 0) $score = 0;
 
         $score = (int) round(sqrt($score));
-        $set_score_res = $db->Execute("UPDATE ".\BlackNova\Services\Db::table('ships')." SET score=? WHERE ship_id=?", array($score, $ship_id));
-        Db::logDbErrors($db, $set_score_res, __LINE__, __FILE__);
+        Db::exec(
+            "UPDATE ".Db::table('ships')." SET score=? WHERE ship_id=?",
+            [$score, $ship_id]
+        );
 
         return $score;
     }
 }
-?>

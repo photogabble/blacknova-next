@@ -27,7 +27,7 @@ $res = $db->Execute("SELECT ship_id FROM ".\BlackNova\Services\Db::table('ships'
 \BlackNova\Services\Db::logDbErrors($db, $res, __LINE__, __FILE__);
 while (!$res->EOF)
 {
-    \BlackNova\Services\Score::updateScore($db, $res->fields['ship_id'], $bntreg);
+    \BlackNova\Services\Score::updateScore($res->fields['ship_id']);
     $res->MoveNext();
 }
 echo "<br>";

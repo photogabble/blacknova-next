@@ -871,7 +871,7 @@ if (!is_bool($planetinfo) && $planetinfo != false)
 
             if ($planetinfo['owner'] != 0)
             {
-                \BlackNova\Services\Score::updateScore($db, $planetinfo['owner'], $bntreg);
+                \BlackNova\Services\Score::updateScore($planetinfo['owner']);
             }
 
             if ($planetinfo['owner'] != 0)
