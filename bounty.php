@@ -240,7 +240,7 @@ switch ($response) {
         {
             $percent = $bounty_maxvalue * 100;
 
-            $score = Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+            $score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
             $maxtrans = $score * $score * $bounty_maxvalue;
             $previous_bounty = 0;
             $pb = $db->Execute("SELECT SUM(amount) AS totalbounty FROM ".\BlackNova\Services\Db::table('bounty')." WHERE bounty_on = ? AND placed_by = ?;", array($bounty_on, $playerinfo['ship_id']));

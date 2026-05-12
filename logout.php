@@ -30,7 +30,7 @@ if (array_key_exists('username', $_SESSION))
     $result = $db->Execute("SELECT ship_id FROM ".\BlackNova\Services\Db::table('ships')." WHERE email = ?;", array($_SESSION['username']));
     \BlackNova\Services\Db::logDbErrors($db, $result, __LINE__, __FILE__);
     $playerinfo = $result->fields;
-    $current_score = Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+    $current_score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
 
     $langvars = Bnt\Translate::load($pdo_db, $lang, array('logout', 'common', 'global_includes', 'global_funcs', 'combat', 'footer', 'news'));
     Bnt\PlayerLog::writeLog($db, $playerinfo['ship_id'], LOG_LOGOUT, $_SERVER['REMOTE_ADDR']);

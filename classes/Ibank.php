@@ -45,7 +45,7 @@ class Ibank
             Ibank::ibankError($active_template, $langvars, $langvars['l_ibank_notwoloans'], "igb.php?command=loans");
         }
 
-        $score = \Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+        $score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
         $maxtrans = $score * $score * $ibank_loanlimit;
 
         if ($amount > $maxtrans)
@@ -315,7 +315,7 @@ class Ibank
         else
         {
             $percent = $ibank_loanlimit * 100;
-            $score = \Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+            $score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
             $maxloan = $score * $score * $ibank_loanlimit;
 
             $langvars['l_ibank_maxloanpercent'] = str_replace("[ibank_percent]", $percent, $langvars['l_ibank_maxloanpercent']);
@@ -486,7 +486,7 @@ class Ibank
             else
             {
                 $percent = $ibank_svalue * 100;
-                $score = \Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+                $score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
                 $maxtrans = $score * $score * $ibank_svalue;
 
                 $langvars['l_ibank_maxtransferpercent'] = str_replace("[ibank_percent]", $percent, $langvars['l_ibank_maxtransferpercent']);
@@ -658,7 +658,7 @@ class Ibank
             if ($ibank_svalue != 0)
             {
                 $percent = $ibank_svalue * 100;
-                $score = \Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+                $score = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
                 $maxtrans = $score * $score * $ibank_svalue;
 
                 if ($amount > $maxtrans)

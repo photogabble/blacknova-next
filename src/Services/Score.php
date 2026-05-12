@@ -17,7 +17,10 @@
 //
 // File: classes/Score.php
 
-namespace Bnt;
+namespace BlackNova\Services;
+
+use Bnt\Db;
+use Bnt\ADORecordSet;
 
 class Score
 {

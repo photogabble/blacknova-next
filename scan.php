@@ -43,8 +43,8 @@ $result2 = $db->Execute("SELECT * FROM ".\BlackNova\Services\Db::table('ships').
 \BlackNova\Services\Db::logDbErrors($db, $result2, __LINE__, __FILE__);
 $targetinfo = $result2->fields;
 
-$playerscore = Bnt\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
-$targetscore = Bnt\Score::updateScore($db, $targetinfo['ship_id'], $bntreg);
+$playerscore = \BlackNova\Services\Score::updateScore($db, $playerinfo['ship_id'], $bntreg);
+$targetscore = \BlackNova\Services\Score::updateScore($db, $targetinfo['ship_id'], $bntreg);
 
 $playerscore = $playerscore * $playerscore;
 $targetscore = $targetscore * $targetscore;
