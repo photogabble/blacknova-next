@@ -138,9 +138,10 @@ As part of refactoring the login system I built the `BanRepository` class and so
 To refactor templates, I need to also refactor how translations are handled. I will be creating `LocaleMiddleware` to handle language selection, but also need a way of loading the translations from the database. The existing `Translate` class is functional but can be improved. Instead of passing a list of `$categories` to it, I want to
 instead be able to call `Translate::get('category', 'key')` and have it return the translation for the given category and key. 
 
-- [ ] Create `LocaleMiddleware` to handle language selection, listens to a GET parameter and persists it in session
+- [x] Create `LocaleMiddleware` to handle language selection, listens to a GET parameter and persists it in session
 - [x] Create `Translate::get` method
-- [ ] Create `lang()` helper function
+- [x] Create `__()` language helper function
+- [ ] Refactor to remove translations from the database, use ini files as the source of truth
 
 #### Refactoring Templates: Main
 `main.php` is the games dashboard providing the player with their current game state and is the first page that a player sees upon logging in.
