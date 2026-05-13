@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
-// Copyright (C) 2025 Simon Dann
+// Copyright (C) 2025-2026 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -118,11 +118,11 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('session')) {
-    function session(): SessionManager
+    function session(): SessionInterface
     {
         return App::getInstance()
             ->getContainer()
-            ->get(SessionManager::class);
+            ->get(SessionInterface::class);
     }
 }
 
@@ -140,7 +140,7 @@ if (!function_exists('view')) {
 
         $dbActive = Db::isActive();
         // TODO: create lang(...) helper
-        $langvars = Translate::load(Db::connection(), 'english', [
+        $langvars = Translate::load(Db::connection(), session()->get('lang', config()->default_lang), [
             'main',
             'login',
             'logout',
@@ -258,6 +258,43 @@ if (!function_exists('view')) {
         $smarty->assign('langvars', $langvars);
 
         return $smarty->fetch($view);
+    }
+}
+
+if (!function_exists('locales')) {
+    function locales(): array
+    {
+        $files = new DirectoryIterator(APP_ROOT . DIRECTORY_SEPARATOR . 'languages');
+        $locales = [];
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() == 'ini') {
+                $parsed = parse_ini_file($file->getPathname(), true);
+                $locales[$file->getBasename('.ini')] = [
+                    'name' => $parsed['regional']['local_lang_name'],
+                    'flag' => $parsed['regional']['local_lang_flag'],
+                    'current' => session()->get('lang', config()->default_lang) === $file->getBasename('.ini'),
+                ];
+            }
+        }
+
+        return $locales;
+    }
+}
+
+if (!function_exists('__')) {
+    function __(string $key, array $params = []): string
+    {
+        $string = Translate::get($key);
+
+        if (empty($string)) {
+            return $key;
+        }
+
+        foreach ($params as $param => $value) {
+            $string = str_replace("[$param]", $value, $string);
+        }
+
+        return $string;
     }
 }
 

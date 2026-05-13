@@ -26,6 +26,59 @@ class Translate
 {
     private static array $langvars = [];
 
+    private static array $loaded = [];
+
+    public static string $language = 'english';
+
+    public static function get(string $key): string
+    {
+        $parts = explode('.', $key);
+        if (count($parts) !== 2) throw new \InvalidArgumentException('Invalid key format');
+
+
+        // If already loaded, return the value
+        if (array_key_exists($parts[0], self::$loaded) && array_key_exists($parts[1], self::$loaded[$parts[0]])){
+            return self::$loaded[$parts[0]][$parts[1]];
+        }
+
+        $language = session()->get('lang', config()->default_lang);
+
+        // Attempt to load the value from the database
+        if (Db::isActive()) {
+            $query = "SELECT name, value FROM ".Db::table('languages')." WHERE category = :category AND section = :language;";
+            $result = Db::prepare($query);
+
+            $result->bindParam(':category', $parts[0]);
+            $result->bindParam(':language', $language);
+            $result->execute();
+
+            $list = [];
+
+            while (($row = $result->fetch()) !== false)
+            {
+                $list[$row['name']] = $row['value'];
+            }
+
+            if (count($list) > 0) {
+                self::$loaded[$parts[0]] = $list;
+                return self::$loaded[$parts[0]][$parts[1]] ?? $key;
+            }
+
+            return $key;
+        }
+
+        // Fall back to the ini files
+        $ini_file = APP_ROOT . '/languages/' . $language . '.ini';
+        foreach (parse_ini_file($ini_file, true) as $category => $values) {
+            if (!isset(self::$loaded[$category])) self::$loaded[$category] = [];
+            foreach ($values as $name => $value) {
+                self::$loaded[$category][$name] = $value;
+            }
+        }
+
+        return self::$loaded[$parts[0]][$parts[1]] ?? $key;
+    }
+
     public static function load($db = null, $language = null, $categories = null)
     {
         // Check if all supplied args are valid, if not return false.
@@ -37,7 +90,7 @@ class Translate
         if (!Db::isActive())
         {
             // Slurp in language variables from the ini file directly
-            $ini_file = './languages/' . $language . '.ini.php';
+            $ini_file = APP_ROOT . '/languages/' . $language . '.ini';
             $ini_keys = parse_ini_file($ini_file, true);
             foreach ($ini_keys as $config_category => $config_line)
             {
@@ -49,27 +102,31 @@ class Translate
 
             return self::$langvars;
         }
-        else
-        {
-            // Populate the $langvars array
-            foreach ($categories as $category)
-            {
-                // Select from the database and return the value of the language variables requested, but do not use caching
-                $query = "SELECT name, value FROM ".Db::table('languages')." WHERE category = :category AND section = :language;";
-                $result = Db::prepare($query);
 
-                // It is possible to use a single prepare, and multiple executes, but it makes the logic of this section much less clear.
-                $result->bindParam(':category', $category);
-                $result->bindParam(':language', $language);
-                $result->execute();
+        // Populate the $langvars array
+        $placeholders = array_reduce($categories, function ($carry) {
+            $index = count($carry);
+            $carry[] = ":cat{$index}";
+            return $carry;
+        }, []);
 
-                while (($row = $result->fetch()) !== false)
-                {
-                    self::$langvars[$row['name']] = $row['value'];
-                }
-            }
+        $placeholderString = implode(',', $placeholders);
 
-            return self::$langvars;
+        $query = "SELECT name, value FROM ".Db::table('languages')." WHERE category IN ($placeholderString) AND section = :language;";
+        $result = Db::prepare($query);
+
+        foreach ($categories as $index => $category){
+            $result->bindValue(":cat{$index}", $category);
         }
+
+        $result->bindParam(':language', $language);
+        $result->execute();
+
+        while (($row = $result->fetch()) !== false)
+        {
+            self::$langvars[$row['name']] = $row['value'];
+        }
+
+        return self::$langvars;
     }
 }

@@ -1,6 +1,7 @@
 {*
     Blacknova Traders - A web-based massively multiplayer space combat and trading game
     Copyright (C) 2001-2014 Ron Harwood and the BNT development team.
+    Copyright (C) 2025-2026 Simon Dann
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -25,7 +26,9 @@
 
 <div class="index-flags">
 {foreach from=$variables['list_of_langs'] key=lang_file item=language}
-<a href="/?lang={$lang_file}"><img width="24" height="16" src="templates/{$variables['template']}/images/flags/{$language['flag']}.png" alt="{$language['lang_name']}"></a>
+    {if $language['current'] == false}
+        <a href="/?lang={$lang_file}"><img width="24" height="16" src="templates/{$variables['template']}/images/flags/{$language['flag']}.png" alt="{$language['name']}"></a>
+    {/if}
 {/foreach}
 </div>
 

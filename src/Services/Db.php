@@ -264,7 +264,7 @@ class Db
      * Kept for backward compatibility during refactoring.
      * @deprecated Use exception handling instead
      */
-    public static function logDbErrors($db, string $query, int $line, string $page): string|bool
+    public static function logDbErrors($db, mixed $query, int $line, string $page): string|bool
     {
         return true;
     }

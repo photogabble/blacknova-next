@@ -31,7 +31,7 @@ final class PagesController extends Controller
     {
         return $this->view('index.tpl', [
             'title' => Translate::get('index.l_welcome_bnt'),
-            'list_of_langs' => Languages::listAvailable('english'),
+            'list_of_langs' => locales(),
 
             'link_forums' => config('link_forums'),
             'admin_mail' => config('admin_mail'),
