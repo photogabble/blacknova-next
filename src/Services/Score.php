@@ -82,12 +82,12 @@ class Score
 
         $calc_planet_goods      = "SUM(".Db::table('planets').".organics) * $organics_price + SUM(".Db::table('planets').".ore) * $ore_price + SUM(".Db::table('planets').".goods) * $goods_price + SUM(".Db::table('planets').".energy) * $energy_price";
         $calc_planet_colonists  = "SUM(".Db::table('planets').".colonists) * $colonist_price";
-        $calc_planet_defence    = "SUM(".Db::table('planets').".fighters) * $fighter_price + IF(".Db::table('planets').".base='Y', $base_credits + SUM(".Db::table('planets').".torps) * $torpedo_price, 0)";
+        $calc_planet_defence    = "SUM(".Db::table('planets').".fighters) * $fighter_price + SUM(IF(".Db::table('planets').".base='Y', $base_credits + ".Db::table('planets').".torps * $torpedo_price, 0))";
         $calc_planet_credits    = "SUM(".Db::table('planets').".credits)";
 
         $pl_score_res = Db::select(
-            "SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM ".Db::table('planets')." WHERE owner=?",
-            [$ship_id]
+            "SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_colonists + $calc_planet_defence + $calc_planet_credits, 0) AS planet_score FROM ".Db::table('planets')." WHERE owner=:owner",
+            ['owner' => $ship_id]
         );
 
         $planet_score = (count($pl_score_res) === 1)
@@ -95,8 +95,8 @@ class Score
             : 0;
 
         $ship_score_res = Db::select(
-            "SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + ".Db::table('ships').".credits, 0) AS ship_score FROM ".Db::table('ships')." LEFT JOIN ".Db::table('planets')." ON ".Db::table('planets').".owner=ship_id WHERE ship_id=? AND ship_destroyed='N'",
-            [$ship_id]
+            "SELECT $calc_levels + $calc_equip + $calc_dev + ".Db::table('ships').".credits AS ship_score FROM ".Db::table('ships')." WHERE ship_id=:owner AND ship_destroyed='N'",
+            ['owner' => $ship_id]
         );
 
         $ship_score = (count($ship_score_res) === 1)
@@ -104,8 +104,8 @@ class Score
             : 0;
 
         $bank_score_res = Db::select(
-            "SELECT (balance - loan) AS bank_score FROM ".Db::table('ibank_accounts')." WHERE ship_id = ?;",
-            [$ship_id]
+            "SELECT (balance - loan) AS bank_score FROM ".Db::table('ibank_accounts')." WHERE ship_id = :owner;",
+            ['owner' => $ship_id]
         );
 
         $bank_score = (count($bank_score_res) === 1)
@@ -117,8 +117,8 @@ class Score
 
         $score = (int) round(sqrt($score));
         Db::exec(
-            "UPDATE ".Db::table('ships')." SET score=? WHERE ship_id=?",
-            [$score, $ship_id]
+            "UPDATE ".Db::table('ships')." SET score=:score WHERE ship_id=:owner",
+            ['score' => $score, 'owner' => $ship_id]
         );
 
         return $score;
