@@ -10,6 +10,7 @@ use BlackNova\Services\Auth\AuthenticationService;
 use League\Route\RouteGroup;
 use League\Route\Router;
 use Photogabble\Tuppence\App;
+use BlackNova\Http\Controllers\Auth\LogoutController;
 
 return function(Router $router, App $app) {
     $router->middleware(new LocaleMiddleware);
@@ -17,6 +18,7 @@ return function(Router $router, App $app) {
 
     // Authentication routes
     $router->map('POST', '/login', [LoginController::class, 'processLogin']);
+    $router->map('GET', '/logout', [LogoutController::class, 'processLogout']);
 
     $router->map('GET', '/', [PagesController::class, 'homepage']);
     $router->map('GET', '/news', [PagesController::class, 'news']);

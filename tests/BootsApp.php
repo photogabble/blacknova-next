@@ -149,6 +149,15 @@ abstract class BootsApp extends TestCase
         );
     }
 
+    protected function assertSessionMissingKey(string $key): void
+    {
+        $this->assertArrayNotHasKey(
+            $key,
+            $this->session->getSessionData(),
+            "Session contains unexpected key '{$key}'"
+        );
+    }
+
     protected function assertSessionEquals(string $key, mixed $expectedValue): void
     {
         $this->assertSessionHasKey($key);

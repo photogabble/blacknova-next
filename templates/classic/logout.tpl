@@ -25,7 +25,7 @@
 
 <h1>{$langvars['l_logout']}</h1>
 
-{if ($variables['session_username'] != '')}
+{if ($variables['character_name'] != '')}
     {$langvars['l_logout_score']} {$variables['current_score']}.<br><br>
     {$variables['l_logout_text_replaced']}
 {else}

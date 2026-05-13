@@ -221,6 +221,30 @@ final class AuthenticationTest extends BootsApp
         $this->assertEquals('0.0.0.0', $player->ipAddress);
     }
 
+    public function test_logout_redirect_to_homepage_when_not_logged_in(): void
+    {
+        $this->runRequest(new ServerRequest()
+            ->withUri(new Uri('/logout'))
+            ->withMethod('GET'));
+
+        $this->assertResponseRedirectsTo('/');
+    }
+
+    public function test_logout_clears_session_and_redirects_to_homepage(): void
+    {
+        $id = $this->createTestPlayer('testip@example.com', 'password123');
+        $this->actingAs($id);
+
+        $this->runRequest(new ServerRequest()
+            ->withUri(new Uri('/logout'))
+            ->withMethod('GET'));
+
+        $this->assertResponseOk();
+
+        $this->assertSessionMissingKey('user_id');
+        $this->assertSessionMissingKey('logged_in');
+    }
+
     private function createTestPlayerWithDestroyedShip(string $email, string $password): int
     {
         $id = $this->createTestPlayer($email, $password);
