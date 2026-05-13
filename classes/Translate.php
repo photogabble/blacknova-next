@@ -1,7 +1,7 @@
 <?php
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
-// Copyright (C) 2025 Simon Dann
+// Copyright (C) 2025-2026 Simon Dann
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Affero General Public License as
@@ -20,113 +20,67 @@
 
 namespace Bnt;
 
-use BlackNova\Services\Db;
+use RuntimeException;
+use InvalidArgumentException;
+use BlackNova\Services\Auth\SessionInterface;
 
 class Translate
 {
-    private static array $langvars = [];
+    private SessionInterface $session;
 
-    private static array $loaded = [];
+    private Reg $reg;
 
-    public static string $language = 'english';
+    private array $values = [];
 
-    public static function get(string $key): string
-    {
-        $parts = explode('.', $key);
-        if (count($parts) !== 2) throw new \InvalidArgumentException('Invalid key format');
+    public function __construct(
+        SessionInterface $session,
+        Reg $reg
+    ){
+        $this->session = $session;
+        $this->reg = $reg;
 
-
-        // If already loaded, return the value
-        if (array_key_exists($parts[0], self::$loaded) && array_key_exists($parts[1], self::$loaded[$parts[0]])){
-            return self::$loaded[$parts[0]][$parts[1]];
+        $ini_file = APP_ROOT . '/languages/' . $this->currentLanguage() . '.ini';
+        if (!file_exists($ini_file)) {
+            throw new RuntimeException('Invalid language file');
         }
 
-        $language = session()->get('lang', config()->default_lang);
-
-        // Attempt to load the value from the database
-        if (Db::isActive()) {
-            $query = "SELECT name, value FROM ".Db::table('languages')." WHERE category = :category AND section = :language;";
-            $result = Db::prepare($query);
-
-            $result->bindParam(':category', $parts[0]);
-            $result->bindParam(':language', $language);
-            $result->execute();
-
-            $list = [];
-
-            while (($row = $result->fetch()) !== false)
-            {
-                $list[$row['name']] = $row['value'];
-            }
-
-            if (count($list) > 0) {
-                self::$loaded[$parts[0]] = $list;
-                return self::$loaded[$parts[0]][$parts[1]] ?? $key;
-            }
-
-            return $key;
-        }
-
-        // Fall back to the ini files
-        $ini_file = APP_ROOT . '/languages/' . $language . '.ini';
         foreach (parse_ini_file($ini_file, true) as $category => $values) {
-            if (!isset(self::$loaded[$category])) self::$loaded[$category] = [];
+            if (!isset($this->values[$category])) $this->values[$category] = [];
             foreach ($values as $name => $value) {
-                self::$loaded[$category][$name] = $value;
+                $this->values[$category][$name] = $value;
             }
         }
-
-        return self::$loaded[$parts[0]][$parts[1]] ?? $key;
     }
 
-    public static function load($db = null, $language = null, $categories = null)
+    public function currentLanguage(): string
     {
-        // Check if all supplied args are valid, if not return false.
-        if (is_null($db) || is_null($language) || !is_array($categories))
-        {
-            return false;
-        }
+        return $this->session->get('lang', $this->reg->default_lang);
+    }
 
-        if (!Db::isActive())
-        {
-            // Slurp in language variables from the ini file directly
-            $ini_file = APP_ROOT . '/languages/' . $language . '.ini';
-            $ini_keys = parse_ini_file($ini_file, true);
-            foreach ($ini_keys as $config_category => $config_line)
-            {
-                foreach ($config_line as $config_key => $config_value)
-                {
-                    self::$langvars[$config_key] = $config_value;
-                }
+    public function get(string $key): string
+    {
+        $parts = explode('.', $key);
+        if (count($parts) !== 2) throw new InvalidArgumentException('Invalid key format');
+
+        return $this->values[$parts[0]][$parts[1]] ?? $key;
+    }
+
+    public function all(): array
+    {
+        // TODO: this has been reduced for consumption by the legacy static load method. It *should* only return $this->values ideally.
+        return array_reduce($this->values, function ($carry, $category) {
+            foreach ($category as $key => $value) {
+                $carry[$key] = $value;
             }
-
-            return self::$langvars;
-        }
-
-        // Populate the $langvars array
-        $placeholders = array_reduce($categories, function ($carry) {
-            $index = count($carry);
-            $carry[] = ":cat{$index}";
             return $carry;
         }, []);
+    }
 
-        $placeholderString = implode(',', $placeholders);
-
-        $query = "SELECT name, value FROM ".Db::table('languages')." WHERE category IN ($placeholderString) AND section = :language;";
-        $result = Db::prepare($query);
-
-        foreach ($categories as $index => $category){
-            $result->bindValue(":cat{$index}", $category);
-        }
-
-        $result->bindParam(':language', $language);
-        $result->execute();
-
-        while (($row = $result->fetch()) !== false)
-        {
-            self::$langvars[$row['name']] = $row['value'];
-        }
-
-        return self::$langvars;
+    /**
+     * @deprecated ideally use __('category.key') or the all method if you need the list
+     */
+    public static function load($db = null, $language = null, $categories = null)
+    {
+        return app(Translate::class)->all();
     }
 }

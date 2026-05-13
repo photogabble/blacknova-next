@@ -141,7 +141,8 @@ instead be able to call `Translate::get('category', 'key')` and have it return t
 - [x] Create `LocaleMiddleware` to handle language selection, listens to a GET parameter and persists it in session
 - [x] Create `Translate::get` method
 - [x] Create `__()` language helper function
-- [ ] Refactor to remove translations from the database, use ini files as the source of truth
+- [x] Refactor to remove translations from the database, use ini files as the source of truth
+- [x] Refactor `Translate` class to be non-static
 
 #### Refactoring Templates: Main
 `main.php` is the games dashboard providing the player with their current game state and is the first page that a player sees upon logging in.

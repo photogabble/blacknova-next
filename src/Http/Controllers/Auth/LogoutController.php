@@ -87,7 +87,7 @@ final class LogoutController extends Controller
             'current_score' => $score,
 
             'l_logout_text_replaced' => $text,
-            'linkback' => ["fulltext" => Translate::get('global_funcs.l_global_mlogin'), "link" => "/"],
+            'linkback' => ["fulltext" => __('global_funcs.l_global_mlogin'), "link" => "/"],
         ]);
     }
 }

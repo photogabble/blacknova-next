@@ -138,7 +138,7 @@ final class MainController extends Controller
 
                             return [
                                     ...$planet->toArray(),
-                                    'owner_name' => $owners[$planet->ownerId]->characterName ?? ('('.Translate::get('common.l_unowned').')'),
+                                    'owner_name' => $owners[$planet->ownerId]->characterName ?? ('('.__('common.l_unowned').')'),
                                     'level' => $level,
                                     'image' => match($level) {
                                         0 => 'tinyplanet.png',
@@ -152,7 +152,7 @@ final class MainController extends Controller
                         'defences' => array_map(fn($defence) => [
                                 ...$defence->toArray(),
                                 'player_owned' => $player->shipId === $defence->ownerId,
-                                'owner_name' => $owners[$defence->ownerId]->characterName ?? ('('.Translate::get('common.l_unowned').')'),
+                                'owner_name' => $owners[$defence->ownerId]->characterName ?? ('('.__('common.l_unowned').')'),
                         ], $defences),
                         'ships_detected' => array_map(
                                 fn(Player $player) => $player->toArray(),

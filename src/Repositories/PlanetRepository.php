@@ -74,7 +74,7 @@ class PlanetRepository
     {
         return new Planet(
             id: $row['planet_id'],
-            name: $row['name'] ?? Translate::get('common.l_unnamed'),
+            name: $row['name'] ?? __('common.l_unnamed'),
             sectorId: $row['sector_id'],
             organics: $row['organics'],
             ore: (int)$row['ore'],

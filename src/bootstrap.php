@@ -139,20 +139,7 @@ if (!function_exists('view')) {
         // TODO: replace hard coded values with dynamic values
 
         $dbActive = Db::isActive();
-        // TODO: create lang(...) helper
-        $langvars = Translate::load(Db::connection(), session()->get('lang', config()->default_lang), [
-            'main',
-            'login',
-            'logout',
-            'index',
-            'common',
-            'regional',
-            'footer',
-            'global_includes',
-            'news',
-            'admin',
-            'combat',
-        ]);
+        $langvars = app(Translate::class)->all();
 
         // Make the SF logo a little bit larger to balance the extra line from
         // the benchmark for page generation.
@@ -284,11 +271,13 @@ if (!function_exists('locales')) {
 if (!function_exists('__')) {
     function __(string $key, array $params = []): string
     {
-        $string = Translate::get($key);
+        /** @var Translate $translate */
+        $translate = App::getInstance()
+            ->getContainer()
+            ->get(Translate::class);
 
-        if (empty($string)) {
-            return $key;
-        }
+        $string = $translate->get($key);
+        if (empty($string)) return $key;
 
         foreach ($params as $param => $value) {
             $string = str_replace("[$param]", $value, $string);

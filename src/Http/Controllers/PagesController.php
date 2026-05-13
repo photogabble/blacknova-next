@@ -30,7 +30,7 @@ final class PagesController extends Controller
     public function homepage(): ResponseInterface
     {
         return $this->view('index.tpl', [
-            'title' => Translate::get('index.l_welcome_bnt'),
+            'title' => __('index.l_welcome_bnt'),
             'list_of_langs' => locales(),
 
             'link_forums' => config('link_forums'),
@@ -54,7 +54,7 @@ final class PagesController extends Controller
         }
 
         return $this->view('news.tpl', [
-            'title' => Translate::get('news.l_news_title'),
+            'title' => __('news.l_news_title'),
 
             'day' => $startDate,
             'previous_day' => News::previousDay($startDate),

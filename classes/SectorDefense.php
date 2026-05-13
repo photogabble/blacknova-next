@@ -34,23 +34,23 @@ class SectorDefense
     public function image(): array
     {
         return match ($this->type) {
-            'M' => ['src' => 'mines.png', 'alt' => Translate::get('common.l_mines')],
-            'F' => ['src' => 'fighters.png', 'alt' => Translate::get('common.l_fighters')]
+            'M' => ['src' => 'mines.png', 'alt' => __('common.l_mines')],
+            'F' => ['src' => 'fighters.png', 'alt' => __('common.l_fighters')]
         };
     }
 
     public function name(): string
     {
         $name = match ($this->type) {
-            'M' => Translate::get('common.l_mines'),
-            'F' => Translate::get('common.l_fighters'),
+            'M' => __('common.l_mines'),
+            'F' => __('common.l_fighters'),
         };
 
         if ($this->type === 'M') return $name;
 
         return trim($name . ' ' . match ($this->setting) {
-            'attack' => Translate::get('modify_defences.l_md_attack'),
-            'toll' => Translate::get('modify_defences.l_md_toll'),
+            'attack' => __('modify_defences.l_md_attack'),
+            'toll' => __('modify_defences.l_md_toll'),
         });
     }
 
