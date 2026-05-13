@@ -26,8 +26,7 @@ if (!extension_loaded('mbstring')) // Test to ensure mbstring extension is loade
 {
     die ('Blacknova Traders Error: The PHP mbstring extension is required. Please install it.');
 }
-
-require_once './vendor/autoload.php';              // Load the auto-loader
+require __DIR__ . '/src/bootstrap.php';
 require_once './global_defines.php';               // Defines used in many places
 if (!defined('APP_ROOT')) define('APP_ROOT', realpath(__DIR__));
 mb_http_output('UTF-8');                           // Our output should be served in UTF-8 no matter what.
