@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 // Blacknova Traders - A web-based massively multiplayer space combat and trading game
 // Copyright (C) 2001-2014 Ron Harwood and the BNT development team
 // Copyright (C) 2026 Simon Dann
