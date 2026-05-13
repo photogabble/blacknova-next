@@ -19,9 +19,42 @@
 
 namespace BlackNova\Tests;
 
+use BlackNova\Services\Db;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 abstract class TestCase extends PHPUnitTestCase
 {
-    // ...
+    protected static bool $useDatabase = false;
+
+    // NOTE: set this to false in tests that need to run in a transaction.
+    protected static bool $useTransactions = true;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        if (static::$useDatabase) {
+            // Initialise the database schema, this gives us a clean slate for each test run,
+            // each test runs within its own transaction which is rolled back at teardown.
+            DatabaseSetup::initialize();
+        }
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (static::$useDatabase && static::$useTransactions && Db::isActive()) {
+            Db::beginTransaction();
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        if (static::$useDatabase && static::$useTransactions && Db::inTransaction()) {
+            Db::rollback();
+        }
+    }
 }

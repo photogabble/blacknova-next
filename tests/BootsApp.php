@@ -25,10 +25,8 @@ use BlackNova\Repositories\PlayerRepository;
 use BlackNova\Repositories\SectorRepository;
 use BlackNova\Repositories\ZoneRepository;
 use BlackNova\Services\Auth\SessionInterface;
-use BlackNova\Services\Db;
 use Photogabble\Tuppence\App;
 use Laminas\Diactoros\ServerRequest;
-use PHPUnit\Framework\TestCase;
 
 abstract class BootsApp extends TestCase
 {
@@ -44,17 +42,7 @@ abstract class BootsApp extends TestCase
 
     protected ZoneRepository $zoneRepository;
 
-    // NOTE: set this to false in tests that need to run in a transaction.
-    protected bool $useTransactions = true;
-
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-
-        // Initialise the database schema, this gives us a clean slate for each test run,
-        // each test runs within its own transaction which is rolled back at teardown.
-        DatabaseSetup::initialize();
-    }
+    protected static bool $useDatabase = true;
 
     public function setUp(): void
     {
@@ -70,18 +58,14 @@ abstract class BootsApp extends TestCase
         $this->zoneRepository = $this->app->getContainer()
             ->get(ZoneRepository::class);
 
-        if ($this->useTransactions && Db::isActive()) {
-            Db::beginTransaction();
-        }
+        parent::setUp();
     }
 
     public function tearDown(): void
     {
-        if ($this->useTransactions && Db::isActive() && Db::inTransaction()) {
-            Db::rollback();
-        }
-
         $this->cleanSession();
+
+        parent::tearDown();
     }
 
     protected function cleanSession(): void
@@ -102,7 +86,7 @@ abstract class BootsApp extends TestCase
 
     protected function bootApp(): void
     {
-        // Setting $emitter which is used by bootstrap.php to replace the default emitter with TestEmitter.
+        // Setting $emitter, which is used by bootstrap.php to replace the default emitter with TestEmitter.
         $this->emitter = $emitter = new TestEmitter();
         $this->app = include __DIR__ . '/../src/bootstrap.php';
 
