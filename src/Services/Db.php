@@ -132,6 +132,16 @@ class Db
     public static function select(string $sql, array $params = []): array
     {
         $stmt = self::prepare($sql);
+        $params = array_map(function($param) {
+            if ($param instanceof \BackedEnum) {
+                return $param->value;
+            }
+            if ($param instanceof \UnitEnum) {
+                return $param->name;
+            }
+
+            return $param;
+        }, $params);
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, match (gettype($value)) {
                 'boolean' => PDO::PARAM_BOOL,
