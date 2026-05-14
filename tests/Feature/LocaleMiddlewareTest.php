@@ -30,9 +30,9 @@ final class LocaleMiddlewareTest extends BootsApp
         $this->runRequest(new ServerRequest()
             ->withUri(new Uri('/'))
             ->withMethod('GET')
-            ->withQueryParams(['lang' => 'fr']));
+            ->withQueryParams(['lang' => 'french']));
 
-        $this->assertSessionEquals('lang', 'fr');
+        $this->assertSessionEquals('lang', 'french');
     }
 
     public function test_missing_lang_query_param_does_not_set_session_lang(): void
