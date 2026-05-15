@@ -44,7 +44,7 @@ class Validator
     /**
      * @var string $current_alias Alias use on error messages instead of field name.
      */
-    private string $current_alias;
+    private string|null $current_alias;
 
     /**
      * @var array $response_messages Error messages to show user.
